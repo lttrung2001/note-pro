@@ -13,6 +13,7 @@ import com.lttrung.notepro.databinding.ActivityMainBinding
 import com.lttrung.notepro.model.Note
 import com.lttrung.notepro.ui.addnote.AddNoteActivity
 import com.lttrung.notepro.ui.notedetail.NoteDetailActivity
+import com.lttrung.notepro.ui.setting.SettingActivity
 import com.lttrung.notepro.utils.AppConstant
 
 class MainActivity : AppCompatActivity() {
@@ -63,8 +64,6 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        setSupportActionBar(binding.toolbar)
 
         binding.fab.setOnClickListener(fabOnClickListener)
         binding.btnSearch.setOnClickListener(btnSearchOnClickListener)

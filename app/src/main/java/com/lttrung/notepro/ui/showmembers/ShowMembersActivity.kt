@@ -14,7 +14,6 @@ class ShowMembersActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
         binding = ActivityShowMembersBinding.inflate(layoutInflater)
-        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         setContentView(binding.root)

@@ -18,7 +18,6 @@ class EditNoteActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = ActivityEditNoteBinding.inflate(layoutInflater)
-        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         setContentView(binding.root)

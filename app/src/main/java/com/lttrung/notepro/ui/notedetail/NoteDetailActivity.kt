@@ -37,7 +37,6 @@ class NoteDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = ActivityNoteDetailBinding.inflate(layoutInflater)
-        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         setContentView(binding.root)

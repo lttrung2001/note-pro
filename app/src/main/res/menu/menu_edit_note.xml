@@ -5,7 +5,7 @@
         android:id="@+id/action_pin"
         android:icon="@drawable/ic_baseline_push_pin_24"
         android:orderInCategory="0"
-        android:title="@string/members"
+        android:title="@string/pin"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_show_members"

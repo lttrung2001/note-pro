@@ -83,4 +83,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="add">add</string>
+    <string name="pin">Pin</string>
+    <string name="new_password">New password</string>
+    <string name="current_password">Current password</string>
+    <string name="update">Update</string>
+    <string name="id">Id</string>
 </resources>
