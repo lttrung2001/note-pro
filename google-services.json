@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "705621164183",
+    "project_id": "note-pro-91c72",
+    "storage_bucket": "note-pro-91c72.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:705621164183:android:952b313e51d1b3a3db69d2",
+        "android_client_info": {
+          "package_name": "com.lttrung.notepro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "705621164183-3t00e2d2n5lff6oe298qio3gbg8em8a4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lttrung.notepro",
+            "certificate_hash": "fe3dee177898228d3f2a14b8e06ca7bf00428f9a"
+          }
+        },
+        {
+          "client_id": "705621164183-fhb4drcg7rvp03dpor636aue10k21th1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKwh8lcC5jFJcFDtImtzVx0Bk7DQGL0yc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "705621164183-fhb4drcg7rvp03dpor636aue10k21th1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

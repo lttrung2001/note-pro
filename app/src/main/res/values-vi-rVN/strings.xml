@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NotePro</string>
+    <string name="action_settings">Cài đặt</string>
+    <string name="next">Tiếp</string>
+    <string name="previous">Lùi</string>
+    <string name="search_here">Tìm kiếm...</string>
+    <string name="update">Cập nhật</string>
+    <string name="current_password">Mật khẩu hiện tại</string>
+    <string name="new_password">Mật khẩu mới</string>
+    <string name="add">Thêm</string>
+    <string name="edit_note">Sửa ghi chú</string>
+    <string name="add_note">Thêm ghi chú</string>
+    <string name="note_details">Chi tiết</string>
+    <string name="logout">Thoát</string>
+    <string name="regional">Khu vực</string>
+    <string name="change_password">Đổi mật khẩu</string>
+    <string name="edit_profile">Thay đổi thông tin</string>
+    <string name="profile">Thông tin cá nhân</string>
+    <string name="already_have_an_account">Đã có tài khoản?</string>
+    <string name="confirm_password">Mật khẩu xác nhận</string>
+    <string name="full_name">Họ tên</string>
+    <string name="edit">Sửa</string>
+    <string name="register">Đăng ký</string>
+    <string name="don_t_have_an_account">Chưa có tài khoản?</string>
+    <string name="forgot_password">Quên mật khẩu?</string>
+    <string name="login">Đăng nhập</string>
+    <string name="password">Mật khẩu</string>
+    <string name="today">Hôm nay</string>
+    <string name="images">Hình ảnh</string>
+    <string name="description">Mô tả</string>
+    <string name="title">Tiêu đề</string>
+    <string name="pinned">Đã ghim</string>
+    <string name="pin">Ghim</string>
+    <string name="others">Khác</string>
+    <string name="create_note">Tạo ghi chú</string>
+    <string name="save">Lưu</string>
+    <string name="members">Thành viên</string>
+    <string name="login_failed">Đăng nhập thất bại</string>
+    <string name="choose_from_gallery">Chọn ảnh từ thư viện</string>
+    <string name="take_a_photo">Chụp ảnh</string>
+</resources>

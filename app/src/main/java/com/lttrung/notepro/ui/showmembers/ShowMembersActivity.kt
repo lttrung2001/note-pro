@@ -11,7 +11,6 @@ import com.lttrung.notepro.databinding.ActivityShowMembersBinding
 class ShowMembersActivity : AppCompatActivity() {
     private lateinit var binding: ActivityShowMembersBinding
     override fun onCreate(savedInstanceState: Bundle?) {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
         binding = ActivityShowMembersBinding.inflate(layoutInflater)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

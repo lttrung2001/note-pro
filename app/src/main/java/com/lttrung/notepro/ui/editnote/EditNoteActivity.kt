@@ -14,7 +14,6 @@ import com.lttrung.notepro.ui.showmembers.ShowMembersActivity
 class EditNoteActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEditNoteBinding
     override fun onCreate(savedInstanceState: Bundle?) {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
 
         binding = ActivityEditNoteBinding.inflate(layoutInflater)
