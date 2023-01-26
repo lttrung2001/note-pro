@@ -6,7 +6,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.WindowCompat
 import com.lttrung.notepro.R
 import com.lttrung.notepro.adapter.PinnedNoteAdapter
 import com.lttrung.notepro.databinding.ActivityMainBinding
@@ -15,6 +14,7 @@ import com.lttrung.notepro.ui.addnote.AddNoteActivity
 import com.lttrung.notepro.ui.notedetail.NoteDetailActivity
 import com.lttrung.notepro.ui.setting.SettingActivity
 import com.lttrung.notepro.utils.AppConstant
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -62,7 +62,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+
+        supportActionBar?.setLogo(R.drawable.ic_baseline_sticky_note_2_24)
+        supportActionBar?.setDisplayUseLogoEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
 
         binding.fab.setOnClickListener(fabOnClickListener)
         binding.btnSearch.setOnClickListener(btnSearchOnClickListener)
@@ -76,6 +79,8 @@ class MainActivity : AppCompatActivity() {
             tmpPinned.add(Note(i.toString(), i.toString(), i.toString(), isPin = true))
         }
         pinnedNoteAdapter.submitList(tmpPinned)
+
+        setContentView(binding.root)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

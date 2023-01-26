@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.lttrung.notepro">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -14,9 +16,21 @@
         android:theme="@style/Theme.NotePro"
         tools:targetApi="31">
         <activity
+            android:name=".ui.forgotpassword.SendInstructionsResultActivity"
+            android:exported="false"
+            android:label="@string/back"
+            android:parentActivityName=".ui.forgotpassword.ForgotPasswordActivity"
+            android:theme="@style/Theme.NotePro.NoActionBar" />
+        <activity
+            android:name=".ui.forgotpassword.ForgotPasswordActivity"
+            android:exported="false"
+            android:label="@string/back"
+            android:parentActivityName=".ui.login.LoginActivity"
+            android:theme="@style/Theme.NotePro" />
+        <activity
             android:name=".ui.viewprofile.ViewProfileActivity"
             android:exported="false"
-            android:label="Your info"
+            android:label="@string/your_info"
             android:parentActivityName=".ui.setting.SettingActivity"
             android:theme="@style/Theme.NotePro" />
         <activity

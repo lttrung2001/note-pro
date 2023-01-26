@@ -13,10 +13,9 @@
     <string name="add_note">Thêm ghi chú</string>
     <string name="note_details">Chi tiết</string>
     <string name="logout">Thoát</string>
-    <string name="regional">Khu vực</string>
     <string name="change_password">Đổi mật khẩu</string>
     <string name="edit_profile">Thay đổi thông tin</string>
-    <string name="profile">Thông tin cá nhân</string>
+    <string name="account">Tài khoản</string>
     <string name="already_have_an_account">Đã có tài khoản?</string>
     <string name="confirm_password">Mật khẩu xác nhận</string>
     <string name="full_name">Họ tên</string>
@@ -39,4 +38,16 @@
     <string name="login_failed">Đăng nhập thất bại</string>
     <string name="choose_from_gallery">Chọn ảnh từ thư viện</string>
     <string name="take_a_photo">Chụp ảnh</string>
+    <string name="back">Quay lại</string>
+    <string name="reset_password">Đặt lại mật khẩu</string>
+    <string name="enter_the_email_associated_with_your_account_and_we_ll_send_an_email_with_instructions_to_reset_your_password">Nhập email liên kết với tài khoản của bạn và chúng tôi sẽ gửi hướng dẫn tới email để đặt lại mật khẩu.</string>
+    <string name="send_instructions">Gửi hướng dẫn</string>
+    <string name="check_your_email">Kiểm tra thư trong email</string>
+    <string name="we_have_sent_a_password_recover_instructions_to_your_email">Chúng tôi đã gửi hướng dẫn đặt lại mật khẩu tới email của bạn.</string>
+    <string name="open_email_app">Mở ứng dụng email</string>
+    <string name="did_not_receive_the_email_check_your_spam_filter">Không nhận được email? Kiểm tra hộp thư spam</string>
+    <string name="or">hoặc</string>
+    <string name="try_another_email_address">thử với email khác</string>
+    <string name="skip_i_ll_confirm_later">Bỏ qua, tôi sẽ xác nhận sau</string>
+    <string name="your_info">Thông tin cá nhân</string>
 </resources>

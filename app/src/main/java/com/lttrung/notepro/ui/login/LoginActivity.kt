@@ -13,6 +13,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityLoginBinding
+import com.lttrung.notepro.ui.forgotpassword.ForgotPasswordActivity
 import com.lttrung.notepro.ui.main.MainActivity
 import com.lttrung.notepro.ui.register.RegisterActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.RC_SIGN_IN
@@ -35,6 +36,12 @@ import com.lttrung.notepro.utils.AppConstant.Companion.RC_SIGN_IN
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
+
+    private val btnToForgotPasswordListener: View.OnClickListener by lazy {
+        View.OnClickListener {
+            startActivity(Intent(this, ForgotPasswordActivity::class.java))
+        }
+    }
 
     private val btnLoginOnClickListener: View.OnClickListener by lazy {
         View.OnClickListener {
@@ -68,10 +75,12 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
 
+        binding.btnToForgotPassword.setOnClickListener(btnToForgotPasswordListener)
         binding.btnLogin.setOnClickListener(btnLoginOnClickListener)
         binding.btnGoogleLogin.setOnClickListener(btnGoogleLoginListener)
         binding.btnToRegister.setOnClickListener(btnToRegisterOnClickListener)
