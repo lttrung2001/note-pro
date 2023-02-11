@@ -1,6 +1,6 @@
 package com.lttrung.notepro.ui.changeprofile
 
-import com.lttrung.notepro.model.User
+import com.lttrung.notepro.database.data.models.User
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Singleton
 

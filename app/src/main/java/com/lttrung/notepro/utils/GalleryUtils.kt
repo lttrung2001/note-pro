@@ -5,8 +5,9 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import com.lttrung.notepro.model.Image
-import com.lttrung.notepro.model.Paging
+import com.lttrung.notepro.database.data.models.Image
+import com.lttrung.notepro.database.data.models.Member
+import com.lttrung.notepro.database.data.models.Paging
 import io.reactivex.rxjava3.core.Single
 
 class GalleryUtils {
@@ -55,7 +56,9 @@ class GalleryUtils {
                         Image(
                             cs.getInt(idColumnIndex).toString(),
                             cs.getString(nameColumnIndex),
-                            cs.getString(dataColumnIndex)
+                            cs.getString(dataColumnIndex),
+                            0,
+                            Member("","","","")
                         )
                     )
                 }

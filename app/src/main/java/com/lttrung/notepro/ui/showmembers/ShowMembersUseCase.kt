@@ -1,7 +1,7 @@
 package com.lttrung.notepro.ui.showmembers
 
-import com.lttrung.notepro.model.Member
-import com.lttrung.notepro.model.Paging
+import com.lttrung.notepro.database.data.models.Member
+import com.lttrung.notepro.database.data.models.Paging
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Singleton
 

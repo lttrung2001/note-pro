@@ -1,6 +1,6 @@
 package com.lttrung.notepro.ui.addnote
 
-import com.lttrung.notepro.model.Note
+import com.lttrung.notepro.database.data.models.Note
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Singleton
 

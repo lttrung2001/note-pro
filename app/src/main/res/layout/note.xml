@@ -27,11 +27,26 @@
             android:textStyle="bold" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tv_description"
+            android:id="@+id/tv_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:ellipsize="end"
             android:maxLines="10" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_last_modified"
+            android:layout_width="0dp"
+            android:layout_height="0dp" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_is_pin"
+            android:layout_width="0dp"
+            android:layout_height="0dp" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_role"
+            android:layout_width="0dp"
+            android:layout_height="0dp" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

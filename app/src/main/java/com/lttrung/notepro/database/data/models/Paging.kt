@@ -1,4 +1,4 @@
-package com.lttrung.notepro.model
+package com.lttrung.notepro.database.data.models
 
 data class Paging<E>(
     val hasPreviousPage: Boolean,
