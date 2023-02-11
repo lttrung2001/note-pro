@@ -4,6 +4,7 @@
     package="com.lttrung.notepro">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SEND_CUSTOM_ACCESSIBILITY_EVENT" />
 
     <application
         android:allowBackup="true"
@@ -15,6 +16,30 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NotePro"
         tools:targetApi="31">
+        <activity
+            android:name=".ui.changeprofile.ChangeProfileActivity"
+            android:exported="false"
+            android:label="@string/back"
+            android:parentActivityName=".ui.viewprofile.ViewProfileActivity"
+            android:theme="@style/Theme.NotePro" />
+        <activity
+            android:name=".ui.forgotpassword.CreateNewPasswordActivity"
+            android:exported="true"
+            android:label="@string/back"
+            android:parentActivityName=".ui.forgotpassword.SendInstructionsResultActivity"
+            android:theme="@style/Theme.NotePro">
+            <tools:validation testUrl="https://www.google.com" />
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="www.google.com"
+                    android:scheme="https" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.forgotpassword.SendInstructionsResultActivity"
             android:exported="false"
@@ -37,10 +62,10 @@
             android:name=".ui.editnote.EditNoteActivity"
             android:exported="false"
             android:label="@string/edit_note"
-            android:parentActivityName=".ui.notedetail.NoteDetailActivity"
+            android:parentActivityName=".ui.notedetails.NoteDetailsActivity"
             android:theme="@style/Theme.NotePro" />
         <activity
-            android:name=".ui.notedetail.NoteDetailActivity"
+            android:name=".ui.notedetails.NoteDetailsActivity"
             android:exported="false"
             android:label="@string/note_details"
             android:parentActivityName=".ui.main.MainActivity"

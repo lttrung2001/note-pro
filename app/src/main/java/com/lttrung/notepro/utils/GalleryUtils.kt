@@ -63,7 +63,7 @@ class GalleryUtils {
             val hasNextPage = (nextPageCursor?.count ?: 0) > 0
             imageCursor?.close()
             nextPageCursor?.close()
-            return Single.just(Paging(imageList, hasNextPage))
+            return Single.just(Paging(hasPreviousPage = false, hasNextPage = hasNextPage, imageList))
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.lttrung.notepro.ui.notedetail
+package com.lttrung.notepro.ui.notedetails
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -7,14 +7,13 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.WindowCompat
 import com.lttrung.notepro.R
-import com.lttrung.notepro.databinding.ActivityNoteDetailBinding
+import com.lttrung.notepro.databinding.ActivityNoteDetailsBinding
 import com.lttrung.notepro.ui.editnote.EditNoteActivity
 import com.lttrung.notepro.ui.showmembers.ShowMembersActivity
 
-class NoteDetailActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityNoteDetailBinding
+class NoteDetailsActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityNoteDetailsBinding
 
     private val fabOnClickListener: View.OnClickListener by lazy {
         View.OnClickListener { view ->
@@ -35,7 +34,7 @@ class NoteDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityNoteDetailBinding.inflate(layoutInflater)
+        binding = ActivityNoteDetailsBinding.inflate(layoutInflater)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         setContentView(binding.root)

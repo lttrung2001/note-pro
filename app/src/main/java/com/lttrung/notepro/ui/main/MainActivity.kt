@@ -11,7 +11,7 @@ import com.lttrung.notepro.adapter.PinnedNoteAdapter
 import com.lttrung.notepro.databinding.ActivityMainBinding
 import com.lttrung.notepro.model.Note
 import com.lttrung.notepro.ui.addnote.AddNoteActivity
-import com.lttrung.notepro.ui.notedetail.NoteDetailActivity
+import com.lttrung.notepro.ui.notedetails.NoteDetailsActivity
 import com.lttrung.notepro.ui.setting.SettingActivity
 import com.lttrung.notepro.utils.AppConstant
 
@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     private val onClickListener: View.OnClickListener by lazy {
         View.OnClickListener { view ->
             val note = PinnedNoteAdapter.ViewHolder.bind(view)
-            val intent = Intent(this, NoteDetailActivity::class.java)
+            val intent = Intent(this, NoteDetailsActivity::class.java)
             val bundle = Bundle()
 
             bundle.putSerializable(AppConstant.NOTE, note)

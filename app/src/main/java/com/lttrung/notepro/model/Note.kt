@@ -5,6 +5,9 @@ import java.io.Serializable
 data class Note (
     val id: String,
     val title: String,
-    val description: String,
-    val isPin: Boolean
+    val content: String,
+    val lastModified: Int,
+    val isPin: Boolean,
+    val role: String,
+    val images: List<Image>?
 ) : Serializable

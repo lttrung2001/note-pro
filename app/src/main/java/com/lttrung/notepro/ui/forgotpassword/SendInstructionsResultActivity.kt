@@ -1,6 +1,8 @@
 package com.lttrung.notepro.ui.forgotpassword
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -13,9 +15,7 @@ class SendInstructionsResultActivity : AppCompatActivity() {
 
     private val openEmailAppListener: View.OnClickListener by lazy {
         View.OnClickListener { view ->
-            val intent = Intent(Intent.ACTION_MAIN)
-            intent.addCategory(Intent.CATEGORY_APP_EMAIL)
-            startActivity(intent)
+
         }
     }
 
@@ -32,7 +32,6 @@ class SendInstructionsResultActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = ActivitySendInstructionsResultBinding.inflate(layoutInflater)
-//        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         binding.btnOpenEmailApp.setOnClickListener(openEmailAppListener)
         binding.btnSkip.setOnClickListener(skipListener)

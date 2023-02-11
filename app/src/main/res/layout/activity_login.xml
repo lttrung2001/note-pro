@@ -13,7 +13,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="320dp"
+            android:layout_height="240dp"
             android:background="@drawable/rectangle_corner_bottom_left_128dp">
 
             <ImageView
@@ -89,7 +89,7 @@
                 android:backgroundTint="@color/primary"
                 android:text="@string/login"
                 android:textAllCaps="true"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
 
             <com.google.android.gms.common.SignInButton
                 android:id="@+id/btn_google_login"
