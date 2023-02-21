@@ -9,12 +9,11 @@ import androidx.appcompat.app.AppCompatActivity
 import com.lttrung.notepro.R
 import com.lttrung.notepro.adapter.PinnedNoteAdapter
 import com.lttrung.notepro.databinding.ActivityMainBinding
-import com.lttrung.notepro.database.data.models.Note
+import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.ui.addnote.AddNoteActivity
 import com.lttrung.notepro.ui.notedetails.NoteDetailsActivity
 import com.lttrung.notepro.ui.setting.SettingActivity
 import com.lttrung.notepro.utils.AppConstant
-import java.util.*
 
 
 class MainActivity : AppCompatActivity() {

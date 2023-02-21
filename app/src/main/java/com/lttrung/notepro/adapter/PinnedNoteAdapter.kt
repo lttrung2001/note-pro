@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.models.Note
+import com.lttrung.notepro.database.data.networks.models.Note
 
 class PinnedNoteAdapter(private val onClickListener: View.OnClickListener) :
     ListAdapter<Note, PinnedNoteAdapter.ViewHolder>(object : DiffUtil.ItemCallback<Note>() {
