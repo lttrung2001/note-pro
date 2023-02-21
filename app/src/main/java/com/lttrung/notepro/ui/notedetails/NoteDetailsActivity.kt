@@ -16,7 +16,7 @@ class NoteDetailsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNoteDetailsBinding
 
     private val fabOnClickListener: View.OnClickListener by lazy {
-        View.OnClickListener { view ->
+        View.OnClickListener {
             startActivity(Intent(this, EditNoteActivity::class.java))
         }
     }

@@ -50,7 +50,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private val btnGoogleLoginListener: View.OnClickListener by lazy {
-        View.OnClickListener { view ->
+        View.OnClickListener {
             val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_firebase_client_id))
                 .requestEmail()
@@ -69,7 +69,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private val btnToRegisterOnClickListener: View.OnClickListener by lazy {
-        View.OnClickListener { view ->
+        View.OnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
         }

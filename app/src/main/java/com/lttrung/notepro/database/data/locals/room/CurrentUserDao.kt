@@ -1,7 +1,7 @@
 package com.lttrung.notepro.database.data.locals.room
 
 import androidx.room.*
-import androidx.room.OnConflictStrategy.Companion.REPLACE
+import androidx.room.OnConflictStrategy.REPLACE
 import com.lttrung.notepro.database.data.locals.entities.CurrentUser
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single

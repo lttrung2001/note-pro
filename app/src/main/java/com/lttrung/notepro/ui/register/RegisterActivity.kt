@@ -9,7 +9,7 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
 
     private val btnToLoginOnClickListener: View.OnClickListener by lazy {
-        View.OnClickListener { view ->
+        View.OnClickListener {
             finish()
         }
     }

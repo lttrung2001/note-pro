@@ -19,7 +19,7 @@ class AddNoteActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddNoteBinding
 
     private val openBottomSheetDialogListener: View.OnClickListener by lazy {
-        View.OnClickListener { view ->
+        View.OnClickListener {
             openBottomSheetMenu()
         }
     }

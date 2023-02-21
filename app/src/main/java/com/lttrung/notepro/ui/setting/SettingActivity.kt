@@ -13,21 +13,21 @@ class SettingActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingBinding
 
     private val viewProfileListener: View.OnClickListener by lazy {
-        View.OnClickListener { view ->
+        View.OnClickListener {
             val intent = Intent(this, ViewProfileActivity::class.java)
             startActivity(intent)
         }
     }
 
     private val changePasswordListener: View.OnClickListener by lazy {
-        View.OnClickListener { view ->
+        View.OnClickListener {
             val intent = Intent(this, ChangePasswordActivity::class.java)
             startActivity(intent)
         }
     }
 
     private val logoutOnClickListener: View.OnClickListener by lazy {
-        View.OnClickListener { view ->
+        View.OnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(intent)
