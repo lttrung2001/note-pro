@@ -1,18 +1,10 @@
-package com.lttrung.notepro.database.data.networks.impl
+package com.lttrung.notepro.database.repositories.impl
 
-import com.lttrung.notepro.database.data.networks.NoteNetworks
-import com.lttrung.notepro.database.data.networks.models.ApiResponse
 import com.lttrung.notepro.database.data.networks.models.Note
+import com.lttrung.notepro.database.repositories.NoteRepositories
 import io.reactivex.rxjava3.core.Single
-import retrofit2.Response
-import retrofit2.http.*
-import java.util.*
 
-class NoteRetrofitServiceImp : NoteNetworks {
-    interface Service {
-
-    }
-
+class NoteRepositoriesImpl : NoteRepositories {
     override fun addNote(note: Note): Single<Note> {
         TODO("Not yet implemented")
     }

@@ -1,18 +1,10 @@
-package com.lttrung.notepro.database.data.networks.impl
+package com.lttrung.notepro.database.repositories.impl
 
-import com.lttrung.notepro.database.data.networks.UserNetworks
-import com.lttrung.notepro.database.data.networks.models.*
-import com.lttrung.notepro.utils.HttpStatusCodes
+import com.lttrung.notepro.database.data.networks.models.User
+import com.lttrung.notepro.database.repositories.UserRepositories
 import io.reactivex.rxjava3.core.Single
-import retrofit2.Response
-import retrofit2.http.*
-import javax.inject.Inject
 
-class UserRetrofitServiceImpl @Inject constructor(private val service: Service) : UserNetworks {
-    interface Service {
-
-    }
-
+class UserRepositoriesImpl : UserRepositories {
     override fun login(email: String, password: String): Single<String> {
         TODO("Not yet implemented")
     }
@@ -26,11 +18,11 @@ class UserRetrofitServiceImpl @Inject constructor(private val service: Service) 
         TODO("Not yet implemented")
     }
 
-    override fun changePassword(oldPassword: String, newPassword: String): Single<Unit> {
+    override fun changePassword(oldPassword: String, newPassword: String): Single<String> {
         TODO("Not yet implemented")
     }
 
-    override fun changeProfile(fullName: String, phoneNumber: String): Single<Unit> {
+    override fun changeProfile(fullName: String, phoneNumber: String): Single<User> {
         TODO("Not yet implemented")
     }
 

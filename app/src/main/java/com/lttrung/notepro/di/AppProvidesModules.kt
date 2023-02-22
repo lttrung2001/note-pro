@@ -7,6 +7,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.lttrung.notepro.database.data.locals.room.CurrentUserDao
 import com.lttrung.notepro.database.data.locals.room.UserDatabase
+import com.lttrung.notepro.database.data.networks.impl.UserRetrofitServiceImpl
 import com.lttrung.notepro.database.data.networks.interceptors.AuthorizationInterceptor
 import com.lttrung.notepro.database.data.networks.interceptors.NetworksInterceptor
 import com.lttrung.notepro.utils.AppConstant.Companion.DEFAULT_PREFERENCES_NAME
@@ -94,4 +95,9 @@ class AppProvidesModules {
     fun providesSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
         return context.getSharedPreferences(DEFAULT_PREFERENCES_NAME, Context.MODE_PRIVATE)
     }
+
+    @Provides
+    @Singleton
+    fun providesUserService(retrofit: Retrofit) =
+        retrofit.create(UserRetrofitServiceImpl.Service::class.java)
 }
