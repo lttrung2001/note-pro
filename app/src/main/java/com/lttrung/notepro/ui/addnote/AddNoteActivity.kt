@@ -43,7 +43,7 @@ class AddNoteActivity : AppCompatActivity() {
 
     private fun openBottomSheetMenu() {
         val bottomSheet = MenuBottomSheetDialogFragment()
-        bottomSheet.show(supportFragmentManager, MenuBottomSheetDialogFragment.toString())
+        bottomSheet.show(supportFragmentManager, TAG)
     }
 
     private fun openCamera() {
@@ -86,5 +86,9 @@ class AddNoteActivity : AppCompatActivity() {
                 super.onOptionsItemSelected(item)
             }
         }
+    }
+
+    companion object {
+        private const val TAG = "MenuBottomSheetDialogFragment"
     }
 }

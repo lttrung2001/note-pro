@@ -52,6 +52,7 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edt_email"
                     android:layout_width="match_parent"
+                    android:text="lt.trung2001@gmail.com"
                     android:layout_height="wrap_content"
                     android:inputType="textEmailAddress"
                     android:textColorHint="@color/primary" />
@@ -69,6 +70,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword"
+                    android:text="123456"
                     android:textColorHint="@color/primary" />
             </com.google.android.material.textfield.TextInputLayout>
 

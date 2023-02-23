@@ -3,8 +3,10 @@ package com.lttrung.notepro.ui.login
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.util.Patterns
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -17,25 +19,13 @@ import com.lttrung.notepro.ui.forgotpassword.ForgotPasswordActivity
 import com.lttrung.notepro.ui.main.MainActivity
 import com.lttrung.notepro.ui.register.RegisterActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.RC_SIGN_IN
+import com.lttrung.notepro.utils.Resource
+import dagger.hilt.android.AndroidEntryPoint
 
-/*
-* This is the code for a login activity in an Android app.
-* It is using the Google Sign-In API to handle the user's login process.
-* The activity uses data binding to bind views in the layout to variables in the activity's code.
-* When the activity is created, it sets onClickListeners for the login, Google login, and register buttons.
-* When the login button is clicked, it switches to the MainActivity.
-* When the Google login button is clicked,
-* it checks if the user has already signed in with a Google account, and if so, it switches to the MainActivity.
-* If the user has not signed in, it starts the Google Sign-In process by creating a GoogleSignInOptions object
-* and a GoogleSignInClient object and then starting the sign-in intent.
-* When the user finishes signing in, the onActivityResult method is called and it checks the requestCode and resultCode.
-* If the requestCode is for Google Sign-In, it gets the task that completed and calls the handleSignInResult method,
-* where it tries to get the result from the task and if successful, it shows a toast with the user's email and switches to the MainActivity.
-* If there is an exception, it shows a toast with the message "Sign in failed" and logs the error.
-* */
-
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
+    private val viewModel: LoginViewModel by viewModels()
 
     private val btnToForgotPasswordListener: View.OnClickListener by lazy {
         View.OnClickListener {
@@ -45,7 +35,16 @@ class LoginActivity : AppCompatActivity() {
 
     private val btnLoginOnClickListener: View.OnClickListener by lazy {
         View.OnClickListener {
-            switchToMain()
+            val email = binding.edtEmail.text.toString()
+            val password = binding.edtPassword.text.toString()
+            Toast.makeText(this, email + password, Toast.LENGTH_SHORT).show()
+            if (email.isBlank() || password.isBlank()) {
+                binding.edtPassword.error = getString(R.string.all_input_required)
+            } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                binding.edtPassword.error = getString(R.string.this_text_is_not_email_type)
+            } else {
+                viewModel.login(email, password)
+            }
         }
     }
 
@@ -80,12 +79,33 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
 
+        setupListener()
+        setupObserver()
+
+        setContentView(binding.root)
+    }
+
+    private fun setupObserver() {
+        viewModel.login.observe(this) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+
+                }
+                is Resource.Success -> {
+                    switchToMain()
+                }
+                is Resource.Error -> {
+                    binding.edtPassword.error = resource.message
+                }
+            }
+        }
+    }
+
+    private fun setupListener() {
         binding.btnToForgotPassword.setOnClickListener(btnToForgotPasswordListener)
         binding.btnLogin.setOnClickListener(btnLoginOnClickListener)
         binding.btnGoogleLogin.setOnClickListener(btnGoogleLoginListener)
         binding.btnToRegister.setOnClickListener(btnToRegisterOnClickListener)
-
-        setContentView(binding.root)
     }
 
     private fun switchToMain() {

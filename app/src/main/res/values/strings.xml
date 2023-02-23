@@ -99,4 +99,7 @@
     <string name="your_info">Your info</string>
     <string name="create_new_password">Create new password</string>
     <string name="your_new_password_must_be_different_from_previous_used_passwords">Your new password must be different from previous used passwords.</string>
+
+    <string name="all_input_required">All input required.</string>
+    <string name="this_text_is_not_email_type">This text is not email type.</string>
 </resources>

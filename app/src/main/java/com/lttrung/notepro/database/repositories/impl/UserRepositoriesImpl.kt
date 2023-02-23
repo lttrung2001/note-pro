@@ -1,12 +1,22 @@
 package com.lttrung.notepro.database.repositories.impl
 
+import com.lttrung.notepro.database.data.locals.UserLocals
+import com.lttrung.notepro.database.data.locals.entities.CurrentUser
+import com.lttrung.notepro.database.data.networks.UserNetworks
 import com.lttrung.notepro.database.data.networks.models.User
 import com.lttrung.notepro.database.repositories.UserRepositories
 import io.reactivex.rxjava3.core.Single
+import javax.inject.Inject
 
-class UserRepositoriesImpl : UserRepositories {
+class UserRepositoriesImpl @Inject constructor(
+    override val locals: UserLocals,
+    override val networks: UserNetworks
+) :
+    UserRepositories {
     override fun login(email: String, password: String): Single<String> {
-        TODO("Not yet implemented")
+        return networks.login(email, password).doAfterSuccess { refreshToken ->
+            locals.login(CurrentUser(email, password), refreshToken)
+        }
     }
 
     override fun register(

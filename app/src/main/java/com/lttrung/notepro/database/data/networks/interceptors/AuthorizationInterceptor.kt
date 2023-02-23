@@ -17,8 +17,6 @@ import javax.inject.Inject
 class AuthorizationInterceptor @Inject constructor(
     @ApplicationContext private val context: Context,
     private val sharedPreferences: SharedPreferences,
-    private val userNetworks: UserNetworks
-
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
@@ -56,7 +54,8 @@ class AuthorizationInterceptor @Inject constructor(
             throw InvalidTokenException("Refresh token not found or empty")
         }
         try {
-            return userNetworks.fetchAccessToken(refreshToken).blockingGet()
+            // Create OkHttpClient here and call
+            return refreshToken
         } catch (ex: Exception) {
             throw InvalidTokenException()
         }

@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.room.Room
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.lttrung.notepro.BuildConfig
 import com.lttrung.notepro.database.data.locals.room.CurrentUserDao
 import com.lttrung.notepro.database.data.locals.room.UserDatabase
 import com.lttrung.notepro.database.data.networks.impl.UserRetrofitServiceImpl
@@ -17,11 +18,13 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
+import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import java.net.URL
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -54,11 +57,11 @@ class AppProvidesModules {
         loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
+            .addInterceptor(networksInterceptor)
             .addInterceptor(authorizationInterceptor)
             .addInterceptor(loggingInterceptor)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
-            .addInterceptor(networksInterceptor)
             .build()
     }
 
@@ -81,11 +84,11 @@ class AppProvidesModules {
 
     @Provides
     @Singleton
-    fun providerRetrofit(
+    fun providesRetrofit(
         gsonConverterFactory: GsonConverterFactory,
         rxJava3CallAdapterFactory: RxJava3CallAdapterFactory,
         okHttp: OkHttpClient
-    ): Retrofit = Retrofit.Builder().baseUrl("https://10.0.2.2/api/v1/")
+    ): Retrofit = Retrofit.Builder().baseUrl("http://10.0.2.2:3000/api/v1/")
         .addConverterFactory(gsonConverterFactory)
         .addCallAdapterFactory(rxJava3CallAdapterFactory)
         .client(okHttp).build()
@@ -98,6 +101,6 @@ class AppProvidesModules {
 
     @Provides
     @Singleton
-    fun providesUserService(retrofit: Retrofit) =
+    fun providesUserService(retrofit: Retrofit): UserRetrofitServiceImpl.Service =
         retrofit.create(UserRetrofitServiceImpl.Service::class.java)
 }
