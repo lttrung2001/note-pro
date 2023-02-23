@@ -25,7 +25,7 @@ class UserRepositoriesImpl @Inject constructor(
         fullName: String,
         phoneNumber: String
     ): Single<Unit> {
-        TODO("Not yet implemented")
+        return networks.register(email, password, fullName, phoneNumber)
     }
 
     override fun changePassword(oldPassword: String, newPassword: String): Single<String> {

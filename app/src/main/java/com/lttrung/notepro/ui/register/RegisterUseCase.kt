@@ -5,5 +5,5 @@ import javax.inject.Singleton
 
 @Singleton
 interface RegisterUseCase {
-    fun register(email: String, password: String, confirmPassword: String, fullName: String): Single<Unit>
+    fun register(email: String, password: String, fullName: String, phoneNumber: String): Single<Unit>
 }

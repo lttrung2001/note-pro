@@ -54,4 +54,6 @@
     <string name="your_new_password_must_be_different_from_previous_used_passwords">Mật khẩu mới phải khác với mật khẩu trước đó.</string>
     <string name="all_input_required">Vui lòng nhập đầy đủ thông tin.</string>
     <string name="this_text_is_not_email_type">Email không đúng định dạng.</string>
+    <string name="phone_number">Số điện thoại</string>
+    <string name="password_not_match">Mật khẩu không khớp.</string>
 </resources>
