@@ -102,4 +102,6 @@
 
     <string name="all_input_required">All input required.</string>
     <string name="this_text_is_not_email_type">This text is not email type.</string>
+    <string name="phone_number">Phone number</string>
+    <string name="password_not_match">Password not match.</string>
 </resources>

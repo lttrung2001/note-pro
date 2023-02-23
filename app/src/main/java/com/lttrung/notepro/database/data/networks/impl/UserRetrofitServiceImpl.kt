@@ -21,6 +21,15 @@ class UserRetrofitServiceImpl @Inject constructor(private val service: Service) 
             @Field("email") email: String,
             @Field("password") password: String
         ): Single<Response<ApiResponse<String>>>
+
+        @FormUrlEncoded
+        @POST("/register")
+        fun register(
+            @Field("email") email: String,
+            @Field("password") password: String,
+            @Field("fullName") fullName: String,
+            @Field("phoneNumber") phoneNumber: String
+        ): Single<Response<ApiResponse<Unit>>>
     }
 
     override fun login(email: String, password: String): Single<String> {
@@ -28,7 +37,7 @@ class UserRetrofitServiceImpl @Inject constructor(private val service: Service) 
             if (it.code() == HttpStatusCodes.OK.code) {
                 it.body()!!.data
             } else {
-                throw Error(it.body()!!.message)
+                throw Exception(it.body()!!.message)
             }
         }
     }
@@ -39,7 +48,13 @@ class UserRetrofitServiceImpl @Inject constructor(private val service: Service) 
         fullName: String,
         phoneNumber: String
     ): Single<Unit> {
-        TODO("Not yet implemented")
+        return service.register(email, password, fullName, phoneNumber).map {
+            if (it.code() == HttpStatusCodes.OK.code) {
+                it.body()!!.data
+            } else {
+                throw Exception(it.body()!!.message)
+            }
+        }
     }
 
     override fun changePassword(oldPassword: String, newPassword: String): Single<Unit> {
