@@ -8,6 +8,8 @@ import com.lttrung.notepro.database.repositories.UserRepositories
 import com.lttrung.notepro.database.repositories.impl.UserRepositoriesImpl
 import com.lttrung.notepro.ui.login.LoginUseCase
 import com.lttrung.notepro.ui.login.LoginUseCaseImpl
+import com.lttrung.notepro.ui.register.RegisterUseCase
+import com.lttrung.notepro.ui.register.RegisterUseCaseImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -19,6 +21,8 @@ import javax.inject.Singleton
 abstract class AppBindsModules {
     @Binds
     abstract fun bindsLoginUseCase(impl: LoginUseCaseImpl): LoginUseCase
+    @Binds
+    abstract fun bindsRegisterUseCase(impl: RegisterUseCaseImpl): RegisterUseCase
     @Binds
     abstract fun bindsUserRepositories(impl: UserRepositoriesImpl): UserRepositories
     @Binds
