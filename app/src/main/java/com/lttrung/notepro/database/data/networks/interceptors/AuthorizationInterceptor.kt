@@ -3,7 +3,6 @@ package com.lttrung.notepro.database.data.networks.interceptors
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import com.lttrung.notepro.database.data.networks.UserNetworks
 import com.lttrung.notepro.exceptions.InvalidTokenException
 import com.lttrung.notepro.ui.login.LoginActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.ACCESS_TOKEN
@@ -19,13 +18,6 @@ class AuthorizationInterceptor @Inject constructor(
     private val sharedPreferences: SharedPreferences,
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val request = chain.request()
-        if (isLogin(request) || isRegister(request) || isForgotPassword(request) || isFetchAccessToken(
-                request
-            )
-        ) {
-            return chain.proceed(request)
-        }
         val builder = chain.request().newBuilder()
         // Get access token
         val accessToken = try {
@@ -59,29 +51,5 @@ class AuthorizationInterceptor @Inject constructor(
         } catch (ex: Exception) {
             throw InvalidTokenException()
         }
-    }
-
-    private fun isForgotPassword(request: Request): Boolean {
-        val encodedPath = request.url.encodedPath
-        val method = request.method
-        return (encodedPath.equals(
-            "/forgot-password",
-            true
-        ) && method.equals("post", true)) || (encodedPath.equals(
-            "/reset-password",
-            true
-        ) && method.equals("post", true))
-    }
-
-    private fun isRegister(request: Request): Boolean {
-        val encodedPath = request.url.encodedPath
-        val method = request.method
-        return encodedPath.equals("/register", true) && method.equals("post", true)
-    }
-
-    private fun isLogin(request: Request): Boolean {
-        val encodedPath = request.url.encodedPath
-        val method = request.method
-        return encodedPath.equals("/login", true) && method.equals("post", true)
     }
 }

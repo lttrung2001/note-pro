@@ -2,8 +2,8 @@ package com.lttrung.notepro.di
 
 import com.lttrung.notepro.database.data.locals.UserLocals
 import com.lttrung.notepro.database.data.locals.impl.UserLocalsImpl
-import com.lttrung.notepro.database.data.networks.UserNetworks
-import com.lttrung.notepro.database.data.networks.impl.UserRetrofitServiceImpl
+import com.lttrung.notepro.database.data.networks.LoginNetworks
+import com.lttrung.notepro.database.data.networks.impl.LoginRetrofitServiceImpl
 import com.lttrung.notepro.database.repositories.UserRepositories
 import com.lttrung.notepro.database.repositories.impl.UserRepositoriesImpl
 import com.lttrung.notepro.ui.login.LoginUseCase
@@ -14,7 +14,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -26,7 +25,7 @@ abstract class AppBindsModules {
     @Binds
     abstract fun bindsUserRepositories(impl: UserRepositoriesImpl): UserRepositories
     @Binds
-    abstract fun bindsUserNetworks(impl: UserRetrofitServiceImpl): UserNetworks
+    abstract fun bindsUserNetworks(impl: LoginRetrofitServiceImpl): LoginNetworks
     @Binds
     abstract fun bindsUserLocals(impl: UserLocalsImpl): UserLocals
 }

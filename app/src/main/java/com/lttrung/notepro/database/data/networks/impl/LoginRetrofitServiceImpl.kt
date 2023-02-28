@@ -1,29 +1,28 @@
 package com.lttrung.notepro.database.data.networks.impl
 
-import com.lttrung.notepro.database.data.networks.UserNetworks
+import com.lttrung.notepro.database.data.networks.LoginNetworks
 import com.lttrung.notepro.database.data.networks.models.ApiResponse
 import com.lttrung.notepro.database.data.networks.models.User
 import com.lttrung.notepro.utils.HttpStatusCodes
 import io.reactivex.rxjava3.core.Single
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.Request
-import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.*
 import javax.inject.Inject
 
-class UserRetrofitServiceImpl @Inject constructor(private val service: Service) : UserNetworks {
+class LoginRetrofitServiceImpl @Inject constructor(private val service: Service) : LoginNetworks {
+    companion object {
+        private const val PATH = "/api/v1"
+    }
     interface Service {
         @FormUrlEncoded
-        @POST("/login")
+        @POST("$PATH/login")
         fun login(
             @Field("email") email: String,
             @Field("password") password: String
         ): Single<Response<ApiResponse<String>>>
 
         @FormUrlEncoded
-        @POST("/register")
+        @POST("$PATH/register")
         fun register(
             @Field("email") email: String,
             @Field("password") password: String,
