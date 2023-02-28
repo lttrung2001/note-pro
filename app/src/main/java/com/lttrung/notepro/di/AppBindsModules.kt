@@ -25,7 +25,7 @@ abstract class AppBindsModules {
     @Binds
     abstract fun bindsUserRepositories(impl: UserRepositoriesImpl): UserRepositories
     @Binds
-    abstract fun bindsUserNetworks(impl: LoginRetrofitServiceImpl): LoginNetworks
+    abstract fun bindsLoginNetworks(impl: LoginRetrofitServiceImpl): LoginNetworks
     @Binds
     abstract fun bindsUserLocals(impl: UserLocalsImpl): UserLocals
 }
