@@ -47,8 +47,4 @@ class UserRepositoriesImpl @Inject constructor(
     override fun resetPassword(code: String, newPassword: String): Single<Unit> {
         TODO("Not yet implemented")
     }
-
-    override fun fetchAccessToken(refreshToken: String): Single<String> {
-        TODO("Not yet implemented")
-    }
 }

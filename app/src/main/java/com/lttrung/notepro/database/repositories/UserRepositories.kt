@@ -24,6 +24,4 @@ interface UserRepositories {
 
     fun forgotPassword(email: String): Single<Unit>
     fun resetPassword(code: String, newPassword: String): Single<Unit>
-
-    fun fetchAccessToken(refreshToken: String): Single<String>
 }
