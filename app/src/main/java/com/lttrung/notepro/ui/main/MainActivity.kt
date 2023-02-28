@@ -2,15 +2,17 @@ package com.lttrung.notepro.ui.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.lttrung.notepro.R
-import com.lttrung.notepro.adapter.PinnedNoteAdapter
 import com.lttrung.notepro.databinding.ActivityMainBinding
 import com.lttrung.notepro.ui.addnote.AddNoteActivity
+import com.lttrung.notepro.ui.main.adapters.NoteAdapter
+import com.lttrung.notepro.ui.main.adapters.NoteViewHolder
 import com.lttrung.notepro.ui.notedetails.NoteDetailsActivity
 import com.lttrung.notepro.ui.setting.SettingActivity
 import com.lttrung.notepro.utils.AppConstant
@@ -20,12 +22,12 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var pinnedNoteAdapter: PinnedNoteAdapter
+    private lateinit var pinnedNoteAdapter: NoteAdapter
     private val mainViewModel: MainViewModel by viewModels()
 
     private val onClickListener: View.OnClickListener by lazy {
         View.OnClickListener { view ->
-            val note = PinnedNoteAdapter.ViewHolder.bind(view)
+            val note = NoteViewHolder.bind(view)
             val intent = Intent(this, NoteDetailsActivity::class.java)
             val bundle = Bundle()
 
@@ -79,14 +81,14 @@ class MainActivity : AppCompatActivity() {
                     pinnedNoteAdapter.submitList(resource.data)
                 }
                 is Resource.Error -> {
-
+                    Log.e("ERROR", resource.message)
                 }
             }
         }
     }
 
     private fun initAdapters() {
-        pinnedNoteAdapter = PinnedNoteAdapter(onClickListener)
+        pinnedNoteAdapter = NoteAdapter(onClickListener)
         binding.rcvPinnedNotes.adapter = pinnedNoteAdapter
         binding.rcvOtherNotes.adapter = pinnedNoteAdapter
     }
