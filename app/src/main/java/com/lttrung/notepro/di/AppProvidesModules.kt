@@ -8,6 +8,7 @@ import com.google.gson.GsonBuilder
 import com.lttrung.notepro.database.data.locals.room.CurrentUserDao
 import com.lttrung.notepro.database.data.locals.room.UserDatabase
 import com.lttrung.notepro.database.data.networks.impl.LoginRetrofitServiceImpl
+import com.lttrung.notepro.database.data.networks.impl.NoteRetrofitServiceImpl
 import com.lttrung.notepro.database.data.networks.interceptors.AuthorizationInterceptor
 import com.lttrung.notepro.database.data.networks.interceptors.NetworksInterceptor
 import com.lttrung.notepro.utils.AppConstant.Companion.DEFAULT_PREFERENCES_NAME
@@ -130,4 +131,9 @@ class AppProvidesModules {
     @Singleton
     fun providesUserService(@Named("NoTokenRetrofit") retrofit: Retrofit): LoginRetrofitServiceImpl.Service =
         retrofit.create(LoginRetrofitServiceImpl.Service::class.java)
+
+    @Provides
+    @Singleton
+    fun providesNoteService(@Named("TokenRetrofit") retrofit: Retrofit): NoteRetrofitServiceImpl.Service =
+        retrofit.create(NoteRetrofitServiceImpl.Service::class.java)
 }

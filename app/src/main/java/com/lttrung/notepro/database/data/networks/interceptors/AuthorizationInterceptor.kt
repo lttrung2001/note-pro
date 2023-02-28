@@ -9,6 +9,7 @@ import com.lttrung.notepro.utils.AppConstant.Companion.ACCESS_TOKEN
 import com.lttrung.notepro.utils.AppConstant.Companion.REFRESH_TOKEN
 import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.Interceptor
+import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import javax.inject.Inject
@@ -31,12 +32,6 @@ class AuthorizationInterceptor @Inject constructor(
         }
         val newRequest = builder.addHeader("Authorization", "Bearer $accessToken").build()
         return chain.proceed(newRequest)
-    }
-
-    private fun isFetchAccessToken(request: Request): Boolean {
-        val encodedPath = request.url.encodedPath
-        val method = request.method
-        return encodedPath.equals("/get-access-token", true) && method.equals("get", true)
     }
 
     private fun fetchAccessToken(): String {
