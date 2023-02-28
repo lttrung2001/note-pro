@@ -6,7 +6,7 @@ data class Note (
     val id: String,
     val title: String,
     val content: String,
-    val lastModified: Int,
+    val lastModified: Long,
     val isPin: Boolean,
     val role: String,
     val images: List<Image>? = null

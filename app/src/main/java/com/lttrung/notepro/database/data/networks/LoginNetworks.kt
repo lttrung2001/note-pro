@@ -5,7 +5,7 @@ import io.reactivex.rxjava3.core.Single
 import javax.inject.Singleton
 
 @Singleton
-interface UserNetworks {
+interface LoginNetworks {
     fun login(email: String, password: String): Single<String>
     fun register(
         email: String,
@@ -20,6 +20,4 @@ interface UserNetworks {
 
     fun forgotPassword(email: String): Single<Unit>
     fun resetPassword(code: String, newPassword: String): Single<Unit>
-
-    fun fetchAccessToken(refreshToken: String): Single<String>
 }
