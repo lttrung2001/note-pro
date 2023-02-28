@@ -56,7 +56,7 @@ class PinnedNoteAdapter(private val onClickListener: View.OnClickListener) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.note, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_note, parent, false)
         return ViewHolder(view)
     }
 

@@ -13,6 +13,7 @@ import com.lttrung.notepro.database.data.networks.interceptors.AuthorizationInte
 import com.lttrung.notepro.database.data.networks.interceptors.NetworksInterceptor
 import com.lttrung.notepro.utils.AppConstant.Companion.DEFAULT_PREFERENCES_NAME
 import com.lttrung.notepro.utils.AppConstant.Companion.USER_DATABASE_NAME
+import com.lttrung.notepro.utils.RetrofitUtils.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -88,7 +89,7 @@ class AppProvidesModules {
         gsonConverterFactory: GsonConverterFactory,
         rxJava3CallAdapterFactory: RxJava3CallAdapterFactory,
         okHttp: OkHttpClient
-    ): Retrofit = Retrofit.Builder().baseUrl("http://10.0.2.2:3000/api/v1/")
+    ): Retrofit = Retrofit.Builder().baseUrl(BASE_URL)
         .addConverterFactory(gsonConverterFactory)
         .addCallAdapterFactory(rxJava3CallAdapterFactory)
         .client(okHttp).build()
