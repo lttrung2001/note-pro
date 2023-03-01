@@ -9,10 +9,11 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.lttrung.notepro.R
+import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityMainBinding
 import com.lttrung.notepro.ui.addnote.AddNoteActivity
 import com.lttrung.notepro.ui.main.adapters.NoteAdapter
-import com.lttrung.notepro.ui.main.adapters.NoteViewHolder
+import com.lttrung.notepro.ui.main.adapters.NoteListener
 import com.lttrung.notepro.ui.notedetails.NoteDetailsActivity
 import com.lttrung.notepro.ui.setting.SettingActivity
 import com.lttrung.notepro.utils.AppConstant
@@ -25,16 +26,17 @@ class MainActivity : AppCompatActivity() {
     private lateinit var pinnedNoteAdapter: NoteAdapter
     private val mainViewModel: MainViewModel by viewModels()
 
-    private val onClickListener: View.OnClickListener by lazy {
-        View.OnClickListener { view ->
-            val note = NoteViewHolder.bind(view)
-            val intent = Intent(this, NoteDetailsActivity::class.java)
-            val bundle = Bundle()
+    private val noteListener: NoteListener by lazy {
+        object : NoteListener {
+            override fun onClick(note: Note) {
+                val intent = Intent(this@MainActivity, NoteDetailsActivity::class.java)
+                val bundle = Bundle()
 
-            bundle.putSerializable(AppConstant.NOTE, note)
-            intent.putExtras(bundle)
+                bundle.putSerializable(AppConstant.NOTE, note)
+                intent.putExtras(bundle)
 
-            startActivityIfNeeded(intent, AppConstant.SHOW_NOTE_DETAIL_REQUEST)
+                startActivityIfNeeded(intent, AppConstant.SHOW_NOTE_DETAIL_REQUEST)
+            }
         }
     }
 
@@ -88,7 +90,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initAdapters() {
-        pinnedNoteAdapter = NoteAdapter(onClickListener)
+        pinnedNoteAdapter = NoteAdapter(noteListener)
         binding.rcvPinnedNotes.adapter = pinnedNoteAdapter
         binding.rcvOtherNotes.adapter = pinnedNoteAdapter
     }

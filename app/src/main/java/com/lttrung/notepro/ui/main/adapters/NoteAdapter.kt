@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import com.lttrung.notepro.R
 import com.lttrung.notepro.database.data.networks.models.Note
 
-class NoteAdapter(private val onClickListener: View.OnClickListener) :
+class NoteAdapter(private val onClickListener: NoteListener) :
     ListAdapter<Note, NoteViewHolder>(object : DiffUtil.ItemCallback<Note>() {
         override fun areItemsTheSame(oldItem: Note, newItem: Note): Boolean {
             return oldItem.id == newItem.id
@@ -26,9 +26,10 @@ class NoteAdapter(private val onClickListener: View.OnClickListener) :
     }
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
-        holder.bind(getItem(position))
-        holder.itemView.setOnClickListener { view ->
-            onClickListener.onClick(view)
+        val note = getItem(position)
+        holder.bind(note)
+        holder.itemView.setOnClickListener {
+            onClickListener.onClick(note)
         }
     }
 }

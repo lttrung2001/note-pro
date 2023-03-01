@@ -6,14 +6,23 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.lttrung.notepro.R
+import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityNoteDetailsBinding
 import com.lttrung.notepro.ui.editnote.EditNoteActivity
+import com.lttrung.notepro.ui.notedetails.adapters.ImagesAdapter
 import com.lttrung.notepro.ui.showmembers.ShowMembersActivity
+import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
+import com.lttrung.notepro.utils.Resource
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class NoteDetailsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNoteDetailsBinding
+    private lateinit var imagesAdapter: ImagesAdapter
+    private val noteDetailsViewModel: NoteDetailsViewModel by viewModels()
 
     private val fabOnClickListener: View.OnClickListener by lazy {
         View.OnClickListener {
@@ -37,11 +46,57 @@ class NoteDetailsActivity : AppCompatActivity() {
         binding = ActivityNoteDetailsBinding.inflate(layoutInflater)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        setContentView(binding.root)
+        initListeners()
+        initAdapters()
+        initData()
+        initObservers()
 
+        setContentView(binding.root)
+    }
+
+    private fun initAdapters() {
+        imagesAdapter = ImagesAdapter()
+        binding.rcvImages.adapter = imagesAdapter
+
+        binding.tvImages.visibility = View.GONE
+        binding.rcvImages.visibility = View.GONE
+    }
+
+    private fun initObservers() {
+        noteDetailsViewModel.noteDetails.observe(this) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+
+                }
+                is Resource.Success -> {
+                    val note = resource.data
+                    binding.edtNoteTitle.text = note.title
+                    binding.edtNoteDesc.text = note.content
+                    binding.tvLastModified.text = note.lastModified.toString()
+
+                    if (!note.images.isNullOrEmpty()) {
+                        binding.tvImages.visibility = View.VISIBLE
+                        binding.rcvImages.visibility = View.VISIBLE
+                        imagesAdapter.submitList(note.images)
+                    }
+                }
+                is Resource.Error -> {
+
+                }
+            }
+        }
+    }
+
+    private fun initData() {
+        val note = intent.getSerializableExtra(NOTE) as Note
+        binding.edtNoteTitle.text = note.title
+        binding.edtNoteDesc.text = note.content
+        binding.tvLastModified.text = note.lastModified.toString()
+    }
+
+    private fun initListeners() {
         binding.fab.setOnClickListener(fabOnClickListener)
         binding.fab.setOnScrollChangeListener(fabOnScrollChangeListener)
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -51,9 +106,6 @@ class NoteDetailsActivity : AppCompatActivity() {
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_pin -> {
                 val pinnedDrawable =
@@ -68,7 +120,8 @@ class NoteDetailsActivity : AppCompatActivity() {
                 true
             }
             else -> {
-                super.onOptionsItemSelected(item)
+                onBackPressed()
+                true
             }
         }
     }
