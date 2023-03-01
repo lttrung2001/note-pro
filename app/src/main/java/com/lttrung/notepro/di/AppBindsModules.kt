@@ -14,6 +14,8 @@ import com.lttrung.notepro.ui.login.LoginUseCase
 import com.lttrung.notepro.ui.login.LoginUseCaseImpl
 import com.lttrung.notepro.ui.main.MainUseCase
 import com.lttrung.notepro.ui.main.MainUseCaseImpl
+import com.lttrung.notepro.ui.notedetails.NoteDetailsUseCase
+import com.lttrung.notepro.ui.notedetails.NoteDetailsUseCaseImpl
 import com.lttrung.notepro.ui.register.RegisterUseCase
 import com.lttrung.notepro.ui.register.RegisterUseCaseImpl
 import dagger.Binds
@@ -30,6 +32,8 @@ abstract class AppBindsModules {
     abstract fun bindsRegisterUseCase(impl: RegisterUseCaseImpl): RegisterUseCase
     @Binds
     abstract fun bindsMainUseCase(impl: MainUseCaseImpl): MainUseCase
+    @Binds
+    abstract fun bindsNoteDetailsUseCase(impl: NoteDetailsUseCaseImpl): NoteDetailsUseCase
     @Binds
     abstract fun bindsUserRepositories(impl: UserRepositoriesImpl): UserRepositories
     @Binds

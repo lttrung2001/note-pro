@@ -20,6 +20,9 @@ class NoteRetrofitServiceImpl @Inject constructor(
     interface Service {
         @GET("$PATH/get-notes")
         fun getNotes(): Single<Response<ApiResponse<List<Note>>>>
+
+        @GET("$PATH/get-note-details")
+        fun getNoteDetails(noteId: String): Single<Response<ApiResponse<Note>>>
     }
 
     override fun addNote(note: Note): Single<Note> {
@@ -35,7 +38,13 @@ class NoteRetrofitServiceImpl @Inject constructor(
     }
 
     override fun getNoteDetails(noteId: String): Single<Note> {
-        TODO("Not yet implemented")
+        return service.getNoteDetails(noteId).map { response ->
+            if (response.code() == HttpStatusCodes.OK.code) {
+                response.body()!!.data
+            } else {
+                throw Exception(response.body()!!.message)
+            }
+        }
     }
 
     override fun getNotes(): Single<List<Note>> {

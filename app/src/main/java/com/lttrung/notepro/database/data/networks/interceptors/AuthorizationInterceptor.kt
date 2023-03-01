@@ -25,7 +25,7 @@ class AuthorizationInterceptor @Inject constructor(
         val builder = chain.request().newBuilder()
         // Get access token
         val accessToken = try {
-            val token = sharedPreferences.getString(ACCESS_TOKEN, "")
+            val token = ""
             // If access token is empty or null, then fetch access token using refresh token
             if (token.isNullOrEmpty()) {
                 fetchAccessToken().also {
