@@ -3,11 +3,15 @@ package com.lttrung.notepro.di
 import com.lttrung.notepro.database.data.locals.UserLocals
 import com.lttrung.notepro.database.data.locals.impl.UserLocalsImpl
 import com.lttrung.notepro.database.data.networks.LoginNetworks
+import com.lttrung.notepro.database.data.networks.MemberNetworks
 import com.lttrung.notepro.database.data.networks.NoteNetworks
 import com.lttrung.notepro.database.data.networks.impl.LoginRetrofitServiceImpl
+import com.lttrung.notepro.database.data.networks.impl.MemberRetrofitServiceImpl
 import com.lttrung.notepro.database.data.networks.impl.NoteRetrofitServiceImpl
+import com.lttrung.notepro.database.repositories.MemberRepositories
 import com.lttrung.notepro.database.repositories.NoteRepositories
 import com.lttrung.notepro.database.repositories.UserRepositories
+import com.lttrung.notepro.database.repositories.impl.MemberRepositoriesImpl
 import com.lttrung.notepro.database.repositories.impl.NoteRepositoriesImpl
 import com.lttrung.notepro.database.repositories.impl.UserRepositoriesImpl
 import com.lttrung.notepro.ui.editnote.EditNoteUseCase
@@ -20,6 +24,8 @@ import com.lttrung.notepro.ui.notedetails.NoteDetailsUseCase
 import com.lttrung.notepro.ui.notedetails.NoteDetailsUseCaseImpl
 import com.lttrung.notepro.ui.register.RegisterUseCase
 import com.lttrung.notepro.ui.register.RegisterUseCaseImpl
+import com.lttrung.notepro.ui.showmembers.ShowMembersUseCase
+import com.lttrung.notepro.ui.showmembers.ShowMembersUseCaseImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -39,13 +45,19 @@ abstract class AppBindsModules {
     @Binds
     abstract fun bindsEditNoteUseCase(impl: EditNoteUseCaseImpl): EditNoteUseCase
     @Binds
+    abstract fun bindsShowMembersUseCase(impl: ShowMembersUseCaseImpl): ShowMembersUseCase
+    @Binds
     abstract fun bindsUserRepositories(impl: UserRepositoriesImpl): UserRepositories
     @Binds
     abstract fun bindsNoteRepositories(impl: NoteRepositoriesImpl): NoteRepositories
     @Binds
+    abstract fun bindsMemberRepositories(impl: MemberRepositoriesImpl): MemberRepositories
+    @Binds
     abstract fun bindsLoginNetworks(impl: LoginRetrofitServiceImpl): LoginNetworks
     @Binds
     abstract fun bindsNoteNetworks(impl: NoteRetrofitServiceImpl): NoteNetworks
+    @Binds
+    abstract fun bindsMemberNetworks(impl: MemberRetrofitServiceImpl): MemberNetworks
     @Binds
     abstract fun bindsUserLocals(impl: UserLocalsImpl): UserLocals
 }

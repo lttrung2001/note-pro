@@ -8,6 +8,7 @@ import com.google.gson.GsonBuilder
 import com.lttrung.notepro.database.data.locals.room.CurrentUserDao
 import com.lttrung.notepro.database.data.locals.room.UserDatabase
 import com.lttrung.notepro.database.data.networks.impl.LoginRetrofitServiceImpl
+import com.lttrung.notepro.database.data.networks.impl.MemberRetrofitServiceImpl
 import com.lttrung.notepro.database.data.networks.impl.NoteRetrofitServiceImpl
 import com.lttrung.notepro.database.data.networks.interceptors.AuthorizationInterceptor
 import com.lttrung.notepro.database.data.networks.interceptors.NetworksInterceptor
@@ -136,4 +137,9 @@ class AppProvidesModules {
     @Singleton
     fun providesNoteService(@Named("TokenRetrofit") retrofit: Retrofit): NoteRetrofitServiceImpl.Service =
         retrofit.create(NoteRetrofitServiceImpl.Service::class.java)
+
+    @Provides
+    @Singleton
+    fun providesMemberService(@Named("TokenRetrofit") retrofit: Retrofit): MemberRetrofitServiceImpl.Service =
+        retrofit.create(MemberRetrofitServiceImpl.Service::class.java)
 }

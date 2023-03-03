@@ -146,7 +146,10 @@ class NoteDetailsActivity : AppCompatActivity() {
             }
             R.id.action_show_members -> {
                 // Start show members activity
-                startActivity(Intent(this, ShowMembersActivity::class.java))
+                val showMembersIntent = Intent(this, ShowMembersActivity::class.java)
+                val note = intent.getSerializableExtra(NOTE) as Note
+                showMembersIntent.putExtra(NOTE, note)
+                startActivity(showMembersIntent)
                 true
             }
             else -> {

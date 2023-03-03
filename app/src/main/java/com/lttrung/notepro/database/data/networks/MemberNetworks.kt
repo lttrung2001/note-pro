@@ -11,5 +11,5 @@ interface MemberNetworks {
     fun editMember(noteId: String, member: Member): Single<Member>
     fun deleteMember(noteId: String, memberId: String): Single<Unit>
     fun getMemberDetails(noteId: String, memberId: String): Single<Member>
-    fun getMembers(noteId: String): Single<Paging<Member>>
+    fun getMembers(noteId: String, pageIndex: Int, limit: Int): Single<Paging<Member>>
 }

@@ -18,5 +18,7 @@ class AppConstant {
         const val READ_EXTERNAL_STORAGE_REQUEST = 101
 
         const val RC_SIGN_IN = 9001
+
+        const val PAGE_LIMIT = 10
     }
 }
