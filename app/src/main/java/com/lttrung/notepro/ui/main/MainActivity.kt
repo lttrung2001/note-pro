@@ -29,13 +29,13 @@ class MainActivity : AppCompatActivity() {
     private val noteListener: NoteListener by lazy {
         object : NoteListener {
             override fun onClick(note: Note) {
-                val intent = Intent(this@MainActivity, NoteDetailsActivity::class.java)
+                val noteDetailsIntent = Intent(this@MainActivity, NoteDetailsActivity::class.java)
                 val bundle = Bundle()
 
                 bundle.putSerializable(AppConstant.NOTE, note)
-                intent.putExtras(bundle)
+                noteDetailsIntent.putExtras(bundle)
 
-                startActivityIfNeeded(intent, AppConstant.SHOW_NOTE_DETAIL_REQUEST)
+                startActivityIfNeeded(noteDetailsIntent, AppConstant.SHOW_NOTE_DETAIL_REQUEST)
             }
         }
     }
@@ -69,8 +69,6 @@ class MainActivity : AppCompatActivity() {
         initAdapters()
         initObservers()
         mainViewModel.getNotes()
-
-        setContentView(binding.root)
     }
 
     private fun initObservers() {
@@ -107,6 +105,8 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setLogo(R.drawable.ic_baseline_sticky_note_2_24)
         supportActionBar?.setDisplayUseLogoEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
+
+        setContentView(binding.root)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

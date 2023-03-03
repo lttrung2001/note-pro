@@ -26,7 +26,9 @@ class NoteDetailsActivity : AppCompatActivity() {
 
     private val fabOnClickListener: View.OnClickListener by lazy {
         View.OnClickListener {
-            startActivity(Intent(this, EditNoteActivity::class.java))
+            val editNoteIntent = Intent(this, EditNoteActivity::class.java)
+            editNoteIntent.putExtra(NOTE, intent.getSerializableExtra(NOTE))
+            startActivity(editNoteIntent)
         }
     }
 
@@ -43,15 +45,25 @@ class NoteDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityNoteDetailsBinding.inflate(layoutInflater)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
+        initViews()
         initListeners()
         initAdapters()
         initData()
         initObservers()
+    }
 
+    private fun initViews() {
+        binding = ActivityNoteDetailsBinding.inflate(layoutInflater)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setContentView(binding.root)
+
+        val note = intent.getSerializableExtra(NOTE) as Note
+        if (note.hasEditPermission()) {
+            binding.fab.apply {
+                visibility = View.VISIBLE
+                setOnClickListener(fabOnClickListener)
+            }
+        }
     }
 
     private fun initAdapters() {
@@ -95,7 +107,6 @@ class NoteDetailsActivity : AppCompatActivity() {
     }
 
     private fun initListeners() {
-        binding.fab.setOnClickListener(fabOnClickListener)
         binding.fab.setOnScrollChangeListener(fabOnScrollChangeListener)
     }
 
