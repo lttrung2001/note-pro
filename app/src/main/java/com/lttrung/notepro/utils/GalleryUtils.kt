@@ -58,7 +58,7 @@ class GalleryUtils {
                             cs.getString(nameColumnIndex),
                             cs.getString(dataColumnIndex),
                             0,
-                            Member("","","","")
+                            Member("","","","", "")
                         )
                     )
                 }
