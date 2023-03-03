@@ -106,6 +106,8 @@ class NoteDetailsActivity : AppCompatActivity() {
         binding.edtNoteTitle.text = note.title
         binding.edtNoteDesc.text = note.content
         binding.tvLastModified.text = note.lastModified.toString()
+
+        noteDetailsViewModel.getNoteDetails(note)
     }
 
     private fun initListeners() {
@@ -133,8 +135,6 @@ class NoteDetailsActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_pin -> {
-//                val pinDrawable = AppCompatResources.getDrawable(this, R.drawable.ic_baseline_push_pinned_24)
-//                val unpinDrawable = AppCompatResources.getDrawable(this, R.drawable.ic_baseline_push_pin_24)
                 if (item.isChecked) {
                     item.isChecked = false
                     item.icon.setTint(resources.getColor(R.color.black, theme))

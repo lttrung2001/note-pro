@@ -22,7 +22,7 @@ class NoteRetrofitServiceImpl @Inject constructor(
         fun getNotes(): Single<Response<ApiResponse<List<Note>>>>
 
         @GET("$PATH/get-note-details")
-        fun getNoteDetails(noteId: String): Single<Response<ApiResponse<Note>>>
+        fun getNoteDetails(@Query("id") noteId: String): Single<Response<ApiResponse<Note>>>
     }
 
     override fun addNote(note: Note): Single<Note> {
