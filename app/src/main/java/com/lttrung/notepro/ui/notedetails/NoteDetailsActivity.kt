@@ -3,11 +3,13 @@ package com.lttrung.notepro.ui.notedetails
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.get
 import com.lttrung.notepro.R
 import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityNoteDetailsBinding
@@ -104,14 +106,28 @@ class NoteDetailsActivity : AppCompatActivity() {
         binding.edtNoteTitle.text = note.title
         binding.edtNoteDesc.text = note.content
         binding.tvLastModified.text = note.lastModified.toString()
+
+        noteDetailsViewModel.getNoteDetails(note)
     }
 
     private fun initListeners() {
         binding.fab.setOnScrollChangeListener(fabOnScrollChangeListener)
+        binding.fab.setOnClickListener(fabOnClickListener)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_note_detail, menu)
+
+        val note = intent.getSerializableExtra(NOTE) as Note
+        // Get pin item
+        val pinButton = menu!![0]
+        if (note.isPin) {
+            pinButton.isChecked = true
+            pinButton.icon.setTint(resources.getColor(R.color.primary, theme))
+        } else {
+            pinButton.isChecked = false
+            pinButton.icon.setTint(resources.getColor(R.color.black, theme))
+        }
         return true
     }
 
@@ -119,10 +135,13 @@ class NoteDetailsActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_pin -> {
-                val pinnedDrawable =
-                    resources.getDrawable(R.drawable.ic_baseline_push_pinned_24, theme)
-                val unPinDrawable = resources.getDrawable(R.drawable.ic_baseline_push_pin_24, theme)
-                item.icon = pinnedDrawable
+                if (item.isChecked) {
+                    item.isChecked = false
+                    item.icon.setTint(resources.getColor(R.color.black, theme))
+                } else {
+                    item.isChecked = true
+                    item.icon.setTint(resources.getColor(R.color.primary, theme))
+                }
                 true
             }
             R.id.action_show_members -> {
