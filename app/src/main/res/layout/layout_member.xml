@@ -17,7 +17,9 @@
             android:id="@+id/img_member"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:src="@drawable/app"
+            android:src="@drawable/me"
+            app:civ_border_color="@color/primary"
+            app:civ_border_width="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

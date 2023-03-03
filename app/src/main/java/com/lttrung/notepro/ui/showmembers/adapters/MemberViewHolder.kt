@@ -7,7 +7,6 @@ import com.lttrung.notepro.databinding.LayoutMemberBinding
 
 class MemberViewHolder(val binding: LayoutMemberBinding) : RecyclerView.ViewHolder(binding.root) {
     fun bind(member: Member) {
-        binding.imgMember.setImageResource(R.drawable.app)
         binding.tvFullName.text = member.fullName
         binding.tvRole.text = member.role
         binding.tvEmail.text = member.email
