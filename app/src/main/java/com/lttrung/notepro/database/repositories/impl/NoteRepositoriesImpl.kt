@@ -12,8 +12,8 @@ class NoteRepositoriesImpl @Inject constructor(override val networks: NoteNetwor
         TODO("Not yet implemented")
     }
 
-    override fun editNote(note: Note): Single<Note> {
-        TODO("Not yet implemented")
+    override fun editNote(note: Note, deleteImageIds: List<String>): Single<Note> {
+        return networks.editNote(note, deleteImageIds)
     }
 
     override fun deleteNote(noteId: String): Single<Unit> {

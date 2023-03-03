@@ -80,13 +80,7 @@
         <activity
             android:name=".ui.login.LoginActivity"
             android:exported="true"
-            android:theme="@style/Theme.NotePro.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/Theme.NotePro.NoActionBar" />
         <activity
             android:name=".ui.showmembers.ShowMembersActivity"
             android:exported="false"
@@ -110,8 +104,14 @@
             android:theme="@style/Theme.NotePro" />
         <activity
             android:name=".ui.main.MainActivity"
-            android:exported="false"
-            android:theme="@style/Theme.NotePro" />
+            android:exported="true"
+            android:theme="@style/Theme.NotePro">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.changepassword.ChangePasswordActivity"
             android:exported="false"

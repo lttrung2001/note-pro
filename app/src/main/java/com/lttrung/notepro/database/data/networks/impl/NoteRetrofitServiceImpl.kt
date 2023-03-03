@@ -18,6 +18,16 @@ class NoteRetrofitServiceImpl @Inject constructor(
     }
 
     interface Service {
+        @FormUrlEncoded
+        @PUT("$PATH/edit-note")
+        fun editNote(
+            @Query("id") id: String,
+            @Field("title") title: String,
+            @Field("content") content: String,
+            @Field("isPin") isPin: Boolean,
+            @Field("deleteImageIds") ids: List<String>
+        ): Single<Response<ApiResponse<Note>>>
+
         @GET("$PATH/get-notes")
         fun getNotes(): Single<Response<ApiResponse<List<Note>>>>
 
@@ -29,8 +39,20 @@ class NoteRetrofitServiceImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override fun editNote(note: Note): Single<Note> {
-        TODO("Not yet implemented")
+    override fun editNote(note: Note, deleteImageIds: List<String>): Single<Note> {
+        return service.editNote(
+            note.id,
+            note.title,
+            note.content,
+            note.isPin,
+            deleteImageIds
+        ).map { response ->
+            if (response.code() == HttpStatusCodes.OK.code) {
+                response.body()!!.data
+            } else {
+                throw Exception(response.body()!!.message)
+            }
+        }
     }
 
     override fun deleteNote(noteId: String): Single<Unit> {
