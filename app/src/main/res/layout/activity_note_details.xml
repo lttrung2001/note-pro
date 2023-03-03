@@ -103,6 +103,7 @@
         android:text="@string/edit"
         android:textColor="@color/white"
         android:textSize="16sp"
+        android:visibility="gone"
         app:icon="@drawable/ic_baseline_mode_edit_24"
         app:iconTint="@color/white" />
 

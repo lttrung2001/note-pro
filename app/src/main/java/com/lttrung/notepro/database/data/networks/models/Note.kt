@@ -2,7 +2,7 @@ package com.lttrung.notepro.database.data.networks.models
 
 import java.io.Serializable
 
-data class Note (
+data class Note(
     val id: String,
     val title: String,
     val content: String,
@@ -10,4 +10,8 @@ data class Note (
     val isPin: Boolean,
     val role: String,
     val images: List<Image>? = null
-) : Serializable
+) : Serializable {
+    fun hasEditPermission(): Boolean {
+        return role == "owner" || role == "editor"
+    }
+}
