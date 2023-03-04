@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.lttrung.notepro.R
 import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityMainBinding
@@ -53,6 +54,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val refreshListener: SwipeRefreshLayout.OnRefreshListener by lazy {
+        SwipeRefreshLayout.OnRefreshListener {
+            mainViewModel.getNotes()
+        }
+    }
+
     private val btnSearchOnClickListener: View.OnClickListener by lazy {
         View.OnClickListener {
             startActivity(Intent(this, SettingActivity::class.java))
@@ -72,12 +79,14 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.getNotes.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-
+                    binding.refreshLayout.isRefreshing = true
                 }
                 is Resource.Success -> {
+                    binding.refreshLayout.isRefreshing = false
                     pinnedNoteAdapter.submitList(resource.data)
                 }
                 is Resource.Error -> {
+                    binding.refreshLayout.isRefreshing = false
                     Log.e("ERROR", resource.message)
                 }
             }
@@ -92,8 +101,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun initListeners() {
         binding.fab.setOnClickListener(fabOnClickListener)
-        binding.btnSearch.setOnClickListener(btnSearchOnClickListener)
-        binding.scrollView.setOnScrollChangeListener(fabOnScrollChangeListener)
+        binding.edtSearch.setOnClickListener(btnSearchOnClickListener)
+        binding.refreshLayout.setOnScrollChangeListener(fabOnScrollChangeListener)
+        binding.refreshLayout.setOnRefreshListener(refreshListener)
     }
 
     private fun initViews() {
