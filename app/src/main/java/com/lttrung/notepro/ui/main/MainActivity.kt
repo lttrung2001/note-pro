@@ -17,6 +17,7 @@ import com.lttrung.notepro.ui.main.adapters.NoteListener
 import com.lttrung.notepro.ui.notedetails.NoteDetailsActivity
 import com.lttrung.notepro.ui.setting.SettingActivity
 import com.lttrung.notepro.utils.AppConstant
+import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -30,11 +31,7 @@ class MainActivity : AppCompatActivity() {
         object : NoteListener {
             override fun onClick(note: Note) {
                 val noteDetailsIntent = Intent(this@MainActivity, NoteDetailsActivity::class.java)
-                val bundle = Bundle()
-
-                bundle.putSerializable(AppConstant.NOTE, note)
-                noteDetailsIntent.putExtras(bundle)
-
+                noteDetailsIntent.putExtra(NOTE, note)
                 startActivityIfNeeded(noteDetailsIntent, AppConstant.SHOW_NOTE_DETAIL_REQUEST)
             }
         }
