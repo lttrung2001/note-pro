@@ -5,25 +5,74 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.WindowCompat
 import com.lttrung.notepro.R
+import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityEditNoteBinding
+import com.lttrung.notepro.ui.notedetails.adapters.ImagesAdapter
 import com.lttrung.notepro.ui.showmembers.ShowMembersActivity
+import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
+import com.lttrung.notepro.utils.Resource
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class EditNoteActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEditNoteBinding
+    private lateinit var imagesAdapter: ImagesAdapter
+    private var menu: Menu? = null
+    private val editNoteViewModel: EditNoteViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        initViews()
+        initData()
+        initListeners()
+        initObservers()
+    }
+
+    private fun initData() {
+        val note = intent.getSerializableExtra(NOTE) as Note
+        binding.edtNoteTitle.setText(note.title)
+        binding.edtNoteDesc.setText(note.content)
+        binding.tvLastModified.text = note.lastModified.toString()
+        imagesAdapter = ImagesAdapter()
+        binding.rcvImages.adapter = imagesAdapter
+    }
+
+    private fun initListeners() {
+
+    }
+
+    private fun initObservers() {
+        editNoteViewModel.editNote.observe(this) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+
+                }
+                is Resource.Success -> {
+                    val resultIntent = Intent()
+                    resultIntent.putExtra(NOTE, resource.data)
+                    setResult(1, resultIntent)
+                    finishActivity(1)
+                }
+                is Resource.Error -> {
+
+                }
+            }
+        }
+    }
+
+    private fun initViews() {
         binding = ActivityEditNoteBinding.inflate(layoutInflater)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
         setContentView(binding.root)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_edit_note, menu)
+        this.menu = menu
         return true
     }
 
@@ -46,10 +95,23 @@ class EditNoteActivity : AppCompatActivity() {
                 true
             }
             R.id.action_save -> {
+                // Save note
+                val noteViewed = (intent.getSerializableExtra(NOTE) as Note)
+                val note = Note(
+                    noteViewed.id,
+                    binding.edtNoteTitle.text!!.trim().toString(),
+                    binding.edtNoteDesc.text!!.trim().toString(),
+                    noteViewed.lastModified,
+                    menu!!.getItem(0).isChecked,
+                    noteViewed.role,
+                    emptyList()
+                )
+                editNoteViewModel.editNote(note, emptyList())
                 true
             }
             else -> {
-                super.onOptionsItemSelected(item)
+                onBackPressed()
+                true
             }
         }
     }

@@ -23,18 +23,4 @@ class NoteViewHolder(itemView: View) :
         tvIsPin.text = note.isPin.toString()
         tvRole.text = note.role
     }
-
-    companion object {
-        fun bind(view: View): Note {
-            return Note(
-                view.findViewById<TextView>(R.id.tv_id).text.toString(),
-                view.findViewById<TextView>(R.id.tv_title).text.toString(),
-                view.findViewById<TextView>(R.id.tv_content).text.toString(),
-                view.findViewById<TextView>(R.id.tv_last_modified).text.toString().toLong(),
-                view.findViewById<TextView>(R.id.tv_is_pin).text.toString().toBoolean(),
-                view.findViewById<TextView>(R.id.tv_role).text.toString(),
-                null
-            )
-        }
-    }
 }

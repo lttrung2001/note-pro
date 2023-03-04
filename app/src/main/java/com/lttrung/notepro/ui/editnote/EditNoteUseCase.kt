@@ -6,6 +6,6 @@ import javax.inject.Singleton
 
 @Singleton
 interface EditNoteUseCase {
-    fun editNote(note: Note): Single<Note>
+    fun editNote(note: Note, deleteImageIds: List<String>): Single<Note>
     fun deleteNote(noteId: String): Single<Unit>
 }

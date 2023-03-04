@@ -7,7 +7,7 @@ import javax.inject.Singleton
 @Singleton
 interface NoteNetworks {
     fun addNote(note: Note): Single<Note>
-    fun editNote(note: Note): Single<Note>
+    fun editNote(note: Note, deleteImageIds: List<String>): Single<Note>
     fun deleteNote(noteId: String): Single<Unit>
     fun getNoteDetails(noteId: String): Single<Note>
     fun getNotes(): Single<List<Note>>

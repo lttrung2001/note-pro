@@ -3,6 +3,8 @@ package com.lttrung.notepro.database.data.networks.interceptors
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.util.Log
+import com.auth0.android.jwt.JWT
 import com.google.gson.Gson
 import com.lttrung.notepro.database.data.networks.models.ApiResponse
 import com.lttrung.notepro.exceptions.InvalidTokenException
@@ -13,8 +15,8 @@ import com.lttrung.notepro.utils.RetrofitUtils.BASE_URL
 import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
+import java.util.*
 import javax.inject.Inject
-
 
 class AuthorizationInterceptor @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -26,13 +28,25 @@ class AuthorizationInterceptor @Inject constructor(
         // Get access token
         val accessToken = try {
             val token = sharedPreferences.getString(ACCESS_TOKEN, "")
+//            val token = ""
             // If access token is empty or null, then fetch access token using refresh token
             if (token.isNullOrEmpty()) {
                 fetchAccessToken().also {
                     sharedPreferences.edit().putString(ACCESS_TOKEN, it).apply()
                 }
             } else {
-                token
+                // Decode access token
+                val decoded = JWT(token)
+                // Get exp time
+                val exp = decoded.getClaim("exp").asLong()!!
+                // If token expired
+                if (exp < Date().time + 30) { // 30 seconds to handle request
+                    fetchAccessToken().also {
+                        sharedPreferences.edit().putString(ACCESS_TOKEN, it).apply()
+                    }
+                } else {
+                    token
+                }
             }
         } catch (ex: Exception) {
             context.startActivity(Intent(context, LoginActivity::class.java).apply {

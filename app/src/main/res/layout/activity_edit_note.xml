@@ -45,12 +45,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:text="@string/images" />
+                android:text="@string/images"
+                android:visibility="gone" />
 
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/pager_images"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rcv_images"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
+                tools:listitem="@layout/layout_image" />
         </LinearLayout>
     </ScrollView>
 
