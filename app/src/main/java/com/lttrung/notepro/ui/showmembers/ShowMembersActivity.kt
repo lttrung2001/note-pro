@@ -5,6 +5,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.lttrung.notepro.R
 import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityShowMembersBinding
@@ -22,9 +23,20 @@ class ShowMembersActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initViews()
+        initListeners()
         initAdapters()
         initObservers()
         initData()
+    }
+
+    private val refreshListener: SwipeRefreshLayout.OnRefreshListener by lazy {
+        SwipeRefreshLayout.OnRefreshListener {
+            initData()
+        }
+    }
+
+    private fun initListeners() {
+        binding.refreshLayout.setOnRefreshListener(refreshListener)
     }
 
     private fun initAdapters() {
@@ -36,13 +48,14 @@ class ShowMembersActivity : AppCompatActivity() {
         getMembersViewModel.getMembers.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-
+                    binding.refreshLayout.isRefreshing = true
                 }
                 is Resource.Success -> {
+                    binding.refreshLayout.isRefreshing = false
                     memberAdapter.submitList(resource.data.data)
                 }
                 is Resource.Error -> {
-
+                    binding.refreshLayout.isRefreshing = false
                 }
             }
         }
