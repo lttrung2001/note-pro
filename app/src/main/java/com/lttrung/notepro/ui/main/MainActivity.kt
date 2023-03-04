@@ -16,6 +16,7 @@ import com.lttrung.notepro.ui.main.adapters.NoteViewHolder
 import com.lttrung.notepro.ui.notedetails.NoteDetailsActivity
 import com.lttrung.notepro.ui.setting.SettingActivity
 import com.lttrung.notepro.utils.AppConstant
+import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,16 +26,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var pinnedNoteAdapter: NoteAdapter
     private val mainViewModel: MainViewModel by viewModels()
 
-    private val onClickListener: View.OnClickListener by lazy {
-        View.OnClickListener { view ->
-            val note = NoteViewHolder.bind(view)
-            val intent = Intent(this, NoteDetailsActivity::class.java)
-            val bundle = Bundle()
-
-            bundle.putSerializable(AppConstant.NOTE, note)
-            intent.putExtras(bundle)
-
-            startActivityIfNeeded(intent, AppConstant.SHOW_NOTE_DETAIL_REQUEST)
+    private val noteListener: NoteListener by lazy {
+        object : NoteListener {
+            override fun onClick(note: Note) {
+                val noteDetailsIntent = Intent(this@MainActivity, NoteDetailsActivity::class.java)
+                noteDetailsIntent.putExtra(NOTE, note)
+                startActivityIfNeeded(noteDetailsIntent, AppConstant.SHOW_NOTE_DETAIL_REQUEST)
+            }
         }
     }
 
