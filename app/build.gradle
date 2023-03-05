@@ -57,6 +57,7 @@ dependencies {
     room()
     coroutines()
     jwt()
+    image()
 
     // Circle image
     implementation 'de.hdodenhof:circleimageview:3.1.0'
@@ -110,6 +111,10 @@ private void coroutines() {
 private void jwt() {
     // https://mvnrepository.com/artifact/com.auth0/java-jwt
     dependencies.implementation 'com.auth0.android:jwtdecode:2.0.1'
+}
+
+private void image() {
+    dependencies.implementation("io.coil-kt:coil:2.2.2")
 }
 
 kapt {

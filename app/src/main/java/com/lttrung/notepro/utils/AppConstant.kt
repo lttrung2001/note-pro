@@ -16,6 +16,7 @@ class AppConstant {
 
         const val CAMERA_REQUEST = 100
         const val READ_EXTERNAL_STORAGE_REQUEST = 101
+        const val PICK_IMAGES_REQUEST = 102
 
         const val RC_SIGN_IN = 9001
 

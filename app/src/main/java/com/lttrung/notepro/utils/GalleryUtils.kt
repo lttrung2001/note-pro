@@ -15,6 +15,7 @@ class GalleryUtils {
         fun findImages(context: Context, page: Int, limit: Int): Single<Paging<Image>> {
             val imageList: ArrayList<Image> = ArrayList()
             val columns = arrayOf(
+                MediaStore.Images.Media.DISPLAY_NAME,
                 MediaStore.Images.Media.DATA,
                 MediaStore.Images.Media._ID
             )
@@ -57,8 +58,8 @@ class GalleryUtils {
                             cs.getInt(idColumnIndex).toString(),
                             cs.getString(nameColumnIndex),
                             cs.getString(dataColumnIndex),
-                            0,
-                            Member("","","","", "")
+                            null,
+                            null
                         )
                     )
                 }
