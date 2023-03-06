@@ -1,4 +1,4 @@
-package com.lttrung.notepro.ui.main.adapters
+package com.lttrung.notepro.ui.base.adapters.note
 
 import com.lttrung.notepro.database.data.networks.models.Note
 

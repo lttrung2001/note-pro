@@ -13,8 +13,8 @@ import com.lttrung.notepro.R
 import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityMainBinding
 import com.lttrung.notepro.ui.addnote.AddNoteActivity
-import com.lttrung.notepro.ui.main.adapters.NoteAdapter
-import com.lttrung.notepro.ui.main.adapters.NoteListener
+import com.lttrung.notepro.ui.base.adapters.note.NoteAdapter
+import com.lttrung.notepro.ui.base.adapters.note.NoteListener
 import com.lttrung.notepro.ui.notedetails.NoteDetailsActivity
 import com.lttrung.notepro.ui.setting.SettingActivity
 import com.lttrung.notepro.utils.AppConstant

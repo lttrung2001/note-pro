@@ -1,18 +1,14 @@
-package com.lttrung.notepro.ui.base
+package com.lttrung.notepro.ui.base.activities
 
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.provider.MediaStore
-import android.util.Log
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.lttrung.notepro.ui.addimages.AddImagesFragment
-import com.lttrung.notepro.ui.notedetails.adapters.ImagesAdapter
 import com.lttrung.notepro.ui.viewgallery.ViewGalleryActivity
 import com.lttrung.notepro.utils.AppConstant
 

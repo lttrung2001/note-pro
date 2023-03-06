@@ -1,4 +1,4 @@
-package com.lttrung.notepro.ui.viewgallery.adapters
+package com.lttrung.notepro.ui.base.adapters.imageselection
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,10 +6,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.lttrung.notepro.database.data.networks.models.Image
 import com.lttrung.notepro.databinding.LayoutImageBinding
+import com.lttrung.notepro.databinding.LayoutImageSelectionBinding
 
 class ImageSelectionAdapter : ListAdapter<Image, ImageSelectionViewHolder>(itemCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageSelectionViewHolder {
-        val binding = LayoutImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = LayoutImageSelectionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ImageSelectionViewHolder(binding)
     }
 

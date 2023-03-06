@@ -1,4 +1,4 @@
-package com.lttrung.notepro.ui.notedetails.adapters
+package com.lttrung.notepro.ui.base.adapters.image
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
