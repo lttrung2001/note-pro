@@ -1,4 +1,4 @@
-package com.lttrung.notepro.ui.showmembers.adapters
+package com.lttrung.notepro.ui.base.adapters.member
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

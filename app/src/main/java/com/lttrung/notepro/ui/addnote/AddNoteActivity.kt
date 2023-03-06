@@ -10,8 +10,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityAddNoteBinding
-import com.lttrung.notepro.ui.base.AddImagesActivity
-import com.lttrung.notepro.ui.notedetails.adapters.ImagesAdapter
+import com.lttrung.notepro.ui.base.activities.AddImagesActivity
+import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

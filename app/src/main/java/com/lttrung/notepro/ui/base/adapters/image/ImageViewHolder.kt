@@ -1,4 +1,4 @@
-package com.lttrung.notepro.ui.notedetails.adapters
+package com.lttrung.notepro.ui.base.adapters.image
 
 import android.net.Uri
 import android.view.View

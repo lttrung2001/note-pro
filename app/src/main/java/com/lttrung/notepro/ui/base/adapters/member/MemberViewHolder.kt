@@ -1,4 +1,4 @@
-package com.lttrung.notepro.ui.showmembers.adapters
+package com.lttrung.notepro.ui.base.adapters.member
 
 import androidx.recyclerview.widget.RecyclerView
 import com.lttrung.notepro.R

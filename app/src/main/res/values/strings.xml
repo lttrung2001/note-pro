@@ -105,4 +105,5 @@
     <string name="phone_number">Phone number</string>
     <string name="password_not_match">Password not match.</string>
     <string name="role">Role</string>
+    <string name="select">Select</string>
 </resources>

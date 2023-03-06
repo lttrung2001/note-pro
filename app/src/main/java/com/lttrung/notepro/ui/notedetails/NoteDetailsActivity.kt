@@ -3,7 +3,6 @@ package com.lttrung.notepro.ui.notedetails
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -14,7 +13,7 @@ import com.lttrung.notepro.R
 import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityNoteDetailsBinding
 import com.lttrung.notepro.ui.editnote.EditNoteActivity
-import com.lttrung.notepro.ui.notedetails.adapters.ImagesAdapter
+import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
 import com.lttrung.notepro.ui.showmembers.ShowMembersActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.Resource

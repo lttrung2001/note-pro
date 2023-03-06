@@ -1,7 +1,6 @@
-package com.lttrung.notepro.ui.main.adapters
+package com.lttrung.notepro.ui.base.adapters.note
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter

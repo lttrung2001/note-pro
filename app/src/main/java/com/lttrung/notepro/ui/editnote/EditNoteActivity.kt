@@ -11,8 +11,8 @@ import androidx.activity.viewModels
 import com.lttrung.notepro.R
 import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityEditNoteBinding
-import com.lttrung.notepro.ui.base.AddImagesActivity
-import com.lttrung.notepro.ui.notedetails.adapters.ImagesAdapter
+import com.lttrung.notepro.ui.base.activities.AddImagesActivity
+import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
 import com.lttrung.notepro.ui.showmembers.ShowMembersActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.Resource

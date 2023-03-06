@@ -9,7 +9,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.lttrung.notepro.R
 import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityShowMembersBinding
-import com.lttrung.notepro.ui.showmembers.adapters.MemberAdapter
+import com.lttrung.notepro.ui.base.adapters.member.MemberAdapter
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.PAGE_LIMIT
 import com.lttrung.notepro.utils.Resource
