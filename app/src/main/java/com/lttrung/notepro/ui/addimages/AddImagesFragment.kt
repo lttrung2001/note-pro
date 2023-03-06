@@ -8,9 +8,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.lttrung.notepro.databinding.FragmentAddImagesBinding
+import com.lttrung.notepro.ui.base.AddImagesActivity
 import com.lttrung.notepro.ui.viewgallery.ViewGalleryActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.CAMERA_REQUEST
 import com.lttrung.notepro.utils.AppConstant.Companion.READ_EXTERNAL_STORAGE_REQUEST
@@ -59,7 +61,8 @@ class AddImagesFragment : BottomSheetDialogFragment() {
                     CAMERA_REQUEST
                 )
             } else {
-                openCamera()
+                val parentActivity = (requireActivity() as AddImagesActivity)
+                parentActivity.openCamera()
             }
         }
     }
@@ -77,22 +80,9 @@ class AddImagesFragment : BottomSheetDialogFragment() {
                     READ_EXTERNAL_STORAGE_REQUEST
                 )
             } else {
-                openGallery()
+                val parentActivity = (requireActivity() as AddImagesActivity)
+                parentActivity.openGallery()
             }
         }
-    }
-
-    private fun openCamera() {
-        val cameraIntent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
-        requireActivity().startActivityIfNeeded(cameraIntent, CAMERA_REQUEST)
-    }
-
-    private fun openGallery() {
-//        val intent = Intent(Intent.ACTION_GET_CONTENT)
-//        intent.type = "image/*"
-//        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-        Log.i("INFO", "openGallery")
-        val intent = Intent(requireContext(), ViewGalleryActivity::class.java)
-        requireActivity().startActivityIfNeeded(intent, 1)
     }
 }

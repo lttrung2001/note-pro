@@ -1,15 +1,17 @@
 package com.lttrung.notepro.ui.editnote
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import com.lttrung.notepro.R
 import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityEditNoteBinding
+import com.lttrung.notepro.ui.base.AddImagesActivity
 import com.lttrung.notepro.ui.notedetails.adapters.ImagesAdapter
 import com.lttrung.notepro.ui.showmembers.ShowMembersActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
@@ -17,10 +19,10 @@ import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class EditNoteActivity : AppCompatActivity() {
+class EditNoteActivity : AddImagesActivity() {
     private lateinit var binding: ActivityEditNoteBinding
     private lateinit var imagesAdapter: ImagesAdapter
-    private var menu: Menu? = null
+    private lateinit var menu: Menu
     private val editNoteViewModel: EditNoteViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +44,7 @@ class EditNoteActivity : AppCompatActivity() {
     }
 
     private fun initListeners() {
-
+        binding.btnOpenBottomSheet.setOnClickListener(openBottomSheetDialogListener)
     }
 
     private fun initObservers() {
@@ -54,8 +56,8 @@ class EditNoteActivity : AppCompatActivity() {
                 is Resource.Success -> {
                     val resultIntent = Intent()
                     resultIntent.putExtra(NOTE, resource.data)
-                    setResult(1, resultIntent)
-                    finishActivity(1)
+                    setResult(RESULT_OK, resultIntent)
+                    finish()
                 }
                 is Resource.Error -> {
 
@@ -72,21 +74,20 @@ class EditNoteActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_edit_note, menu)
-        this.menu = menu
+        this.menu = menu!!
         return true
     }
 
-    @SuppressLint("UseCompatLoadingForDrawables")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_pin -> {
-                val pinnedDrawable =
-                    resources.getDrawable(R.drawable.ic_baseline_push_pinned_24, theme)
-                val unPinDrawable = resources.getDrawable(R.drawable.ic_baseline_push_pin_24, theme)
-                item.icon = pinnedDrawable
+                if (item.isChecked) {
+                    item.isChecked = false
+                    item.icon.setTint(resources.getColor(R.color.black, theme))
+                } else {
+                    item.isChecked = true
+                    item.icon.setTint(resources.getColor(R.color.primary, theme))
+                }
                 true
             }
             R.id.action_show_members -> {
@@ -102,7 +103,7 @@ class EditNoteActivity : AppCompatActivity() {
                     binding.edtNoteTitle.text!!.trim().toString(),
                     binding.edtNoteDesc.text!!.trim().toString(),
                     noteViewed.lastModified,
-                    menu!!.getItem(0).isChecked,
+                    menu.getItem(0)?.isChecked ?: false,
                     noteViewed.role,
                     emptyList()
                 )
@@ -115,4 +116,11 @@ class EditNoteActivity : AppCompatActivity() {
             }
         }
     }
+
+    override val launcher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                Log.i("OK", result.toString())
+            }
+        }
 }
