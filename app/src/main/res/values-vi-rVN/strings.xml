@@ -57,4 +57,5 @@
     <string name="phone_number">Số điện thoại</string>
     <string name="password_not_match">Mật khẩu không khớp.</string>
     <string name="role">Vai trò</string>
+    <string name="select">Chọn</string>
 </resources>
