@@ -72,7 +72,6 @@ class MainActivity : AppCompatActivity() {
         initListeners()
         initAdapters()
         initObservers()
-        mainViewModel.getNotes()
     }
 
     private fun initObservers() {
