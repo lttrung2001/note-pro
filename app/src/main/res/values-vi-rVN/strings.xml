@@ -56,4 +56,7 @@
     <string name="this_text_is_not_email_type">Email không đúng định dạng.</string>
     <string name="phone_number">Số điện thoại</string>
     <string name="password_not_match">Mật khẩu không khớp.</string>
+    <string name="role">Vai trò</string>
+    <string name="select">Chọn</string>
+    <string name="loading">Đang tải</string>
 </resources>
