@@ -117,6 +117,11 @@ private void image() {
     dependencies.implementation("io.coil-kt:coil:2.2.2")
 }
 
+private void customUI() {
+    dependencies.implementation 'com.ramotion.cardslider:card-slider:0.3.1'
+    dependencies.implementation 'com.github.razir.progressbutton:progressbutton:2.1.0'
+}
+
 kapt {
     correctErrorTypes = true
 }
