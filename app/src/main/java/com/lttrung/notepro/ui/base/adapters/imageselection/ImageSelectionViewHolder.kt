@@ -15,5 +15,8 @@ class ImageSelectionViewHolder(private val binding: LayoutImageSelectionBinding)
             placeholder(R.drawable.me)
         }
         binding.checkbox.isChecked = false
+        binding.checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
+            image.isSelected = isChecked
+        }
     }
 }

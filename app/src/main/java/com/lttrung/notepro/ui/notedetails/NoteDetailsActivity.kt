@@ -3,6 +3,7 @@ package com.lttrung.notepro.ui.notedetails
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -17,6 +18,8 @@ import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
 import com.lttrung.notepro.ui.showmembers.ShowMembersActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.Resource
+import com.ramotion.cardslider.CardSliderLayoutManager
+import com.ramotion.cardslider.CardSnapHelper
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -70,9 +73,8 @@ class NoteDetailsActivity : AppCompatActivity() {
     private fun initAdapters() {
         imagesAdapter = ImagesAdapter()
         binding.rcvImages.adapter = imagesAdapter
-
-        binding.tvImages.visibility = View.GONE
-        binding.rcvImages.visibility = View.GONE
+        binding.rcvImages.layoutManager = CardSliderLayoutManager(this)
+        CardSnapHelper().attachToRecyclerView(binding.rcvImages)
     }
 
     private fun initObservers() {
@@ -86,15 +88,10 @@ class NoteDetailsActivity : AppCompatActivity() {
                     binding.edtNoteTitle.text = note.title
                     binding.edtNoteDesc.text = note.content
                     binding.tvLastModified.text = note.lastModified.toString()
-
-                    if (!note.images.isNullOrEmpty()) {
-                        binding.tvImages.visibility = View.VISIBLE
-                        binding.rcvImages.visibility = View.VISIBLE
-                        imagesAdapter.submitList(note.images)
-                    }
+                    imagesAdapter.submitList(note.images)
                 }
                 is Resource.Error -> {
-
+                    Log.e("ERROR", resource.message)
                 }
             }
         }
@@ -120,27 +117,24 @@ class NoteDetailsActivity : AppCompatActivity() {
         val note = intent.getSerializableExtra(NOTE) as Note
         // Get pin item
         val pinButton = menu!![0]
+        pinButton.isChecked = note.isPin
         if (note.isPin) {
-            pinButton.isChecked = true
             pinButton.icon.setTint(resources.getColor(R.color.primary, theme))
         } else {
-            pinButton.isChecked = false
             pinButton.icon.setTint(resources.getColor(R.color.black, theme))
         }
         return true
     }
 
-    @SuppressLint("UseCompatLoadingForDrawables")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_pin -> {
                 if (item.isChecked) {
-                    item.isChecked = false
                     item.icon.setTint(resources.getColor(R.color.black, theme))
                 } else {
-                    item.isChecked = true
                     item.icon.setTint(resources.getColor(R.color.primary, theme))
                 }
+                item.isChecked = !item.isChecked
                 true
             }
             R.id.action_show_members -> {

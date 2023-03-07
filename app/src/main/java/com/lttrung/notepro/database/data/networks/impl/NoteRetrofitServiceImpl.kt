@@ -5,8 +5,15 @@ import com.lttrung.notepro.database.data.networks.models.ApiResponse
 import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.utils.HttpStatusCodes
 import io.reactivex.rxjava3.core.Single
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Response
 import retrofit2.http.*
+import java.io.File
 import java.util.*
 import javax.inject.Inject
 
@@ -18,6 +25,14 @@ class NoteRetrofitServiceImpl @Inject constructor(
     }
 
     interface Service {
+        @Multipart
+        @POST("$PATH/add-note")
+        fun addNote(
+            @Part("title") title: RequestBody,
+            @Part("content") content: RequestBody,
+            @Part("isPin") isPin: Boolean,
+            @Part images: List<MultipartBody.Part>?
+        ): Single<Response<ApiResponse<Note>>>
         @FormUrlEncoded
         @PUT("$PATH/edit-note")
         fun editNote(
@@ -36,7 +51,20 @@ class NoteRetrofitServiceImpl @Inject constructor(
     }
 
     override fun addNote(note: Note): Single<Note> {
-        TODO("Not yet implemented")
+        val title = note.title.toRequestBody(MultipartBody.FORM)
+        val content = note.content.toRequestBody(MultipartBody.FORM)
+        val parts = note.images?.map { image ->
+            val file = File(image.url)
+            val requestBody = file.asRequestBody(MultipartBody.FORM)
+            MultipartBody.Part.createFormData("images", file.name, requestBody)
+        }
+        return service.addNote(title, content, note.isPin, parts).map { response ->
+            if (response.code() == HttpStatusCodes.OK.code) {
+                response.body()!!.data
+            } else {
+                throw Exception(response.body()!!.message)
+            }
+        }
     }
 
     override fun editNote(note: Note, deleteImageIds: List<String>): Single<Note> {

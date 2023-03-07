@@ -75,6 +75,14 @@ class EditNoteActivity : AddImagesActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_edit_note, menu)
         this.menu = menu!!
+        val noteDetails = intent.getSerializableExtra(NOTE) as Note
+        val pinButton = menu.getItem(0)
+        pinButton.isChecked = noteDetails.isPin
+        if (noteDetails.isPin) {
+            pinButton.icon.setTint(resources.getColor(R.color.primary, theme))
+        } else {
+            pinButton.icon.setTint(resources.getColor(R.color.black, theme))
+        }
         return true
     }
 
@@ -82,12 +90,11 @@ class EditNoteActivity : AddImagesActivity() {
         return when (item.itemId) {
             R.id.action_pin -> {
                 if (item.isChecked) {
-                    item.isChecked = false
                     item.icon.setTint(resources.getColor(R.color.black, theme))
                 } else {
-                    item.isChecked = true
                     item.icon.setTint(resources.getColor(R.color.primary, theme))
                 }
+                item.isChecked = !item.isChecked
                 true
             }
             R.id.action_show_members -> {
@@ -97,14 +104,14 @@ class EditNoteActivity : AddImagesActivity() {
             }
             R.id.action_save -> {
                 // Save note
-                val noteViewed = (intent.getSerializableExtra(NOTE) as Note)
+                val noteDetails = intent.getSerializableExtra(NOTE) as Note
                 val note = Note(
-                    noteViewed.id,
+                    noteDetails.id,
                     binding.edtNoteTitle.text!!.trim().toString(),
                     binding.edtNoteDesc.text!!.trim().toString(),
-                    noteViewed.lastModified,
+                    noteDetails.lastModified,
                     menu.getItem(0)?.isChecked ?: false,
-                    noteViewed.role,
+                    noteDetails.role,
                     emptyList()
                 )
                 editNoteViewModel.editNote(note, emptyList())

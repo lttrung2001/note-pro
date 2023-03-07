@@ -9,7 +9,7 @@ import javax.inject.Inject
 class NoteRepositoriesImpl @Inject constructor(override val networks: NoteNetworks) :
     NoteRepositories {
     override fun addNote(note: Note): Single<Note> {
-        TODO("Not yet implemented")
+        return networks.addNote(note)
     }
 
     override fun editNote(note: Note, deleteImageIds: List<String>): Single<Note> {

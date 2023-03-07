@@ -6,6 +6,8 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.registerForActivityResult
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -25,7 +27,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var pinnedNoteAdapter: NoteAdapter
+    private lateinit var pinNotesAdapter: NoteAdapter
+    private lateinit var normalNotesAdapter: NoteAdapter
     private val mainViewModel: MainViewModel by viewModels()
 
     private val noteListener: NoteListener by lazy {
@@ -33,14 +36,15 @@ class MainActivity : AppCompatActivity() {
             override fun onClick(note: Note) {
                 val noteDetailsIntent = Intent(this@MainActivity, NoteDetailsActivity::class.java)
                 noteDetailsIntent.putExtra(NOTE, note)
-                startActivityIfNeeded(noteDetailsIntent, AppConstant.SHOW_NOTE_DETAIL_REQUEST)
+                launcher.launch(noteDetailsIntent)
             }
         }
     }
 
     private val fabOnClickListener: View.OnClickListener by lazy {
         View.OnClickListener {
-            startActivity(Intent(this, AddNoteActivity::class.java))
+            val addNoteIntent = Intent(this, AddNoteActivity::class.java)
+            launcher.launch(addNoteIntent)
         }
     }
 
@@ -82,7 +86,14 @@ class MainActivity : AppCompatActivity() {
                 }
                 is Resource.Success -> {
                     binding.refreshLayout.isRefreshing = false
-                    pinnedNoteAdapter.submitList(resource.data)
+                    val pinNotes = resource.data.filter {
+                        it.isPin
+                    }
+                    val normalNotes = resource.data.filter {
+                        !it.isPin
+                    }
+                    pinNotesAdapter.submitList(pinNotes)
+                    normalNotesAdapter.submitList(normalNotes)
                 }
                 is Resource.Error -> {
                     binding.refreshLayout.isRefreshing = false
@@ -93,9 +104,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initAdapters() {
-        pinnedNoteAdapter = NoteAdapter(noteListener)
-        binding.rcvPinnedNotes.adapter = pinnedNoteAdapter
-        binding.rcvOtherNotes.adapter = pinnedNoteAdapter
+        pinNotesAdapter = NoteAdapter(noteListener)
+        normalNotesAdapter = NoteAdapter(noteListener)
+        binding.rcvPinnedNotes.adapter = pinNotesAdapter
+        binding.rcvOtherNotes.adapter = normalNotesAdapter
     }
 
     private fun initListeners() {
@@ -128,6 +140,24 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val resultIntent = result.data
+            resultIntent?.let { intent ->
+                val note = intent.getSerializableExtra(NOTE) as Note
+                if (note.isPin) {
+                    val currentList = pinNotesAdapter.currentList.toMutableList()
+                    currentList.add(note)
+                    pinNotesAdapter.submitList(currentList)
+                } else {
+                    val currentList = normalNotesAdapter.currentList.toMutableList()
+                    currentList.add(note)
+                    normalNotesAdapter.submitList(currentList)
+                }
+            }
         }
     }
 

@@ -9,6 +9,7 @@ class AppConstant {
         const val DEFAULT_PREFERENCES_NAME = "com.lttrung.notepro.DEFAULT_PREFERENCES_NAME"
         const val REFRESH_TOKEN = "com.lttrung.notepro.REFRESH_TOKEN"
         const val ACCESS_TOKEN = "com.lttrung.notepro.ACCESS_TOKEN"
+        const val SELECTED_IMAGES = "com.lttrung.notepro.SELECTED_IMAGES"
 
         const val CREATE_NOTE_REQUEST = 1
         const val EDIT_NOTE_REQUEST = 2

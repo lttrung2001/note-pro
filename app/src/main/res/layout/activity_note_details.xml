@@ -50,8 +50,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rcv_images"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
+                android:layout_height="200dp"
                 tools:listitem="@layout/layout_image" />
         </LinearLayout>
     </ScrollView>

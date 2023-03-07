@@ -59,7 +59,8 @@ class GalleryUtils {
                             cs.getString(nameColumnIndex),
                             cs.getString(dataColumnIndex),
                             null,
-                            null
+                            null,
+                            false
                         )
                     )
                 }

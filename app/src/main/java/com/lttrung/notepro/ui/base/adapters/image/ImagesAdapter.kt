@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.lttrung.notepro.R
 import com.lttrung.notepro.database.data.networks.models.Image
+import com.lttrung.notepro.databinding.LayoutImageBinding
 
 class ImagesAdapter : ListAdapter<Image, ImageViewHolder>(object : DiffUtil.ItemCallback<Image>() {
     override fun areItemsTheSame(oldItem: Image, newItem: Image): Boolean {
@@ -18,8 +19,8 @@ class ImagesAdapter : ListAdapter<Image, ImageViewHolder>(object : DiffUtil.Item
 
 }) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_image, parent, false)
-        return ImageViewHolder(view)
+        val binding = LayoutImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ImageViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
