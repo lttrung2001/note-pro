@@ -6,5 +6,6 @@ data class Member(
     val id: String,
     val email: String,
     val fullName: String,
-    val role: String
+    val role: String,
+    val phoneNumber: String
 ) : Serializable

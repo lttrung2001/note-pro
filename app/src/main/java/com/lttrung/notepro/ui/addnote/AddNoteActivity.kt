@@ -1,64 +1,48 @@
 package com.lttrung.notepro.ui.addnote
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.WindowCompat
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityAddNoteBinding
-import com.lttrung.notepro.ui.bottomsheetdialogfragment.MenuBottomSheetDialogFragment
-import com.lttrung.notepro.utils.AppConstant
+import com.lttrung.notepro.ui.base.activities.AddImagesActivity
+import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
+import dagger.hilt.android.AndroidEntryPoint
 
-class AddNoteActivity : AppCompatActivity() {
+@AndroidEntryPoint
+class AddNoteActivity : AddImagesActivity() {
     private lateinit var binding: ActivityAddNoteBinding
-
-    private val openBottomSheetDialogListener: View.OnClickListener by lazy {
-        View.OnClickListener {
-            openBottomSheetMenu()
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode == AppConstant.READ_EXTERNAL_STORAGE_REQUEST &&
-            permissions.contains(Manifest.permission.READ_EXTERNAL_STORAGE)
-        ) {
-            openBottomSheetMenu()
-        } else if (requestCode == AppConstant.CAMERA_REQUEST &&
-            permissions.contains(Manifest.permission.CAMERA)
-        ) {
-            openCamera()
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
-    private fun openBottomSheetMenu() {
-        val bottomSheet = MenuBottomSheetDialogFragment()
-        bottomSheet.show(supportFragmentManager, TAG)
-    }
-
-    private fun openCamera() {
-        val cameraIntent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
-        startActivityForResult(cameraIntent, 1)
-    }
+    private lateinit var imagesAdapter: ImagesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initViews()
+        initListeners()
+        initAdapter()
+    }
+
+    private fun initAdapter() {
+        imagesAdapter = ImagesAdapter()
+        binding.rcvImages.apply {
+            adapter = imagesAdapter
+            layoutManager =
+                LinearLayoutManager(this@AddNoteActivity, LinearLayoutManager.HORIZONTAL, false)
+        }
+    }
+
+    private fun initListeners() {
+        binding.btnOpenBottomSheet.setOnClickListener(openBottomSheetDialogListener)
+    }
+
+    private fun initViews() {
         binding = ActivityAddNoteBinding.inflate(layoutInflater)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
         setContentView(binding.root)
-
-        binding.btnOpenBottomSheet.setOnClickListener(openBottomSheetDialogListener)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -66,29 +50,32 @@ class AddNoteActivity : AppCompatActivity() {
         return true
     }
 
-    @SuppressLint("UseCompatLoadingForDrawables")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_pin -> {
-                val pinnedDrawable =
-                    resources.getDrawable(R.drawable.ic_baseline_push_pinned_24, theme)
-                val unPinDrawable = resources.getDrawable(R.drawable.ic_baseline_push_pin_24, theme)
-                item.icon = pinnedDrawable
+                if (item.isChecked) {
+                    item.isChecked = false
+                    item.icon.setTint(resources.getColor(R.color.black, theme))
+                } else {
+                    item.isChecked = true
+                    item.icon.setTint(resources.getColor(R.color.primary, theme))
+                }
                 true
             }
             R.id.action_save -> {
                 true
             }
             else -> {
-                super.onOptionsItemSelected(item)
+                onBackPressed()
+                true
             }
         }
     }
 
-    companion object {
-        private const val TAG = "MenuBottomSheetDialogFragment"
-    }
+    override val launcher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                Log.i("OK", result.toString())
+            }
+        }
 }

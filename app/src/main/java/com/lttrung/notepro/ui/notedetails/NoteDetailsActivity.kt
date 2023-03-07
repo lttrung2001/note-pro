@@ -6,18 +6,30 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.get
 import com.lttrung.notepro.R
+import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityNoteDetailsBinding
 import com.lttrung.notepro.ui.editnote.EditNoteActivity
+import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
 import com.lttrung.notepro.ui.showmembers.ShowMembersActivity
+import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
+import com.lttrung.notepro.utils.Resource
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class NoteDetailsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNoteDetailsBinding
+    private lateinit var imagesAdapter: ImagesAdapter
+    private val noteDetailsViewModel: NoteDetailsViewModel by viewModels()
 
     private val fabOnClickListener: View.OnClickListener by lazy {
         View.OnClickListener {
-            startActivity(Intent(this, EditNoteActivity::class.java))
+            val editNoteIntent = Intent(this, EditNoteActivity::class.java)
+            editNoteIntent.putExtra(NOTE, intent.getSerializableExtra(NOTE))
+            startActivity(editNoteIntent)
         }
     }
 
@@ -34,41 +46,114 @@ class NoteDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        initViews()
+        initListeners()
+        initAdapters()
+        initData()
+        initObservers()
+    }
+
+    private fun initViews() {
         binding = ActivityNoteDetailsBinding.inflate(layoutInflater)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
         setContentView(binding.root)
 
-        binding.fab.setOnClickListener(fabOnClickListener)
-        binding.fab.setOnScrollChangeListener(fabOnScrollChangeListener)
+        val note = intent.getSerializableExtra(NOTE) as Note
+        if (note.hasEditPermission()) {
+            binding.fab.apply {
+                visibility = View.VISIBLE
+                setOnClickListener(fabOnClickListener)
+            }
+        }
+    }
 
+    private fun initAdapters() {
+        imagesAdapter = ImagesAdapter()
+        binding.rcvImages.adapter = imagesAdapter
+
+        binding.tvImages.visibility = View.GONE
+        binding.rcvImages.visibility = View.GONE
+    }
+
+    private fun initObservers() {
+        noteDetailsViewModel.noteDetails.observe(this) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+
+                }
+                is Resource.Success -> {
+                    val note = resource.data
+                    binding.edtNoteTitle.text = note.title
+                    binding.edtNoteDesc.text = note.content
+                    binding.tvLastModified.text = note.lastModified.toString()
+
+                    if (!note.images.isNullOrEmpty()) {
+                        binding.tvImages.visibility = View.VISIBLE
+                        binding.rcvImages.visibility = View.VISIBLE
+                        imagesAdapter.submitList(note.images)
+                    }
+                }
+                is Resource.Error -> {
+
+                }
+            }
+        }
+    }
+
+    private fun initData() {
+        val note = intent.getSerializableExtra(NOTE) as Note
+        binding.edtNoteTitle.text = note.title
+        binding.edtNoteDesc.text = note.content
+        binding.tvLastModified.text = note.lastModified.toString()
+
+        noteDetailsViewModel.getNoteDetails(note)
+    }
+
+    private fun initListeners() {
+        binding.fab.setOnScrollChangeListener(fabOnScrollChangeListener)
+        binding.fab.setOnClickListener(fabOnClickListener)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_note_detail, menu)
+
+        val note = intent.getSerializableExtra(NOTE) as Note
+        // Get pin item
+        val pinButton = menu!![0]
+        if (note.isPin) {
+            pinButton.isChecked = true
+            pinButton.icon.setTint(resources.getColor(R.color.primary, theme))
+        } else {
+            pinButton.isChecked = false
+            pinButton.icon.setTint(resources.getColor(R.color.black, theme))
+        }
         return true
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_pin -> {
-                val pinnedDrawable =
-                    resources.getDrawable(R.drawable.ic_baseline_push_pinned_24, theme)
-                val unPinDrawable = resources.getDrawable(R.drawable.ic_baseline_push_pin_24, theme)
-                item.icon = pinnedDrawable
+                if (item.isChecked) {
+                    item.isChecked = false
+                    item.icon.setTint(resources.getColor(R.color.black, theme))
+                } else {
+                    item.isChecked = true
+                    item.icon.setTint(resources.getColor(R.color.primary, theme))
+                }
                 true
             }
             R.id.action_show_members -> {
                 // Start show members activity
-                startActivity(Intent(this, ShowMembersActivity::class.java))
+                val showMembersIntent = Intent(this, ShowMembersActivity::class.java)
+                val note = intent.getSerializableExtra(NOTE) as Note
+                showMembersIntent.putExtra(NOTE, note)
+                startActivity(showMembersIntent)
                 true
             }
             else -> {
-                super.onOptionsItemSelected(item)
+                onBackPressed()
+                true
             }
         }
     }
