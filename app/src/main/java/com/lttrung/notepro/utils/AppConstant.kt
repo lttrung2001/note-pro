@@ -3,6 +3,9 @@ package com.lttrung.notepro.utils
 class AppConstant {
     companion object {
         const val NOTE = "com.lttrung.notepro.NOTE"
+        const val EDITED_NOTE = "com.lttrung.notepro.EDITED_NOTE"
+        const val DELETED_NOTE = "com.lttrung.notepro.DELETED_NOTE"
+
         const val USER_DATABASE_VERSION = 1
         const val USER_DATABASE_NAME = "com.lttrung.notepro.USER_DATABASE"
 
@@ -11,13 +14,8 @@ class AppConstant {
         const val ACCESS_TOKEN = "com.lttrung.notepro.ACCESS_TOKEN"
         const val SELECTED_IMAGES = "com.lttrung.notepro.SELECTED_IMAGES"
 
-        const val CREATE_NOTE_REQUEST = 1
-        const val EDIT_NOTE_REQUEST = 2
-        const val SHOW_NOTE_DETAIL_REQUEST = 3
-
         const val CAMERA_REQUEST = 100
         const val READ_EXTERNAL_STORAGE_REQUEST = 101
-        const val PICK_IMAGES_REQUEST = 102
 
         const val RC_SIGN_IN = 9001
 

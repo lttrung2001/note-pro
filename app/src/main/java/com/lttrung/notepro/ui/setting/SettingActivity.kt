@@ -2,6 +2,7 @@ package com.lttrung.notepro.ui.setting
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.lttrung.notepro.databinding.ActivitySettingBinding
@@ -45,5 +46,10 @@ class SettingActivity : AppCompatActivity() {
         binding.btnLogout.setOnClickListener(logoutOnClickListener)
 
         setContentView(binding.root)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        onBackPressed()
+        return true
     }
 }

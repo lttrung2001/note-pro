@@ -2,20 +2,26 @@ package com.lttrung.notepro.ui.editnote
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import com.lttrung.notepro.R
+import com.lttrung.notepro.database.data.networks.models.Image
 import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityEditNoteBinding
 import com.lttrung.notepro.ui.base.activities.AddImagesActivity
 import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
 import com.lttrung.notepro.ui.showmembers.ShowMembersActivity
+import com.lttrung.notepro.utils.AppConstant.Companion.DELETED_NOTE
+import com.lttrung.notepro.utils.AppConstant.Companion.EDITED_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
+import com.lttrung.notepro.utils.AppConstant.Companion.SELECTED_IMAGES
 import com.lttrung.notepro.utils.Resource
+import com.ramotion.cardslider.CardSliderLayoutManager
+import com.ramotion.cardslider.CardSnapHelper
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -29,22 +35,30 @@ class EditNoteActivity : AddImagesActivity() {
         super.onCreate(savedInstanceState)
 
         initViews()
-        initData()
         initListeners()
+        initAdapter()
+        initData()
         initObservers()
     }
 
     private fun initData() {
         val note = intent.getSerializableExtra(NOTE) as Note
-        binding.edtNoteTitle.setText(note.title)
-        binding.edtNoteDesc.setText(note.content)
-        binding.tvLastModified.text = note.lastModified.toString()
+        binding.apply {
+            edtNoteTitle.setText(note.title)
+            edtNoteDesc.setText(note.content)
+            tvLastModified.text = note.lastModified.toString()
+        }
+        imagesAdapter.submitList(note.images)
+    }
+
+    private fun initAdapter() {
         imagesAdapter = ImagesAdapter()
         binding.rcvImages.adapter = imagesAdapter
     }
 
     private fun initListeners() {
         binding.btnOpenBottomSheet.setOnClickListener(openBottomSheetDialogListener)
+        binding.btnDeleteNote.setOnClickListener(deleteNoteListener)
     }
 
     private fun initObservers() {
@@ -55,7 +69,25 @@ class EditNoteActivity : AddImagesActivity() {
                 }
                 is Resource.Success -> {
                     val resultIntent = Intent()
-                    resultIntent.putExtra(NOTE, resource.data)
+                    resultIntent.putExtra(EDITED_NOTE, resource.data)
+                    setResult(RESULT_OK, resultIntent)
+                    finish()
+                }
+                is Resource.Error -> {
+
+                }
+            }
+        }
+
+        editNoteViewModel.deleteNote.observe(this) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+
+                }
+                is Resource.Success -> {
+                    val note = intent.getSerializableExtra(NOTE) as Note
+                    val resultIntent = Intent()
+                    resultIntent.putExtra(DELETED_NOTE, note)
                     setResult(RESULT_OK, resultIntent)
                     finish()
                 }
@@ -70,6 +102,14 @@ class EditNoteActivity : AddImagesActivity() {
         binding = ActivityEditNoteBinding.inflate(layoutInflater)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setContentView(binding.root)
+
+        binding.rcvImages.layoutManager = CardSliderLayoutManager(this)
+        CardSnapHelper().attachToRecyclerView(binding.rcvImages)
+
+        val note = intent.getSerializableExtra(NOTE) as Note
+        if (note.isOwner()) {
+            binding.btnDeleteNote.visibility = View.VISIBLE
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -99,7 +139,10 @@ class EditNoteActivity : AddImagesActivity() {
             }
             R.id.action_show_members -> {
                 // Start show members activity
-                startActivity(Intent(this, ShowMembersActivity::class.java))
+                val showMembersIntent = Intent(this, ShowMembersActivity::class.java)
+                val note = intent.getSerializableExtra(NOTE) as Note
+                showMembersIntent.putExtra(NOTE, note)
+                startActivity(showMembersIntent)
                 true
             }
             R.id.action_save -> {
@@ -110,9 +153,9 @@ class EditNoteActivity : AddImagesActivity() {
                     binding.edtNoteTitle.text!!.trim().toString(),
                     binding.edtNoteDesc.text!!.trim().toString(),
                     noteDetails.lastModified,
-                    menu.getItem(0)?.isChecked ?: false,
+                    menu.getItem(0).isChecked,
                     noteDetails.role,
-                    emptyList()
+                    imagesAdapter.currentList
                 )
                 editNoteViewModel.editNote(note, emptyList())
                 true
@@ -127,7 +170,20 @@ class EditNoteActivity : AddImagesActivity() {
     override val launcher: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
-                Log.i("OK", result.toString())
+                val resultIntent = result.data
+                resultIntent?.let {
+                    val images = it.getSerializableExtra(SELECTED_IMAGES) as List<Image>
+                    val tempList = imagesAdapter.currentList.toMutableList()
+                    tempList.addAll(images)
+                    imagesAdapter.submitList(tempList)
+                }
             }
         }
+
+    private val deleteNoteListener: View.OnClickListener by lazy {
+        View.OnClickListener {
+            val note = intent.getSerializableExtra(NOTE) as Note
+            editNoteViewModel.deleteNote(note.id)
+        }
+    }
 }

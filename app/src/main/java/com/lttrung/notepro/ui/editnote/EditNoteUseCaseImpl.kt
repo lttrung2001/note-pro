@@ -13,7 +13,7 @@ class EditNoteUseCaseImpl @Inject constructor(
     }
 
     override fun deleteNote(noteId: String): Single<Unit> {
-        TODO("Not yet implemented")
+        return repositories.deleteNote(noteId)
     }
 
 }

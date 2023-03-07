@@ -7,6 +7,8 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.registerForActivityResult
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.get
@@ -16,6 +18,8 @@ import com.lttrung.notepro.databinding.ActivityNoteDetailsBinding
 import com.lttrung.notepro.ui.editnote.EditNoteActivity
 import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
 import com.lttrung.notepro.ui.showmembers.ShowMembersActivity
+import com.lttrung.notepro.utils.AppConstant.Companion.DELETED_NOTE
+import com.lttrung.notepro.utils.AppConstant.Companion.EDITED_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.Resource
 import com.ramotion.cardslider.CardSliderLayoutManager
@@ -32,7 +36,7 @@ class NoteDetailsActivity : AppCompatActivity() {
         View.OnClickListener {
             val editNoteIntent = Intent(this, EditNoteActivity::class.java)
             editNoteIntent.putExtra(NOTE, intent.getSerializableExtra(NOTE))
-            startActivity(editNoteIntent)
+            launcher.launch(editNoteIntent)
         }
     }
 
@@ -66,6 +70,7 @@ class NoteDetailsActivity : AppCompatActivity() {
             binding.fab.apply {
                 visibility = View.VISIBLE
                 setOnClickListener(fabOnClickListener)
+                isEnabled = false
             }
         }
     }
@@ -85,10 +90,12 @@ class NoteDetailsActivity : AppCompatActivity() {
                 }
                 is Resource.Success -> {
                     val note = resource.data
+                    intent.putExtra(NOTE, note)
                     binding.edtNoteTitle.text = note.title
                     binding.edtNoteDesc.text = note.content
                     binding.tvLastModified.text = note.lastModified.toString()
                     imagesAdapter.submitList(note.images)
+                    binding.fab.isEnabled = true
                 }
                 is Resource.Error -> {
                     Log.e("ERROR", resource.message)
@@ -113,30 +120,11 @@ class NoteDetailsActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_note_detail, menu)
-
-        val note = intent.getSerializableExtra(NOTE) as Note
-        // Get pin item
-        val pinButton = menu!![0]
-        pinButton.isChecked = note.isPin
-        if (note.isPin) {
-            pinButton.icon.setTint(resources.getColor(R.color.primary, theme))
-        } else {
-            pinButton.icon.setTint(resources.getColor(R.color.black, theme))
-        }
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_pin -> {
-                if (item.isChecked) {
-                    item.icon.setTint(resources.getColor(R.color.black, theme))
-                } else {
-                    item.icon.setTint(resources.getColor(R.color.primary, theme))
-                }
-                item.isChecked = !item.isChecked
-                true
-            }
             R.id.action_show_members -> {
                 // Start show members activity
                 val showMembersIntent = Intent(this, ShowMembersActivity::class.java)
@@ -148,6 +136,27 @@ class NoteDetailsActivity : AppCompatActivity() {
             else -> {
                 onBackPressed()
                 true
+            }
+        }
+    }
+
+    private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val resultIntent = result.data
+            resultIntent?.let {
+                val editedNote = it.getSerializableExtra(EDITED_NOTE) as Note?
+                val deletedNote = it.getSerializableExtra(DELETED_NOTE) as Note?
+                editedNote?.let { note ->
+                    setResult(RESULT_OK, Intent().apply {
+                        putExtra(EDITED_NOTE, note)
+                    })
+                }
+                deletedNote?.let { note ->
+                    setResult(RESULT_OK, Intent().apply {
+                        putExtra(DELETED_NOTE, note)
+                    })
+                }
+                finish()
             }
         }
     }

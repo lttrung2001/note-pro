@@ -14,4 +14,8 @@ data class Note(
     fun hasEditPermission(): Boolean {
         return role == "owner" || role == "editor"
     }
+
+    fun isOwner(): Boolean {
+        return role == "owner"
+    }
 }

@@ -98,13 +98,16 @@ class LoginActivity : AppCompatActivity() {
                         buttonTextRes = R.string.loading
                         progressColor = Color.WHITE
                     }
+                    binding.btnLogin.isEnabled = false
                 }
                 is Resource.Success -> {
                     binding.btnLogin.hideProgress(R.string.login)
+                    binding.btnLogin.isEnabled = true
                     switchToMain()
                 }
                 is Resource.Error -> {
                     binding.btnLogin.hideProgress(R.string.login)
+                    binding.btnLogin.isEnabled = true
                     binding.edtPassword.error = resource.message
                 }
             }

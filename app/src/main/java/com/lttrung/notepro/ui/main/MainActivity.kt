@@ -7,7 +7,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.registerForActivityResult
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -19,7 +18,8 @@ import com.lttrung.notepro.ui.base.adapters.note.NoteAdapter
 import com.lttrung.notepro.ui.base.adapters.note.NoteListener
 import com.lttrung.notepro.ui.notedetails.NoteDetailsActivity
 import com.lttrung.notepro.ui.setting.SettingActivity
-import com.lttrung.notepro.utils.AppConstant
+import com.lttrung.notepro.utils.AppConstant.Companion.DELETED_NOTE
+import com.lttrung.notepro.utils.AppConstant.Companion.EDITED_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
@@ -143,22 +143,47 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            val resultIntent = result.data
-            resultIntent?.let { intent ->
-                val note = intent.getSerializableExtra(NOTE) as Note
-                if (note.isPin) {
-                    val currentList = pinNotesAdapter.currentList.toMutableList()
-                    currentList.add(note)
-                    pinNotesAdapter.submitList(currentList)
-                } else {
-                    val currentList = normalNotesAdapter.currentList.toMutableList()
-                    currentList.add(note)
-                    normalNotesAdapter.submitList(currentList)
+    private val launcher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val resultIntent = result.data
+                resultIntent?.let { intent ->
+                    val editedNote = intent.getSerializableExtra(EDITED_NOTE) as Note?
+                    val deletedNote = intent.getSerializableExtra(DELETED_NOTE) as Note?
+                    editedNote?.let { note ->
+                            pinNotesAdapter.currentList.find {
+                                it.id == note.id
+                            }?.let { findingNote ->
+                                val pinNotes = pinNotesAdapter.currentList.toMutableList()
+                                pinNotes.remove(findingNote)
+                                pinNotesAdapter.submitList(pinNotes)
+                                val normalNotes = normalNotesAdapter.currentList.toMutableList()
+                                normalNotes.add(note)
+                                normalNotesAdapter.submitList(normalNotes)
+                            }
+                            normalNotesAdapter.currentList.find {
+                                it.id == note.id
+                            }?.let { findingNote ->
+                                val normalNotes = normalNotesAdapter.currentList.toMutableList()
+                                normalNotes.remove(findingNote)
+                                normalNotesAdapter.submitList(normalNotes)
+                                val pinNotes = normalNotesAdapter.currentList.toMutableList()
+                                pinNotes.add(note)
+                                normalNotesAdapter.submitList(pinNotes)
+                            }
+                        }
+                    deletedNote?.let { note ->
+                        val pinNotes = pinNotesAdapter.currentList.toMutableList()
+                        val normalNotes = normalNotesAdapter.currentList.toMutableList()
+                        pinNotesAdapter.submitList(pinNotes.filter {
+                            it.id != note.id
+                        })
+                        normalNotesAdapter.submitList(normalNotes.filter {
+                            it.id != note.id
+                        })
+                    }
                 }
             }
         }
-    }
 
 }

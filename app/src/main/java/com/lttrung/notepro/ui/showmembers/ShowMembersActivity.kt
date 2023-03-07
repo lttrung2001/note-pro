@@ -52,7 +52,9 @@ class ShowMembersActivity : AppCompatActivity() {
                 }
                 is Resource.Success -> {
                     binding.refreshLayout.isRefreshing = false
-                    memberAdapter.submitList(resource.data.data)
+                    val currentList = memberAdapter.currentList.toMutableList()
+                    currentList.addAll(resource.data.data)
+                    memberAdapter.submitList(currentList)
                 }
                 is Resource.Error -> {
                     binding.refreshLayout.isRefreshing = false

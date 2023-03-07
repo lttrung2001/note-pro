@@ -17,7 +17,7 @@ class NoteRepositoriesImpl @Inject constructor(override val networks: NoteNetwor
     }
 
     override fun deleteNote(noteId: String): Single<Unit> {
-        TODO("Not yet implemented")
+        return networks.deleteNote(noteId)
     }
 
     override fun getNoteDetails(noteId: String): Single<Note> {
