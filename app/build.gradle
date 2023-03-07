@@ -58,6 +58,7 @@ dependencies {
     coroutines()
     jwt()
     image()
+    customUI()
 
     // Circle image
     implementation 'de.hdodenhof:circleimageview:3.1.0'
