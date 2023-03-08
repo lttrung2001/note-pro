@@ -5,14 +5,18 @@ import com.lttrung.notepro.database.data.locals.impl.UserLocalsImpl
 import com.lttrung.notepro.database.data.networks.LoginNetworks
 import com.lttrung.notepro.database.data.networks.MemberNetworks
 import com.lttrung.notepro.database.data.networks.NoteNetworks
+import com.lttrung.notepro.database.data.networks.UserNetworks
 import com.lttrung.notepro.database.data.networks.impl.LoginRetrofitServiceImpl
 import com.lttrung.notepro.database.data.networks.impl.MemberRetrofitServiceImpl
 import com.lttrung.notepro.database.data.networks.impl.NoteRetrofitServiceImpl
+import com.lttrung.notepro.database.data.networks.impl.UserRetrofitServiceImpl
 import com.lttrung.notepro.database.repositories.MemberRepositories
 import com.lttrung.notepro.database.repositories.NoteRepositories
+import com.lttrung.notepro.database.repositories.LoginRepositories
 import com.lttrung.notepro.database.repositories.UserRepositories
 import com.lttrung.notepro.database.repositories.impl.MemberRepositoriesImpl
 import com.lttrung.notepro.database.repositories.impl.NoteRepositoriesImpl
+import com.lttrung.notepro.database.repositories.impl.LoginRepositoriesImpl
 import com.lttrung.notepro.database.repositories.impl.UserRepositoriesImpl
 import com.lttrung.notepro.ui.addnote.AddNoteUseCase
 import com.lttrung.notepro.ui.addnote.AddNoteUseCaseImpl
@@ -28,6 +32,8 @@ import com.lttrung.notepro.ui.register.RegisterUseCase
 import com.lttrung.notepro.ui.register.RegisterUseCaseImpl
 import com.lttrung.notepro.ui.showmembers.ShowMembersUseCase
 import com.lttrung.notepro.ui.showmembers.ShowMembersUseCaseImpl
+import com.lttrung.notepro.ui.viewprofile.ViewProfileUseCase
+import com.lttrung.notepro.ui.viewprofile.ViewProfileUseCaseImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -51,17 +57,23 @@ abstract class AppBindsModules {
     @Binds
     abstract fun bindsAddNoteUseCase(impl: AddNoteUseCaseImpl): AddNoteUseCase
     @Binds
-    abstract fun bindsUserRepositories(impl: UserRepositoriesImpl): UserRepositories
+    abstract fun bindsGetProfileUseCase(impl: ViewProfileUseCaseImpl): ViewProfileUseCase
+    @Binds
+    abstract fun bindsLoginRepositories(impl: LoginRepositoriesImpl): LoginRepositories
     @Binds
     abstract fun bindsNoteRepositories(impl: NoteRepositoriesImpl): NoteRepositories
     @Binds
     abstract fun bindsMemberRepositories(impl: MemberRepositoriesImpl): MemberRepositories
+    @Binds
+    abstract fun bindsUserRepositories(impl: UserRepositoriesImpl): UserRepositories
     @Binds
     abstract fun bindsLoginNetworks(impl: LoginRetrofitServiceImpl): LoginNetworks
     @Binds
     abstract fun bindsNoteNetworks(impl: NoteRetrofitServiceImpl): NoteNetworks
     @Binds
     abstract fun bindsMemberNetworks(impl: MemberRetrofitServiceImpl): MemberNetworks
+    @Binds
+    abstract fun bindsUserNetworks(impl: UserRetrofitServiceImpl): UserNetworks
     @Binds
     abstract fun bindsUserLocals(impl: UserLocalsImpl): UserLocals
 }

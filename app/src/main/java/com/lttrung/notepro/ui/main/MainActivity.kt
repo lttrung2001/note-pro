@@ -76,6 +76,7 @@ class MainActivity : AppCompatActivity() {
         initListeners()
         initAdapters()
         initObservers()
+        mainViewModel.getNotes()
     }
 
     private fun initObservers() {
@@ -179,9 +180,9 @@ class MainActivity : AppCompatActivity() {
                                 val normalNotes = normalNotesAdapter.currentList.toMutableList()
                                 normalNotes.remove(findingNote)
                                 normalNotesAdapter.submitList(normalNotes)
-                                val pinNotes = normalNotesAdapter.currentList.toMutableList()
+                                val pinNotes = pinNotesAdapter.currentList.toMutableList()
                                 pinNotes.add(note)
-                                normalNotesAdapter.submitList(pinNotes)
+                                pinNotesAdapter.submitList(pinNotes)
                             }
                         }
                     deletedNote?.let { note ->

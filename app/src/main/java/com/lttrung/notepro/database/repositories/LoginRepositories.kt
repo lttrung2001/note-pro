@@ -1,11 +1,15 @@
-package com.lttrung.notepro.database.data.networks
+package com.lttrung.notepro.database.repositories
 
+import com.lttrung.notepro.database.data.locals.UserLocals
+import com.lttrung.notepro.database.data.networks.LoginNetworks
 import com.lttrung.notepro.database.data.networks.models.User
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Singleton
 
 @Singleton
-interface LoginNetworks {
+interface LoginRepositories {
+    val locals: UserLocals
+    val networks: LoginNetworks
     fun login(email: String, password: String): Single<String>
     fun register(
         email: String,

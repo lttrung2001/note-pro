@@ -19,6 +19,11 @@ class NoteAdapter(private val onClickListener: NoteListener) :
 
     }) {
 
+//    override fun submitList(list: MutableList<Note>?) {
+//        list?.sortByDescending { it.lastModified }
+//        super.submitList(list)
+//    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_note, parent, false)
         return NoteViewHolder(view)

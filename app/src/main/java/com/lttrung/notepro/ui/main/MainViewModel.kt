@@ -20,10 +20,6 @@ class MainViewModel @Inject constructor(
     private val useCase: MainUseCase
 ) : ViewModel() {
 
-    init {
-        getNotes()
-    }
-
     val getNotes: MutableLiveData<Resource<List<Note>>> by lazy {
         MutableLiveData<Resource<List<Note>>>()
     }

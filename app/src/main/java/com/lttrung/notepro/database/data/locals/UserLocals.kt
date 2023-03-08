@@ -7,7 +7,7 @@ import javax.inject.Singleton
 
 @Singleton
 interface UserLocals {
-    fun login(currentUser: CurrentUser, refreshToken: String): Completable
-    fun changePassword(currentUser: CurrentUser): Single<Unit>
-    fun logout(currentUser: CurrentUser): Single<Unit>
+    fun login(currentUser: CurrentUser, refreshToken: String)
+    fun changePassword(password: String)
+    fun logout(currentUser: CurrentUser)
 }

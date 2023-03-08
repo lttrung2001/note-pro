@@ -15,16 +15,16 @@ class UserLocalsImpl @Inject constructor(
     private val currentUserDao: CurrentUserDao,
     private val sharedPreferences: SharedPreferences
 ) : UserLocals {
-    override fun login(currentUser: CurrentUser, refreshToken: String): Completable {
+    override fun login(currentUser: CurrentUser, refreshToken: String) {
         sharedPreferences.edit().putString(REFRESH_TOKEN, refreshToken).apply()
-        return currentUserDao.insertCurrentUser(currentUser)
+        currentUserDao.insertCurrentUser(currentUser)
     }
 
-    override fun changePassword(currentUser: CurrentUser): Single<Unit> {
+    override fun changePassword(password: String) {
         TODO("Not yet implemented")
     }
 
-    override fun logout(currentUser: CurrentUser): Single<Unit> {
+    override fun logout(currentUser: CurrentUser) {
         TODO("Not yet implemented")
     }
 }

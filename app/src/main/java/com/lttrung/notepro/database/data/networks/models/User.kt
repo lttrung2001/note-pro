@@ -1,3 +1,9 @@
 package com.lttrung.notepro.database.data.networks.models
 
-data class User(val id: String, val email: String, val fullName: String)
+import com.google.gson.annotations.SerializedName
+data class User(
+    @SerializedName("uid") val id: String,
+    val email: String,
+    val fullName: String,
+    val phoneNumber: String
+)

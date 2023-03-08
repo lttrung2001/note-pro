@@ -9,14 +9,14 @@ import io.reactivex.rxjava3.core.Single
 @Dao
 interface CurrentUserDao {
     @Insert(onConflict = REPLACE)
-    fun insertCurrentUser(currentUser: CurrentUser): Completable
+    fun insertCurrentUser(currentUser: CurrentUser)
 
     @Update(onConflict = REPLACE)
-    fun updateCurrentUser(currentUser: CurrentUser): Completable
+    fun updateCurrentUser(currentUser: CurrentUser)
 
     @Delete
-    fun deleteCurrentUser(currentUser: CurrentUser): Completable
+    fun deleteCurrentUser(currentUser: CurrentUser)
 
-    @Query("SELECT * FROM CurrentUser WHERE email = :email LIMIT 1")
-    fun getCurrentUser(email: String): Single<CurrentUser>
+    @Query("SELECT * FROM CurrentUser LIMIT 1")
+    fun getCurrentUser(): CurrentUser
 }

@@ -56,18 +56,6 @@ class LoginRetrofitServiceImpl @Inject constructor(private val service: Service)
         }
     }
 
-    override fun changePassword(oldPassword: String, newPassword: String): Single<Unit> {
-        TODO("Not yet implemented")
-    }
-
-    override fun changeProfile(fullName: String, phoneNumber: String): Single<Unit> {
-        TODO("Not yet implemented")
-    }
-
-    override fun getProfile(): Single<User> {
-        TODO("Not yet implemented")
-    }
-
     override fun forgotPassword(email: String): Single<Unit> {
         TODO("Not yet implemented")
     }
