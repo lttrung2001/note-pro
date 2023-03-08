@@ -148,8 +148,20 @@ class MainActivity : AppCompatActivity() {
             if (result.resultCode == RESULT_OK) {
                 val resultIntent = result.data
                 resultIntent?.let { intent ->
+                    val addedNote = intent.getSerializableExtra(NOTE) as Note?
                     val editedNote = intent.getSerializableExtra(EDITED_NOTE) as Note?
                     val deletedNote = intent.getSerializableExtra(DELETED_NOTE) as Note?
+                    addedNote?.let { note ->
+                        if (note.isPin) {
+                            val currentList = pinNotesAdapter.currentList.toMutableList()
+                            currentList.add(note)
+                            pinNotesAdapter.submitList(currentList)
+                        } else {
+                            val currentList = normalNotesAdapter.currentList.toMutableList()
+                            currentList.add(note)
+                            normalNotesAdapter.submitList(currentList)
+                        }
+                    }
                     editedNote?.let { note ->
                             pinNotesAdapter.currentList.find {
                                 it.id == note.id
