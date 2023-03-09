@@ -5,6 +5,10 @@ class AppConstant {
         const val NOTE = "com.lttrung.notepro.NOTE"
         const val EDITED_NOTE = "com.lttrung.notepro.EDITED_NOTE"
         const val DELETED_NOTE = "com.lttrung.notepro.DELETED_NOTE"
+        const val SELECTED_IMAGES = "com.lttrung.notepro.SELECTED_IMAGES"
+        const val USER = "com.lttrung.notepro.USER"
+
+
 
         const val USER_DATABASE_VERSION = 1
         const val USER_DATABASE_NAME = "com.lttrung.notepro.USER_DATABASE"
@@ -12,7 +16,6 @@ class AppConstant {
         const val DEFAULT_PREFERENCES_NAME = "com.lttrung.notepro.DEFAULT_PREFERENCES_NAME"
         const val REFRESH_TOKEN = "com.lttrung.notepro.REFRESH_TOKEN"
         const val ACCESS_TOKEN = "com.lttrung.notepro.ACCESS_TOKEN"
-        const val SELECTED_IMAGES = "com.lttrung.notepro.SELECTED_IMAGES"
 
         const val CAMERA_REQUEST = 100
         const val READ_EXTERNAL_STORAGE_REQUEST = 101

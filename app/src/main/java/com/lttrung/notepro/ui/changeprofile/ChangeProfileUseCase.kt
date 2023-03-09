@@ -6,5 +6,5 @@ import javax.inject.Singleton
 
 @Singleton
 interface ChangeProfileUseCase {
-    fun changeProfile(user: User): Single<User>
+    fun changeProfile(fullName: String, phoneNumber: String): Single<User>
 }

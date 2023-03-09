@@ -23,7 +23,7 @@
                 android:id="@+id/img_avt"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:src="@drawable/ic_launcher_background"
+                android:src="@drawable/me"
                 app:civ_border_color="@color/primary"
                 app:civ_border_width="2dp" />
 
@@ -45,30 +45,6 @@
             android:layout_marginBottom="16dp"
             android:text="@string/account"
             android:textSize="16sp" />
-
-        <LinearLayout
-            android:id="@+id/btn_edit_profile"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:orientation="horizontal">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_baseline_person_24"
-                app:civ_circle_background_color="@color/primary" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="36dp"
-                android:drawableEnd="@drawable/ic_baseline_arrow_forward_ios_24"
-                android:text="@string/edit_profile"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/btn_change_password"

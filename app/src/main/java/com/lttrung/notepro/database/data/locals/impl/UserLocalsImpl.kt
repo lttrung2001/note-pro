@@ -21,7 +21,9 @@ class UserLocalsImpl @Inject constructor(
     }
 
     override fun changePassword(password: String) {
-        TODO("Not yet implemented")
+        val currentUser = currentUserDao.getCurrentUser()
+        val changingUser = CurrentUser(currentUser.email, password)
+        currentUserDao.updateCurrentUser(changingUser)
     }
 
     override fun logout(currentUser: CurrentUser) {

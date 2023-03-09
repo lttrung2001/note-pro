@@ -12,15 +12,16 @@ class UserRepositoriesImpl @Inject constructor(
     override val locals: UserLocals
 ) : UserRepositories {
     override fun changePassword(oldPassword: String, newPassword: String): Single<Unit> {
-        TODO("Not yet implemented")
+        return networks.changePassword(oldPassword, newPassword).doAfterSuccess {
+            locals.changePassword(newPassword)
+        }
     }
 
     override fun changeProfile(fullName: String, phoneNumber: String): Single<User> {
-        TODO("Not yet implemented")
+        return networks.changeProfile(fullName, phoneNumber)
     }
 
     override fun getProfile(): Single<User> {
         return networks.getProfile()
     }
-
 }

@@ -9,8 +9,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.lttrung.notepro.R
+import com.lttrung.notepro.database.data.networks.models.User
 import com.lttrung.notepro.databinding.ActivityViewProfileBinding
 import com.lttrung.notepro.ui.changeprofile.ChangeProfileActivity
+import com.lttrung.notepro.utils.AppConstant.Companion.USER
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -61,6 +63,13 @@ class ViewProfileActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.action_edit_info -> {
                 val editProfileIntent = Intent(this, ChangeProfileActivity::class.java)
+                val user = User(
+                    binding.tvId.text.toString(),
+                    binding.tvEmail.text.toString(),
+                    binding.tvFullName.text.toString(),
+                    binding.tvPhoneNumber.text.toString()
+                )
+                editProfileIntent.putExtra(USER, user)
                 launcher.launch(editProfileIntent)
             }
             else -> {
@@ -73,7 +82,12 @@ class ViewProfileActivity : AppCompatActivity() {
     private val launcher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
-
+                val resultIntent = result.data
+                resultIntent?.let {
+                    val user = resultIntent.getSerializableExtra(USER) as User
+                    binding.tvFullName.text = user.fullName
+                    binding.tvPhoneNumber.text = user.phoneNumber
+                }
             }
         }
 }

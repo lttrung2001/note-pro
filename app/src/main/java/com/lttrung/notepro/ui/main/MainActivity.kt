@@ -16,6 +16,7 @@ import com.lttrung.notepro.databinding.ActivityMainBinding
 import com.lttrung.notepro.ui.addnote.AddNoteActivity
 import com.lttrung.notepro.ui.base.adapters.note.NoteAdapter
 import com.lttrung.notepro.ui.base.adapters.note.NoteListener
+import com.lttrung.notepro.ui.editnote.EditNoteActivity
 import com.lttrung.notepro.ui.notedetails.NoteDetailsActivity
 import com.lttrung.notepro.ui.setting.SettingActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.DELETED_NOTE
@@ -34,9 +35,17 @@ class MainActivity : AppCompatActivity() {
     private val noteListener: NoteListener by lazy {
         object : NoteListener {
             override fun onClick(note: Note) {
-                val noteDetailsIntent = Intent(this@MainActivity, NoteDetailsActivity::class.java)
-                noteDetailsIntent.putExtra(NOTE, note)
-                launcher.launch(noteDetailsIntent)
+
+                if (note.hasEditPermission()) {
+                    val editNoteIntent = Intent(this@MainActivity, EditNoteActivity::class.java)
+                    editNoteIntent.putExtra(NOTE, note)
+                    launcher.launch(editNoteIntent)
+                } else {
+                    val noteDetailsIntent =
+                        Intent(this@MainActivity, NoteDetailsActivity::class.java)
+                    noteDetailsIntent.putExtra(NOTE, note)
+                    launcher.launch(noteDetailsIntent)
+                }
             }
         }
     }
@@ -164,16 +173,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                     editedNote?.let { note ->
-                            pinNotesAdapter.currentList.find {
-                                it.id == note.id
-                            }?.let { findingNote ->
-                                val pinNotes = pinNotesAdapter.currentList.toMutableList()
-                                pinNotes.remove(findingNote)
-                                pinNotesAdapter.submitList(pinNotes)
-                                val normalNotes = normalNotesAdapter.currentList.toMutableList()
-                                normalNotes.add(note)
-                                normalNotesAdapter.submitList(normalNotes)
-                            }
+                        if (note.isPin) {
                             normalNotesAdapter.currentList.find {
                                 it.id == note.id
                             }?.let { findingNote ->
@@ -184,7 +184,20 @@ class MainActivity : AppCompatActivity() {
                                 pinNotes.add(note)
                                 pinNotesAdapter.submitList(pinNotes)
                             }
+                        } else {
+                            pinNotesAdapter.currentList.find {
+                                it.id == note.id
+                            }?.let { findingNote ->
+                                val pinNotes = pinNotesAdapter.currentList.toMutableList()
+                                pinNotes.remove(findingNote)
+                                pinNotesAdapter.submitList(pinNotes)
+                                val normalNotes = normalNotesAdapter.currentList.toMutableList()
+                                normalNotes.add(note)
+                                normalNotesAdapter.submitList(normalNotes)
+                            }
                         }
+
+                    }
                     deletedNote?.let { note ->
                         val pinNotes = pinNotesAdapter.currentList.toMutableList()
                         val normalNotes = normalNotesAdapter.currentList.toMutableList()
