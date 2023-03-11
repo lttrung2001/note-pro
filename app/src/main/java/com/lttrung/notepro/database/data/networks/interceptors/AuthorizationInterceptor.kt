@@ -28,7 +28,6 @@ class AuthorizationInterceptor @Inject constructor(
         // Get access token
         val accessToken = try {
             val token = sharedPreferences.getString(ACCESS_TOKEN, "")
-//            val token = ""
             // If access token is empty or null, then fetch access token using refresh token
             if (token.isNullOrEmpty()) {
                 fetchAccessToken().also {
@@ -40,7 +39,7 @@ class AuthorizationInterceptor @Inject constructor(
                 // Get exp time
                 val exp = decoded.getClaim("exp").asLong()!!
                 // If token expired
-                if (exp < Date().time + 30) { // 30 seconds to handle request
+                if (exp < System.currentTimeMillis() / 1000 + 30) { // 30 seconds to handle request
                     fetchAccessToken().also {
                         sharedPreferences.edit().putString(ACCESS_TOKEN, it).apply()
                     }
@@ -60,6 +59,7 @@ class AuthorizationInterceptor @Inject constructor(
     private fun fetchAccessToken(): String {
         // Get refresh token
         val refreshToken = sharedPreferences.getString(REFRESH_TOKEN, "")
+        Log.i("INFO", refreshToken ?: "Refresh token empty")
         if (refreshToken.isNullOrEmpty()) {
             throw InvalidTokenException("Refresh token not found or empty")
         }

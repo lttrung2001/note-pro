@@ -14,8 +14,8 @@ interface CurrentUserDao {
     @Update(onConflict = REPLACE)
     fun updateCurrentUser(currentUser: CurrentUser)
 
-    @Delete
-    fun deleteCurrentUser(currentUser: CurrentUser)
+    @Query("DELETE FROM CurrentUser")
+    fun deleteCurrentUser()
 
     @Query("SELECT * FROM CurrentUser LIMIT 1")
     fun getCurrentUser(): CurrentUser

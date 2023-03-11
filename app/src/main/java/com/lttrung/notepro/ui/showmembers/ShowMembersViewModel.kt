@@ -57,4 +57,33 @@ class ShowMembersViewModel @Inject constructor(
             getMembersDisposable?.let { composite.add(it) }
         }
     }
+
+    val member: MutableLiveData<Resource<Member>> by lazy {
+        MutableLiveData<Resource<Member>>()
+    }
+
+    private var memberDisposable: Disposable? = null
+
+    private val memberObserver: Consumer<Member> by lazy {
+        Consumer {
+            member.postValue(Resource.Success(it))
+        }
+    }
+
+    fun addMember(noteId: String, email: String, role: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            member.postValue(Resource.Loading())
+            memberDisposable?.let {
+                composite.remove(it)
+            }
+            memberDisposable =
+                useCase.addMember(noteId, email, role).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(memberObserver, this@ShowMembersViewModel::addMemberError)
+            memberDisposable?.let { composite.add(it) }
+        }
+    }
+
+    private fun addMemberError(t: Throwable) {
+        member.postValue(Resource.Error(t.message ?: "Unknown error"))
+    }
 }

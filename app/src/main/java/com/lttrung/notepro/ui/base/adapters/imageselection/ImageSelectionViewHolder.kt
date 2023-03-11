@@ -1,10 +1,10 @@
 package com.lttrung.notepro.ui.base.adapters.imageselection
 
+import android.net.Uri
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.lttrung.notepro.R
 import com.lttrung.notepro.database.data.networks.models.Image
-import com.lttrung.notepro.databinding.LayoutImageBinding
 import com.lttrung.notepro.databinding.LayoutImageSelectionBinding
 
 class ImageSelectionViewHolder(private val binding: LayoutImageSelectionBinding) :
@@ -17,6 +17,10 @@ class ImageSelectionViewHolder(private val binding: LayoutImageSelectionBinding)
         binding.checkbox.isChecked = false
         binding.checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
             image.isSelected = isChecked
+        }
+        binding.root.setOnClickListener {
+            image.isSelected = !image.isSelected
+            binding.checkbox.isChecked = image.isSelected
         }
     }
 }

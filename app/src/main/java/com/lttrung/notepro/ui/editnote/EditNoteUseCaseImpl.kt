@@ -16,4 +16,8 @@ class EditNoteUseCaseImpl @Inject constructor(
         return repositories.deleteNote(noteId)
     }
 
+    override fun getNoteDetails(noteId: String): Single<Note> {
+        return repositories.getNoteDetails(noteId)
+    }
+
 }

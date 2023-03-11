@@ -1,5 +1,6 @@
 package com.lttrung.notepro.database.data.networks.impl
 
+import android.util.Log
 import android.webkit.URLUtil
 import com.lttrung.notepro.database.data.networks.NoteNetworks
 import com.lttrung.notepro.database.data.networks.models.ApiResponse
@@ -96,7 +97,7 @@ class NoteRetrofitServiceImpl @Inject constructor(
     }
 
     override fun deleteNote(noteId: String): Single<Unit> {
-        return service.deleteNote(noteId).map {response ->
+        return service.deleteNote(noteId).map { response ->
             if (response.code() == HttpStatusCodes.OK.code) {
                 response.body()!!.data
             } else {

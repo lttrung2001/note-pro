@@ -7,5 +7,6 @@ import javax.inject.Singleton
 
 @Singleton
 interface ShowMembersUseCase {
+    fun addMember(noteId: String, email: String, role: String): Single<Member>
     fun getMembers(noteId: String, pageIndex: Int, limit: Int): Single<Paging<Member>>
 }

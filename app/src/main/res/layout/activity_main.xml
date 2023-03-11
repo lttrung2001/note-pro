@@ -22,25 +22,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cv_search"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="16dp"
-                    app:cardCornerRadius="16dp">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edt_search"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:backgroundTint="@android:color/transparent"
-                        android:drawableEnd="@drawable/ic_baseline_search_24"
-                        android:hint="@string/search_here"
-                        android:inputType="text"
-                        android:paddingHorizontal="16dp" />
-                </androidx.cardview.widget.CardView>
-
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/tv_pinned"
                     android:layout_width="match_parent"

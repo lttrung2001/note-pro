@@ -9,6 +9,7 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.lttrung.notepro.R
 import com.lttrung.notepro.database.data.networks.models.Note
@@ -30,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var pinNotesAdapter: NoteAdapter
     private lateinit var normalNotesAdapter: NoteAdapter
+    private lateinit var searchView: SearchView
     private val mainViewModel: MainViewModel by viewModels()
 
     private val noteListener: NoteListener by lazy {
@@ -58,7 +60,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val fabOnScrollChangeListener: View.OnScrollChangeListener by lazy {
-        View.OnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+        View.OnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
             if (oldScrollY == 0 && scrollY > 0) {
                 binding.fab.shrink()
             } else if (scrollY == 0) {
@@ -73,9 +75,38 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val btnSearchOnClickListener: View.OnClickListener by lazy {
-        View.OnClickListener {
-            startActivity(Intent(this, SettingActivity::class.java))
+    private val searchListener: SearchView.OnQueryTextListener by lazy {
+        object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let {
+                    val filterPinNotes = pinNotesAdapter.currentList.filter {
+                        it.title.contains(query) || it.content.contains(query)
+                    }
+                    pinNotesAdapter.submitList(filterPinNotes)
+                    val filterNormalNotes = normalNotesAdapter.currentList.filter {
+                        it.title.contains(query) || it.content.contains(query)
+                    }
+                    normalNotesAdapter.submitList(filterNormalNotes)
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText == null || newText.isBlank()) {
+                    val resource = mainViewModel.getNotes.value
+                    if (resource is Resource.Success) {
+                        val pinNotes = resource.data.filter {
+                            it.isPin
+                        }
+                        val normalNotes = resource.data.filter {
+                            !it.isPin
+                        }
+                        pinNotesAdapter.submitList(pinNotes)
+                        normalNotesAdapter.submitList(normalNotes)
+                    }
+                }
+                return true
+            }
         }
     }
 
@@ -85,7 +116,9 @@ class MainActivity : AppCompatActivity() {
         initListeners()
         initAdapters()
         initObservers()
-        mainViewModel.getNotes()
+        if (mainViewModel.getNotes.value == null) {
+            mainViewModel.getNotes()
+        }
     }
 
     private fun initObservers() {
@@ -122,32 +155,35 @@ class MainActivity : AppCompatActivity() {
 
     private fun initListeners() {
         binding.fab.setOnClickListener(fabOnClickListener)
-        binding.edtSearch.setOnClickListener(btnSearchOnClickListener)
         binding.refreshLayout.setOnScrollChangeListener(fabOnScrollChangeListener)
         binding.refreshLayout.setOnRefreshListener(refreshListener)
     }
 
     private fun initViews() {
         binding = ActivityMainBinding.inflate(layoutInflater)
-
         supportActionBar?.setLogo(R.drawable.ic_baseline_sticky_note_2_24)
         supportActionBar?.setDisplayUseLogoEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-
         setContentView(binding.root)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
-        return true
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        searchView = menu?.getItem(0)?.actionView as SearchView
+        searchView.setOnQueryTextListener(searchListener)
+        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> {
                 startActivity(Intent(this, SettingActivity::class.java))
-                true
+                super.onOptionsItemSelected(item)
             }
             else -> super.onOptionsItemSelected(item)
         }

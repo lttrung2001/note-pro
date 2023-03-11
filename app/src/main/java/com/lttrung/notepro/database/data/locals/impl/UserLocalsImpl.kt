@@ -26,7 +26,8 @@ class UserLocalsImpl @Inject constructor(
         currentUserDao.updateCurrentUser(changingUser)
     }
 
-    override fun logout(currentUser: CurrentUser) {
-        TODO("Not yet implemented")
+    override fun logout() {
+        sharedPreferences.edit().remove(ACCESS_TOKEN).remove(REFRESH_TOKEN).apply()
+        currentUserDao.deleteCurrentUser()
     }
 }

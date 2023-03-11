@@ -42,7 +42,6 @@ class LoginActivity : AppCompatActivity() {
         View.OnClickListener {
             val email = binding.edtEmail.text.toString()
             val password = binding.edtPassword.text.toString()
-            Toast.makeText(this, email + password, Toast.LENGTH_SHORT).show()
             if (email.isBlank() || password.isBlank()) {
                 binding.edtPassword.error = getString(R.string.all_input_required)
             } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {

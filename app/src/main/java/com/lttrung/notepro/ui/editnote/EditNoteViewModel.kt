@@ -27,6 +27,10 @@ class EditNoteViewModel @Inject constructor(
         MutableLiveData<Resource<Unit>>()
     }
 
+    val noteDetails: MutableLiveData<Resource<Note>> by lazy {
+        MutableLiveData<Resource<Note>>()
+    }
+
     private val composite: CompositeDisposable by lazy {
         CompositeDisposable()
     }
@@ -42,6 +46,13 @@ class EditNoteViewModel @Inject constructor(
     private val deleteNoteObserver: Consumer<Unit> by lazy {
         Consumer {
             deleteNote.postValue(Resource.Success(it))
+        }
+    }
+
+    private var noteDetailsDisposable: Disposable? = null
+    private val noteDetailsObserver: Consumer<Note> by lazy {
+        Consumer {
+            noteDetails.postValue(Resource.Success(it))
         }
     }
 
@@ -90,6 +101,31 @@ class EditNoteViewModel @Inject constructor(
             }
             else -> {
                 deleteNote.postValue(Resource.Error(t.message ?: "Unknown error"))
+            }
+        }
+    }
+
+    fun getNoteDetails(noteId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            noteDetails.postValue(Resource.Loading())
+            noteDetailsDisposable?.let {
+                composite.remove(it)
+                it.dispose()
+            }
+            noteDetailsDisposable =
+                useCase.getNoteDetails(noteId).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(noteDetailsObserver, this@EditNoteViewModel::getNoteDetailsError)
+            noteDetailsDisposable?.let { composite.add(it) }
+        }
+    }
+
+    private fun getNoteDetailsError(t: Throwable) {
+        when (t) {
+            is ConnectivityException -> {
+                noteDetails.postValue(Resource.Error(t.message))
+            }
+            else -> {
+                noteDetails.postValue(Resource.Error(t.message ?: "Unknown error"))
             }
         }
     }

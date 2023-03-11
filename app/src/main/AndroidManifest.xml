@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
+    <!-- requestLegacyExternalStorage use to request access to read media from Android phone -->
     <application
         android:name=".NoteProApplication"
         android:allowBackup="true"
@@ -15,11 +15,15 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.NotePro"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".ui.editmember.EditMemberActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.viewgallery.ViewGalleryActivity"
             android:exported="false" />
@@ -30,30 +34,11 @@
             android:parentActivityName=".ui.viewprofile.ViewProfileActivity"
             android:theme="@style/Theme.NotePro" />
         <activity
-            android:name=".ui.forgotpassword.CreateNewPasswordActivity"
+            android:name=".ui.resetpassword.ResetPasswordActivity"
             android:exported="true"
             android:label="@string/back"
-            android:parentActivityName=".ui.forgotpassword.SendInstructionsResultActivity"
-            android:theme="@style/Theme.NotePro">
-            <tools:validation testUrl="https://www.google.com" />
-
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="www.google.com"
-                    android:scheme="https" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".ui.forgotpassword.SendInstructionsResultActivity"
-            android:exported="false"
-            android:label="@string/back"
             android:parentActivityName=".ui.forgotpassword.ForgotPasswordActivity"
-            android:theme="@style/Theme.NotePro.NoActionBar" />
+            android:theme="@style/Theme.NotePro" />
         <activity
             android:name=".ui.forgotpassword.ForgotPasswordActivity"
             android:exported="false"
@@ -98,10 +83,6 @@
             android:label="@string/add_note"
             android:parentActivityName=".ui.main.MainActivity"
             android:theme="@style/Theme.NotePro" />
-        <activity
-            android:name=".ui.entry.LoadingActivity"
-            android:exported="true"
-            android:theme="@style/Theme.NotePro.NoActionBar" />
         <activity
             android:name=".ui.setting.SettingActivity"
             android:exported="false"

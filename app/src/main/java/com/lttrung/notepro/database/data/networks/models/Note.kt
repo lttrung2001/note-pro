@@ -1,6 +1,7 @@
 package com.lttrung.notepro.database.data.networks.models
 
 import java.io.Serializable
+import java.util.*
 
 data class Note(
     val id: String,

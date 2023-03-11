@@ -3,6 +3,7 @@ package com.lttrung.notepro.ui.main
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lttrung.notepro.database.data.networks.models.Member
 import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.exceptions.ConnectivityException
 import com.lttrung.notepro.utils.Resource
@@ -41,7 +42,6 @@ class MainViewModel @Inject constructor(
             getNotes.postValue(Resource.Loading())
             getNotesDisposable?.let {
                 composite.remove(it)
-                it.dispose()
             }
             getNotesDisposable = useCase.getNotes().observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observerGetNotes, this@MainViewModel::getNotesError)
@@ -59,6 +59,4 @@ class MainViewModel @Inject constructor(
             }
         }
     }
-
-
 }

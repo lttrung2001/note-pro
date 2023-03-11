@@ -29,10 +29,10 @@ class LoginRepositoriesImpl @Inject constructor(
     }
 
     override fun forgotPassword(email: String): Single<Unit> {
-        TODO("Not yet implemented")
+        return networks.forgotPassword(email)
     }
 
     override fun resetPassword(code: String, newPassword: String): Single<Unit> {
-        TODO("Not yet implemented")
+        return networks.resetPassword(code, newPassword)
     }
 }

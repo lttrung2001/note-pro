@@ -7,6 +7,10 @@ class AppConstant {
         const val DELETED_NOTE = "com.lttrung.notepro.DELETED_NOTE"
         const val SELECTED_IMAGES = "com.lttrung.notepro.SELECTED_IMAGES"
         const val USER = "com.lttrung.notepro.USER"
+        const val MEMBER = "com.lttrung.notepro.MEMBER"
+        const val EDITED_MEMBER = "com.lttrung.notepro.EDITED_MEMBER"
+        const val DELETED_MEMBER = "com.lttrung.notepro.DELETED_MEMBER"
+
 
 
 

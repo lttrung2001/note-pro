@@ -1,11 +1,16 @@
 package com.lttrung.notepro.ui.register
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Patterns
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.github.razir.progressbutton.attachTextChangeAnimator
+import com.github.razir.progressbutton.bindProgressButton
+import com.github.razir.progressbutton.hideProgress
+import com.github.razir.progressbutton.showProgress
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityRegisterBinding
 import com.lttrung.notepro.utils.Resource
@@ -44,11 +49,13 @@ class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityRegisterBinding.inflate(layoutInflater)
-
+        initViews()
         setupListener()
         setupObserver()
+    }
 
+    private fun initViews() {
+        binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
     }
 
@@ -56,11 +63,20 @@ class RegisterActivity : AppCompatActivity() {
         viewModel.register.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
+                    binding.btnRegister.isClickable = false
+                    binding.btnRegister.showProgress {
+                        buttonTextRes = R.string.loading
+                        progressColor = Color.WHITE
+                    }
                 }
                 is Resource.Success -> {
+                    binding.btnRegister.isClickable = true
+                    binding.btnRegister.hideProgress(R.string.register)
                     finish()
                 }
                 is Resource.Error -> {
+                    binding.btnRegister.isClickable = true
+                    binding.btnRegister.hideProgress(R.string.register)
                 }
             }
         }
@@ -69,5 +85,8 @@ class RegisterActivity : AppCompatActivity() {
     private fun setupListener() {
         binding.btnToLogin.setOnClickListener(btnToLoginOnClickListener)
         binding.btnRegister.setOnClickListener(btnRegisterOnClickListener)
+
+        bindProgressButton(binding.btnRegister)
+        binding.btnRegister.attachTextChangeAnimator()
     }
 }

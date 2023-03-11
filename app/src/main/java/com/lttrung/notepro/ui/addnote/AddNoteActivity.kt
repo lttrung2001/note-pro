@@ -2,13 +2,11 @@ package com.lttrung.notepro.ui.addnote
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.lttrung.notepro.R
 import com.lttrung.notepro.database.data.networks.models.Image
 import com.lttrung.notepro.database.data.networks.models.Note
@@ -21,6 +19,7 @@ import com.lttrung.notepro.utils.Resource
 import com.ramotion.cardslider.CardSliderLayoutManager
 import com.ramotion.cardslider.CardSnapHelper
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.math.absoluteValue
 
 @AndroidEntryPoint
 class AddNoteActivity : AddImagesActivity() {
@@ -98,12 +97,12 @@ class AddNoteActivity : AddImagesActivity() {
             }
             R.id.action_save -> {
                 val note = Note(
-                    "",
+                    String(),
                     binding.edtNoteTitle.text?.trim().toString(),
                     binding.edtNoteDesc.text?.trim().toString(),
                     0,
                     menu.getItem(0).isChecked,
-                    "",
+                    String(),
                     imagesAdapter.currentList
                 )
                 addNoteViewModel.addNote(note)

@@ -13,6 +13,34 @@ import javax.inject.Inject
 
 class MemberRetrofitServiceImpl @Inject constructor(private val service: Service) : MemberNetworks {
     interface Service {
+        @FormUrlEncoded
+        @POST("$PATH/add-member")
+        fun addMember(
+            @Query("noteId") noteId: String,
+            @Field("email") email: String,
+            @Field("role") role: String
+        ): Single<Response<ApiResponse<Member>>>
+
+        @FormUrlEncoded
+        @PUT("$PATH/edit-member")
+        fun editMember(
+            @Query("noteId") noteId: String,
+            @Query("memberId") memberId: String,
+            @Field("role") role: String
+        ): Single<Response<ApiResponse<Member>>>
+
+        @DELETE("$PATH/delete-member")
+        fun deleteMember(
+            @Query("noteId") noteId: String,
+            @Query("memberId") memberId: String
+        ): Single<Response<ApiResponse<Unit>>>
+
+        @GET("$PATH/get-member-details")
+        fun getMemberDetails(
+            @Query("noteId") noteId: String,
+            @Query("memberId") memberId: String
+        ): Single<Response<ApiResponse<Member>>>
+
         @GET("$PATH/get-members")
         fun getMembers(
             @Query("noteId") noteId: String,
@@ -21,20 +49,44 @@ class MemberRetrofitServiceImpl @Inject constructor(private val service: Service
         ): Single<Response<ApiResponse<Paging<Member>>>>
     }
 
-    override fun addMember(noteId: String, email: String): Single<Member> {
-        TODO("Not yet implemented")
+    override fun addMember(noteId: String, email: String, role: String): Single<Member> {
+        return service.addMember(noteId, email, role).map { response ->
+            if (response.code() == HttpStatusCodes.OK.code) {
+                response.body()!!.data
+            } else {
+                throw Exception(response.body()!!.message)
+            }
+        }
     }
 
     override fun editMember(noteId: String, member: Member): Single<Member> {
-        TODO("Not yet implemented")
+        return service.editMember(noteId, member.id, member.role).map { response ->
+            if (response.code() == HttpStatusCodes.OK.code) {
+                response.body()!!.data
+            } else {
+                throw Exception(response.body()!!.message)
+            }
+        }
     }
 
     override fun deleteMember(noteId: String, memberId: String): Single<Unit> {
-        TODO("Not yet implemented")
+        return service.deleteMember(noteId, memberId).map { response ->
+            if (response.code() == HttpStatusCodes.OK.code) {
+                response.body()!!.data
+            } else {
+                throw Exception(response.body()!!.message)
+            }
+        }
     }
 
     override fun getMemberDetails(noteId: String, memberId: String): Single<Member> {
-        TODO("Not yet implemented")
+        return service.getMemberDetails(noteId, memberId).map { response ->
+            if (response.code() == HttpStatusCodes.OK.code) {
+                response.body()!!.data
+            } else {
+                throw Exception(response.body()!!.message)
+            }
+        }
     }
 
     override fun getMembers(noteId: String, pageIndex: Int, limit: Int): Single<Paging<Member>> {

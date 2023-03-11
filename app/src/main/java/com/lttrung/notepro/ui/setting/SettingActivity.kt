@@ -4,16 +4,21 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.registerForActivityResult
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.lttrung.notepro.database.data.locals.UserLocals
 import com.lttrung.notepro.databinding.ActivitySettingBinding
 import com.lttrung.notepro.ui.changepassword.ChangePasswordActivity
-import com.lttrung.notepro.ui.changeprofile.ChangeProfileActivity
 import com.lttrung.notepro.ui.login.LoginActivity
 import com.lttrung.notepro.ui.viewprofile.ViewProfileActivity
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SettingActivity : AppCompatActivity() {
+    @Inject lateinit var userLocals: UserLocals
     private lateinit var binding: ActivitySettingBinding
 
     private val viewProfileListener: View.OnClickListener by lazy {
@@ -32,6 +37,9 @@ class SettingActivity : AppCompatActivity() {
 
     private val logoutOnClickListener: View.OnClickListener by lazy {
         View.OnClickListener {
+            lifecycleScope.launch(Dispatchers.IO) {
+                userLocals.logout()
+            }
             val logoutIntent = Intent(this, LoginActivity::class.java)
             logoutIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(logoutIntent)

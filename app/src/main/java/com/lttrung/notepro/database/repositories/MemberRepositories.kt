@@ -9,7 +9,7 @@ import javax.inject.Singleton
 @Singleton
 interface MemberRepositories {
     val networks: MemberNetworks
-    fun addMember(noteId: String, email: String): Single<Member>
+    fun addMember(noteId: String, email: String, role: String): Single<Member>
     fun editMember(noteId: String, member: Member): Single<Member>
     fun deleteMember(noteId: String, memberId: String): Single<Unit>
     fun getMemberDetails(noteId: String, memberId: String): Single<Member>

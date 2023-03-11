@@ -2,6 +2,7 @@ package com.lttrung.notepro.ui.editnote
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -39,6 +40,10 @@ class EditNoteActivity : AddImagesActivity() {
         initAdapter()
         initData()
         initObservers()
+        if (editNoteViewModel.noteDetails.value == null) {
+            val note = intent.getSerializableExtra(NOTE) as Note
+            editNoteViewModel.getNoteDetails(note.id)
+        }
     }
 
     private fun initData() {
@@ -74,7 +79,7 @@ class EditNoteActivity : AddImagesActivity() {
                     finish()
                 }
                 is Resource.Error -> {
-
+                    Log.e("ERROR", resource.message)
                 }
             }
         }
@@ -92,7 +97,26 @@ class EditNoteActivity : AddImagesActivity() {
                     finish()
                 }
                 is Resource.Error -> {
+                    Log.e("ERROR", resource.message)
+                }
+            }
+        }
 
+        editNoteViewModel.noteDetails.observe(this) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+
+                }
+                is Resource.Success -> {
+                    val note = resource.data
+                    intent.putExtra(NOTE, note)
+                    binding.edtNoteTitle.setText(note.title)
+                    binding.edtNoteDesc.setText(note.content)
+                    binding.tvLastModified.text = note.lastModified.toString()
+                    imagesAdapter.submitList(note.images)
+                }
+                is Resource.Error -> {
+                    Log.e("ERROR", resource.message)
                 }
             }
         }

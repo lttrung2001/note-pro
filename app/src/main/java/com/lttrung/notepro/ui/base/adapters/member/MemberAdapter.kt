@@ -7,14 +7,20 @@ import androidx.recyclerview.widget.ListAdapter
 import com.lttrung.notepro.database.data.networks.models.Member
 import com.lttrung.notepro.databinding.LayoutMemberBinding
 
-class MemberAdapter : ListAdapter<Member, MemberViewHolder>(memberItemCallback) {
+class MemberAdapter(
+    private val listener: MemberListener
+) : ListAdapter<Member, MemberViewHolder>(memberItemCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemberViewHolder {
         val binding = LayoutMemberBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MemberViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: MemberViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        val member = getItem(position)
+        holder.bind(member)
+        holder.binding.root.setOnClickListener {
+            listener.onClick(member)
+        }
     }
 
     companion object {

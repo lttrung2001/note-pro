@@ -9,5 +9,5 @@ import javax.inject.Singleton
 interface UserLocals {
     fun login(currentUser: CurrentUser, refreshToken: String)
     fun changePassword(password: String)
-    fun logout(currentUser: CurrentUser)
+    fun logout()
 }
