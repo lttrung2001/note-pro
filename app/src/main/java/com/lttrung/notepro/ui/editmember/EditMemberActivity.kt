@@ -88,10 +88,10 @@ class EditMemberActivity : AppCompatActivity() {
         editMemberViewModel.memberDetails.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-                    binding.deleteButton.isClickable = false
+//                    binding.deleteButton.isClickable = false
                 }
                 is Resource.Success -> {
-                    binding.deleteButton.isClickable = true
+//                    binding.deleteButton.isClickable = true
                     val member = resource.data
                     binding.tvId.text = member.id
                     binding.tvEmail.text = member.email
@@ -100,7 +100,7 @@ class EditMemberActivity : AppCompatActivity() {
                     binding.roleSpinner.setSelection(roleAdapter.getPosition(member.role))
                 }
                 is Resource.Error -> {
-                    binding.deleteButton.isClickable = false
+//                    binding.deleteButton.isClickable = false
                     Log.e("ERROR", resource.message)
                 }
             }

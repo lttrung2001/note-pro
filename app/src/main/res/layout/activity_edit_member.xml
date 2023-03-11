@@ -137,12 +137,23 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_phone_number" />
 
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/role_spinner"
-            android:layout_width="match_parent"
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/title_role"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingVertical="16dp"
+            android:text="@string/role"
+            android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title_phone_number" />
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/role_spinner"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/title_role"
+            app:layout_constraintLeft_toRightOf="@id/title_role"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_phone_number"
             tools:listitem="@android:layout/simple_list_item_1" />
