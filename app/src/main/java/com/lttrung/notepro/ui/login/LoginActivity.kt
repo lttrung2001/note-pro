@@ -25,6 +25,7 @@ import com.lttrung.notepro.ui.main.MainActivity
 import com.lttrung.notepro.ui.register.RegisterActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.RC_SIGN_IN
 import com.lttrung.notepro.utils.Resource
+import com.lttrung.notepro.utils.ValidationHelper
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -40,13 +41,17 @@ class LoginActivity : AppCompatActivity() {
 
     private val btnLoginOnClickListener: View.OnClickListener by lazy {
         View.OnClickListener {
-            val email = binding.edtEmail.text.toString()
-            val password = binding.edtPassword.text.toString()
-            if (email.isBlank() || password.isBlank()) {
-                binding.edtPassword.error = getString(R.string.all_input_required)
-            } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                binding.edtPassword.error = getString(R.string.this_text_is_not_email_type)
-            } else {
+            val email = binding.edtEmail.text?.trim().toString()
+            val password = binding.edtPassword.text?.trim().toString()
+            val helper = ValidationHelper
+            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                helper.hasError = true
+                binding.emailLayout.error = getString(R.string.this_text_is_not_email_type)
+            }
+            if (!helper.matchesPasswordLength(password)) {
+                binding.passwordLayout.error = getString(R.string.password_check)
+            }
+            if (!helper.hasError) {
                 viewModel.login(email, password)
             }
         }
@@ -107,7 +112,7 @@ class LoginActivity : AppCompatActivity() {
                 is Resource.Error -> {
                     binding.btnLogin.hideProgress(R.string.login)
                     binding.btnLogin.isClickable = true
-                    binding.edtPassword.error = resource.message
+                    binding.passwordLayout.error = resource.message
                 }
             }
         }

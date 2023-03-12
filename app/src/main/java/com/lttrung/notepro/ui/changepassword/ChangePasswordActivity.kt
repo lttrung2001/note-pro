@@ -13,6 +13,7 @@ import com.github.razir.progressbutton.showProgress
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityChangePasswordBinding
 import com.lttrung.notepro.utils.Resource
+import com.lttrung.notepro.utils.ValidationHelper
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -67,14 +68,24 @@ class ChangePasswordActivity : AppCompatActivity() {
             val oldPassword = binding.currentPassword.text?.trim().toString()
             val newPassword = binding.newPassword.text?.trim().toString()
             val confirmPassword = binding.confirmPassword.text?.trim().toString()
+            val helper = ValidationHelper
+
             if (oldPassword == newPassword) {
-                changePasswordViewModel.changePassword.postValue(Resource.Error("Password must be different!"))
+                helper.hasError = true
+                binding.newPasswordLayout.error = getString(R.string.your_new_password_must_be_different_from_previous_used_passwords)
             } else if (newPassword != confirmPassword) {
-                changePasswordViewModel.changePassword.postValue(Resource.Error("New password not match!"))
+                helper.hasError = true
+                binding.confirmPasswordLayout.error = getString(R.string.password_not_match)
             } else {
-                changePasswordViewModel.changePassword(
-                    oldPassword, newPassword
-                )
+                if (!helper.matchesPasswordLength(oldPassword)) {
+                    binding.currentPasswordLayout.error = getString(R.string.password_check)
+                }
+                if (!helper.matchesPasswordLength(newPassword)) {
+                    binding.newPasswordLayout.error = getString(R.string.password_check)
+                }
+                if (!helper.hasError) {
+                    changePasswordViewModel.changePassword(oldPassword, newPassword)
+                }
             }
         }
     }

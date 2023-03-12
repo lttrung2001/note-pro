@@ -93,7 +93,7 @@ class AddMemberFragment : BottomSheetDialogFragment() {
             if (Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 addMemberViewModel.addMember(note.id, email, role)
             } else {
-                addMemberViewModel.member.postValue(Resource.Error("Not email"))
+                binding!!.email.error = getString(R.string.this_text_is_not_email_type)
             }
         }
     }

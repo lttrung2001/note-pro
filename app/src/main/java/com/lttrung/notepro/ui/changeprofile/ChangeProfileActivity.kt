@@ -12,6 +12,7 @@ import com.lttrung.notepro.database.data.networks.models.User
 import com.lttrung.notepro.databinding.ActivityChangeProfileBinding
 import com.lttrung.notepro.utils.AppConstant.Companion.USER
 import com.lttrung.notepro.utils.Resource
+import com.lttrung.notepro.utils.ValidationHelper
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -71,9 +72,18 @@ class ChangeProfileActivity : AppCompatActivity() {
             R.id.action_save_info -> {
                 val fullName = binding.tvFullName.text?.trim().toString()
                 val phoneNumber = binding.tvPhoneNumber.text?.trim().toString()
-                val user = intent.getSerializableExtra(USER) as User
-                intent.putExtra(USER, User(user.id, user.email, fullName, phoneNumber))
-                changeProfileViewModel.changeProfile(fullName, phoneNumber)
+                val helper = ValidationHelper
+                if (!helper.matchesFullName(fullName)) {
+                    binding.tvFullName.error = getString(R.string.invalid_full_name)
+                }
+                if (!helper.matchesPhoneNumber(phoneNumber)) {
+                    binding.tvPhoneNumber.error = getString(R.string.phone_number_check)
+                }
+                if (!helper.hasError) {
+                    val user = intent.getSerializableExtra(USER) as User
+                    intent.putExtra(USER, User(user.id, user.email, fullName, phoneNumber))
+                    changeProfileViewModel.changeProfile(fullName, phoneNumber)
+                }
             }
             else -> {
                 onBackPressed()

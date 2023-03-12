@@ -12,6 +12,7 @@ import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityResetPasswordBinding
 import com.lttrung.notepro.ui.login.LoginActivity
 import com.lttrung.notepro.utils.Resource
+import com.lttrung.notepro.utils.ValidationHelper
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -68,10 +69,16 @@ class ResetPasswordActivity : AppCompatActivity() {
         View.OnClickListener {
             val code = binding.edtCode.text?.trim().toString()
             val password = binding.edtPassword.text?.trim().toString()
-            if (code.isNotBlank() && password.isNotBlank()) {
+            val helper = ValidationHelper
+            if (code.isBlank()) {
+                helper.hasError = true
+                binding.codeLayout.error = getString(R.string.code_check)
+            }
+            if (!helper.matchesPasswordLength(password)) {
+                binding.passwordLayout.error = getString(R.string.password_check)
+            }
+            if (!helper.hasError) {
                 viewModel.resetPassword(code, password)
-            } else {
-                viewModel.resetPassword.postValue(Resource.Error("Invalid inputs!"))
             }
         }
     }

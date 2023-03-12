@@ -25,7 +25,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
         View.OnClickListener {
             val email = binding.edtEmail.text?.trim().toString()
             if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                viewModel.forgotPassword.postValue(Resource.Error("Not email"))
+                binding.emailLayout.error = getString(R.string.this_text_is_not_email_type)
             } else {
                 viewModel.forgotPassword(email)
             }
@@ -62,6 +62,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
                 is Resource.Error -> {
                     binding.btnSendInstructions.hideProgress(R.string.send_instructions)
                     binding.btnSendInstructions.isClickable = true
+                    binding.emailLayout.error = resource.message
                 }
             }
         }

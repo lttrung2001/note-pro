@@ -62,4 +62,8 @@
     <string name="add_member">Thêm thành viên</string>
     <string name="remove">Xóa</string>
     <string name="enter_code_received_via_email">Nhập mã code nhận được qua email</string>
+    <string name="password_check">Mật khẩu phải có độ dài trong khoảng từ 8 đến 32 ký tự!</string>
+    <string name="invalid_full_name">Họ tên đầy đủ không đúng định dạng!</string>
+    <string name="phone_number_check">Số điện thoại phải có 10 chữ số!</string>
+    <string name="code_check">Không để trống mã xác thực</string>
 </resources>

@@ -112,4 +112,8 @@
     <string name="add_member">Add member</string>
     <string name="remove">Remove</string>
     <string name="enter_code_received_via_email">Enter code received via email</string>
+    <string name="password_check">Password must have length between 8 and 32!</string>
+    <string name="invalid_full_name">Invalid full name!</string>
+    <string name="phone_number_check">Phone number must have 10 digits!</string>
+    <string name="code_check">Code must not be empty!</string>
 </resources>
