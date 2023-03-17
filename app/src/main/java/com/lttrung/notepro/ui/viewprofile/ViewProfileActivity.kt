@@ -8,6 +8,8 @@ import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
 import com.lttrung.notepro.database.data.networks.models.User
 import com.lttrung.notepro.databinding.ActivityViewProfileBinding
@@ -43,6 +45,9 @@ class ViewProfileActivity : AppCompatActivity() {
                 }
                 is Resource.Error -> {
                     Log.e("ERROR", resource.message)
+                    Snackbar.make(binding.root, resource.message,
+                        BaseTransientBottomBar.LENGTH_LONG
+                    ).show()
                 }
             }
         }

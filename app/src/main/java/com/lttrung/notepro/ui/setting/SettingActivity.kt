@@ -2,8 +2,10 @@ package com.lttrung.notepro.ui.setting
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.lttrung.notepro.database.data.locals.UserLocals
@@ -18,8 +20,8 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class SettingActivity : AppCompatActivity() {
-    @Inject lateinit var userLocals: UserLocals
     private lateinit var binding: ActivitySettingBinding
+    private val settingViewModel: SettingViewModel by viewModels()
 
     private val viewProfileListener: View.OnClickListener by lazy {
         View.OnClickListener {
@@ -37,9 +39,7 @@ class SettingActivity : AppCompatActivity() {
 
     private val logoutOnClickListener: View.OnClickListener by lazy {
         View.OnClickListener {
-            lifecycleScope.launch(Dispatchers.IO) {
-                userLocals.logout()
-            }
+            settingViewModel.logout()
             val logoutIntent = Intent(this, LoginActivity::class.java)
             logoutIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(logoutIntent)
@@ -51,6 +51,18 @@ class SettingActivity : AppCompatActivity() {
 
         initViews()
         initListeners()
+        initObservers()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        settingViewModel.getCurrentUserInfo()
+    }
+
+    private fun initObservers() {
+        settingViewModel.userLiveData.observe(this) { user ->
+            binding.tvName.text = user.fullName
+        }
     }
 
     private fun initListeners() {

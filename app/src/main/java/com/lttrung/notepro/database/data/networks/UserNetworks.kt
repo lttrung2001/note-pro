@@ -6,7 +6,7 @@ import javax.inject.Singleton
 
 @Singleton
 interface UserNetworks {
-    fun changePassword(oldPassword: String, newPassword: String): Single<Unit>
+    fun changePassword(oldPassword: String, newPassword: String): Single<String>
     fun changeProfile(fullName: String, phoneNumber: String): Single<User>
     fun getProfile(): Single<User>
 }

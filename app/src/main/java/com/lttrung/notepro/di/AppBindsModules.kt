@@ -18,6 +18,8 @@ import com.lttrung.notepro.database.repositories.impl.LoginRepositoriesImpl
 import com.lttrung.notepro.database.repositories.impl.MemberRepositoriesImpl
 import com.lttrung.notepro.database.repositories.impl.NoteRepositoriesImpl
 import com.lttrung.notepro.database.repositories.impl.UserRepositoriesImpl
+import com.lttrung.notepro.ui.addmember.AddMemberUseCase
+import com.lttrung.notepro.ui.addmember.AddMemberUseCaseImpl
 import com.lttrung.notepro.ui.addnote.AddNoteUseCase
 import com.lttrung.notepro.ui.addnote.AddNoteUseCaseImpl
 import com.lttrung.notepro.ui.changepassword.ChangePasswordUseCase
@@ -40,6 +42,8 @@ import com.lttrung.notepro.ui.register.RegisterUseCase
 import com.lttrung.notepro.ui.register.RegisterUseCaseImpl
 import com.lttrung.notepro.ui.resetpassword.ResetPasswordUseCase
 import com.lttrung.notepro.ui.resetpassword.ResetPasswordUseCaseImpl
+import com.lttrung.notepro.ui.setting.SettingUseCase
+import com.lttrung.notepro.ui.setting.SettingUseCaseImpl
 import com.lttrung.notepro.ui.showmembers.ShowMembersUseCase
 import com.lttrung.notepro.ui.showmembers.ShowMembersUseCaseImpl
 import com.lttrung.notepro.ui.viewprofile.ViewProfileUseCase
@@ -87,6 +91,10 @@ abstract class AppBindsModules {
     abstract fun bindsForgotPasswordUseCase(impl: ForgotPasswordUseCaseImpl): ForgotPasswordUseCase
     @Binds
     abstract fun bindsResetPasswordUseCase(impl: ResetPasswordUseCaseImpl): ResetPasswordUseCase
+    @Binds
+    abstract fun bindsAddMemberUseCase(impl: AddMemberUseCaseImpl): AddMemberUseCase
+    @Binds
+    abstract fun bindsSettingUseCase(impl: SettingUseCaseImpl): SettingUseCase
     @Binds
     abstract fun bindsLoginRepositories(impl: LoginRepositoriesImpl): LoginRepositories
 

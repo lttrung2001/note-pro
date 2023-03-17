@@ -9,9 +9,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.networks.models.Member
-import com.lttrung.notepro.database.data.networks.models.Note
+import com.lttrung.notepro.database.data.locals.entities.Member
+import com.lttrung.notepro.database.data.locals.entities.Note
 import com.lttrung.notepro.database.data.networks.models.Paging
 import com.lttrung.notepro.databinding.ActivityShowMembersBinding
 import com.lttrung.notepro.ui.addmember.AddMemberFragment
@@ -24,8 +26,6 @@ import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.PAGE_LIMIT
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.stream.Collectors
-import java.util.stream.Collectors.toCollection
 
 
 @AndroidEntryPoint
@@ -68,26 +68,15 @@ class ShowMembersActivity : AppCompatActivity() {
                 }
                 is Resource.Success -> {
                     binding.refreshLayout.isRefreshing = false
+                    Log.i("INFO SUCCESS", resource.data.toString())
                     memberAdapter.submitList(resource.data.data)
                 }
                 is Resource.Error -> {
                     binding.refreshLayout.isRefreshing = false
-                }
-            }
-        }
-
-        getMembersViewModel.member.observe(this) { resource ->
-            when (resource) {
-                is Resource.Loading -> {
-
-                }
-                is Resource.Success -> {
-                    val currentList = memberAdapter.currentList.toMutableList()
-                    currentList.add(0, resource.data)
-                    memberAdapter.submitList(currentList)
-                }
-                is Resource.Error -> {
-
+                    Snackbar.make(
+                        binding.root, resource.message,
+                        BaseTransientBottomBar.LENGTH_LONG
+                    ).show()
                 }
             }
         }
@@ -135,35 +124,39 @@ class ShowMembersActivity : AppCompatActivity() {
                         intent.getSerializableExtra(AppConstant.EDITED_MEMBER) as Member?
                     val deletedMember =
                         intent.getSerializableExtra(AppConstant.DELETED_MEMBER) as Member?
+                    val paging = getPaging()
+                    val members = paging.data.toMutableList()
                     editedMember?.let { member ->
-                        val members = memberAdapter.currentList.toMutableList()
-                        val oldMember = members.find {
+                        val findingMember = members.find {
                             it.id == member.id
                         }
-                        members.remove(oldMember)
+                        members.remove(findingMember)
                         members.add(member)
-                        memberAdapter.submitList(members)
-                        val r = getOldResource()
+                        Log.i("INFO", Paging(
+                            paging.hasPreviousPage,
+                            paging.hasNextPage,
+                            members
+                        ).toString())
                         getMembersViewModel.getMembers.postValue(
                             Resource.Success(
                                 Paging(
-                                    r.hasPreviousPage,
-                                    r.hasNextPage,
+                                    paging.hasPreviousPage,
+                                    paging.hasNextPage,
                                     members
                                 )
                             )
                         )
                     }
                     deletedMember?.let { member ->
-                        val members = memberAdapter.currentList.toMutableList()
-                        members.remove(member)
-                        memberAdapter.submitList(members)
-                        val r = getOldResource()
+                        val findingMember = members.find {
+                            it.id == member.id
+                        }
+                        members.remove(findingMember)
                         getMembersViewModel.getMembers.postValue(
                             Resource.Success(
                                 Paging(
-                                    r.hasPreviousPage,
-                                    r.hasNextPage,
+                                    paging.hasPreviousPage,
+                                    paging.hasNextPage,
                                     members
                                 )
                             )
@@ -190,7 +183,22 @@ class ShowMembersActivity : AppCompatActivity() {
         }
     }
 
-    private fun getOldResource(): Paging<Member> {
+    fun addMemberResult(member: Member) {
+        val paging = getPaging()
+        val members = paging.data.toMutableList()
+        members.add(member)
+        getMembersViewModel.getMembers.postValue(
+            Resource.Success(
+                Paging(
+                    paging.hasPreviousPage,
+                    paging.hasNextPage,
+                    members
+                )
+            )
+        )
+    }
+
+    private fun getPaging(): Paging<Member> {
         val resource = getMembersViewModel.getMembers.value as Resource.Success<Paging<Member>>
         return resource.data
     }

@@ -8,6 +8,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityResetPasswordBinding
 import com.lttrung.notepro.ui.login.LoginActivity
@@ -50,6 +52,9 @@ class ResetPasswordActivity : AppCompatActivity() {
                 is Resource.Error -> {
                     binding.btnResetPassword.hideProgress(R.string.reset_password)
                     binding.btnResetPassword.isClickable = true
+                    Snackbar.make(binding.root, resource.message,
+                        BaseTransientBottomBar.LENGTH_LONG
+                    ).show()
                 }
             }
         }

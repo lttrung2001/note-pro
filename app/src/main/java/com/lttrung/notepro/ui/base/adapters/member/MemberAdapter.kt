@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import com.lttrung.notepro.database.data.networks.models.Member
+import com.lttrung.notepro.database.data.locals.entities.Member
 import com.lttrung.notepro.databinding.LayoutMemberBinding
 
 class MemberAdapter(

@@ -1,9 +1,10 @@
 package com.lttrung.notepro.ui.notedetails
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lttrung.notepro.database.data.networks.models.Note
+import com.lttrung.notepro.database.data.locals.entities.Note
 import com.lttrung.notepro.exceptions.ConnectivityException
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -58,6 +59,12 @@ class NoteDetailsViewModel @Inject constructor(
             else -> {
                 noteDetails.postValue(Resource.Error(t.message ?: "Unknown error"))
             }
+        }
+    }
+
+    fun updatePin(noteId: String, isPin: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            useCase.updatePin(noteId, isPin).subscribe()
         }
     }
 }

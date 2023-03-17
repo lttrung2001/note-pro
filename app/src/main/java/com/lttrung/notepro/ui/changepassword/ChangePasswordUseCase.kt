@@ -5,5 +5,5 @@ import javax.inject.Singleton
 
 @Singleton
 interface ChangePasswordUseCase {
-    fun changePassword(oldPassword: String, newPassword: String): Single<Unit>
+    fun changePassword(oldPassword: String, newPassword: String): Single<String>
 }

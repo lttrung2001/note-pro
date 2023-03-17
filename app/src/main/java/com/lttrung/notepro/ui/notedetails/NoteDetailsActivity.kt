@@ -7,11 +7,14 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.networks.models.Note
+import com.lttrung.notepro.database.data.locals.entities.Note
 import com.lttrung.notepro.databinding.ActivityNoteDetailsBinding
 import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
 import com.lttrung.notepro.ui.showmembers.ShowMembersActivity
+import com.lttrung.notepro.utils.AppConstant.Companion.EDITED_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.Resource
 import com.ramotion.cardslider.CardSliderLayoutManager
@@ -22,6 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class NoteDetailsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNoteDetailsBinding
     private lateinit var imagesAdapter: ImagesAdapter
+    private lateinit var menu: Menu
     private val noteDetailsViewModel: NoteDetailsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,6 +66,10 @@ class NoteDetailsActivity : AppCompatActivity() {
                 }
                 is Resource.Error -> {
                     Log.e("ERROR", resource.message)
+                    Snackbar.make(
+                        binding.root, resource.message,
+                        BaseTransientBottomBar.LENGTH_LONG
+                    ).show()
                 }
             }
         }
@@ -78,11 +86,29 @@ class NoteDetailsActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_note_detail, menu)
+        this.menu = menu!!
+        val noteDetails = intent.getSerializableExtra(NOTE) as Note
+        val pinButton = menu.getItem(0)
+        pinButton.isChecked = noteDetails.isPin
+        if (noteDetails.isPin) {
+            pinButton.icon.setTint(resources.getColor(R.color.primary, theme))
+        } else {
+            pinButton.icon.setTint(resources.getColor(R.color.black, theme))
+        }
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            R.id.action_pin -> {
+                if (item.isChecked) {
+                    item.icon.setTint(resources.getColor(R.color.black, theme))
+                } else {
+                    item.icon.setTint(resources.getColor(R.color.primary, theme))
+                }
+                item.isChecked = !item.isChecked
+                true
+            }
             R.id.action_show_members -> {
                 // Start show members activity
                 val showMembersIntent = Intent(this, ShowMembersActivity::class.java)
@@ -92,7 +118,25 @@ class NoteDetailsActivity : AppCompatActivity() {
                 true
             }
             else -> {
-                onBackPressed()
+                // Update pin here...
+                val note = intent.getSerializableExtra(NOTE) as Note
+                val isPin = menu.getItem(0).isChecked
+                noteDetailsViewModel.updatePin(note.id, isPin)
+                val resultIntent = Intent()
+                resultIntent.putExtra(
+                    EDITED_NOTE,
+                    Note(
+                        note.id,
+                        note.title,
+                        note.content,
+                        note.lastModified,
+                        isPin,
+                        note.role,
+                        note.images
+                    )
+                )
+                setResult(RESULT_OK, resultIntent)
+                finish()
                 true
             }
         }

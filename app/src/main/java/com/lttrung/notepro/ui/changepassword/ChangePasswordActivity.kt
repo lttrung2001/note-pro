@@ -10,6 +10,8 @@ import com.github.razir.progressbutton.attachTextChangeAnimator
 import com.github.razir.progressbutton.bindProgressButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityChangePasswordBinding
 import com.lttrung.notepro.utils.Resource
@@ -46,6 +48,9 @@ class ChangePasswordActivity : AppCompatActivity() {
                     binding.btnChangePassword.isClickable = true
                     binding.btnChangePassword.hideProgress(R.string.change_password)
                     Log.e("ERROR", resource.message)
+                    Snackbar.make(binding.root, resource.message,
+                        BaseTransientBottomBar.LENGTH_LONG
+                    ).show()
                 }
             }
         }

@@ -8,6 +8,9 @@ import javax.inject.Singleton
 @Singleton
 interface UserLocals {
     fun login(currentUser: CurrentUser, refreshToken: String)
-    fun changePassword(password: String)
+    fun changePassword(password: String, refreshToken: String)
+    fun changeProfile(fullName: String, phoneNumber: String)
+    fun fetchAccessToken(accessToken: String)
+    fun getCurrentUserInfo(): CurrentUser
     fun logout()
 }

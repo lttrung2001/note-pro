@@ -9,9 +9,11 @@ import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.networks.models.Image
-import com.lttrung.notepro.database.data.networks.models.Note
+import com.lttrung.notepro.database.data.locals.entities.Image
+import com.lttrung.notepro.database.data.locals.entities.Note
 import com.lttrung.notepro.databinding.ActivityEditNoteBinding
 import com.lttrung.notepro.ui.base.activities.AddImagesActivity
 import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
@@ -80,6 +82,9 @@ class EditNoteActivity : AddImagesActivity() {
                 }
                 is Resource.Error -> {
                     Log.e("ERROR", resource.message)
+                    Snackbar.make(binding.root, resource.message,
+                        BaseTransientBottomBar.LENGTH_LONG
+                    ).show()
                 }
             }
         }
@@ -98,6 +103,9 @@ class EditNoteActivity : AddImagesActivity() {
                 }
                 is Resource.Error -> {
                     Log.e("ERROR", resource.message)
+                    Snackbar.make(binding.root, resource.message,
+                        BaseTransientBottomBar.LENGTH_LONG
+                    ).show()
                 }
             }
         }
@@ -117,6 +125,9 @@ class EditNoteActivity : AddImagesActivity() {
                 }
                 is Resource.Error -> {
                     Log.e("ERROR", resource.message)
+                    Snackbar.make(binding.root, resource.message,
+                        BaseTransientBottomBar.LENGTH_LONG
+                    ).show()
                 }
             }
         }

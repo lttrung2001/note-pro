@@ -10,7 +10,7 @@ class ChangePasswordUseCaseImpl @Inject constructor(
     override fun changePassword(
         oldPassword: String,
         newPassword: String
-    ): Single<Unit> {
+    ): Single<String> {
         return repositories.changePassword(oldPassword, newPassword)
     }
 }

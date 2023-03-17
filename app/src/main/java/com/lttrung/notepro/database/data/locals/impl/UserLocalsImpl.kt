@@ -2,6 +2,7 @@ package com.lttrung.notepro.database.data.locals.impl
 
 import android.content.SharedPreferences
 import android.util.Log
+import com.auth0.android.jwt.JWT
 import com.lttrung.notepro.database.data.locals.UserLocals
 import com.lttrung.notepro.database.data.locals.entities.CurrentUser
 import com.lttrung.notepro.database.data.locals.room.CurrentUserDao
@@ -20,10 +21,33 @@ class UserLocalsImpl @Inject constructor(
         currentUserDao.insertCurrentUser(currentUser)
     }
 
-    override fun changePassword(password: String) {
+    override fun changePassword(password: String, refreshToken: String) {
         val currentUser = currentUserDao.getCurrentUser()
-        val changingUser = CurrentUser(currentUser.email, password)
-        currentUserDao.updateCurrentUser(changingUser)
+        currentUser.password = password
+        currentUserDao.updateCurrentUser(currentUser)
+        sharedPreferences.edit().putString(REFRESH_TOKEN, refreshToken).apply()
+    }
+
+    override fun changeProfile(fullName: String, phoneNumber: String) {
+        val currentUser = currentUserDao.getCurrentUser()
+        currentUser.fullName = fullName
+        currentUser.phoneNumber = phoneNumber
+        currentUserDao.updateCurrentUser(currentUser)
+    }
+
+    override fun fetchAccessToken(accessToken: String) {
+        val decoded = JWT(accessToken)
+        val currentUser = currentUserDao.getCurrentUser()
+        currentUser.fullName = decoded.getClaim("name").asString() ?: ""
+        currentUser.phoneNumber = decoded.getClaim("phone_number").asString() ?: ""
+        currentUserDao.updateCurrentUser(currentUser)
+        sharedPreferences.edit().putString(ACCESS_TOKEN, accessToken).apply()
+    }
+
+    override fun getCurrentUserInfo(): CurrentUser {
+        val currentUser = currentUserDao.getCurrentUser()
+        currentUser.password = ""
+        return currentUser
     }
 
     override fun logout() {

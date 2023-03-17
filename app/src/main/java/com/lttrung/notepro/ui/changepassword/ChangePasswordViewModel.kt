@@ -18,8 +18,8 @@ import javax.inject.Inject
 class ChangePasswordViewModel @Inject constructor(
     private val useCase: ChangePasswordUseCase
 ) : ViewModel() {
-    val changePassword: MutableLiveData<Resource<Unit>> by lazy {
-        MutableLiveData<Resource<Unit>>()
+    val changePassword: MutableLiveData<Resource<String>> by lazy {
+        MutableLiveData<Resource<String>>()
     }
 
     private val composite: CompositeDisposable by lazy {
@@ -28,7 +28,7 @@ class ChangePasswordViewModel @Inject constructor(
 
     private var changePasswordDisposable: Disposable? = null
 
-    private val changePasswordObserver: Consumer<Unit> by lazy {
+    private val changePasswordObserver: Consumer<String> by lazy {
         Consumer {
             changePassword.postValue(Resource.Success(it))
         }

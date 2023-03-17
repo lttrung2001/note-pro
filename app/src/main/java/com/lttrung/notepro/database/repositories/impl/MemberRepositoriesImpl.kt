@@ -1,7 +1,7 @@
 package com.lttrung.notepro.database.repositories.impl
 
 import com.lttrung.notepro.database.data.networks.MemberNetworks
-import com.lttrung.notepro.database.data.networks.models.Member
+import com.lttrung.notepro.database.data.locals.entities.Member
 import com.lttrung.notepro.database.data.networks.models.Paging
 import com.lttrung.notepro.database.repositories.MemberRepositories
 import io.reactivex.rxjava3.core.Single
@@ -27,5 +27,9 @@ class MemberRepositoriesImpl @Inject constructor(override val networks: MemberNe
 
     override fun getMembers(noteId: String, pageIndex: Int, limit: Int): Single<Paging<Member>> {
         return networks.getMembers(noteId, pageIndex, limit)
+    }
+
+    override fun updatePin(noteId: String, isPin: Boolean): Single<Boolean> {
+        return networks.updatePin(noteId, isPin)
     }
 }

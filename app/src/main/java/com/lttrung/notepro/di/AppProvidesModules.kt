@@ -7,6 +7,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.lttrung.notepro.database.data.locals.room.CurrentUserDao
 import com.lttrung.notepro.database.data.locals.room.UserDatabase
+import com.lttrung.notepro.database.data.locals.room.UserDatabase.Companion.MIGRATION_1_2
 import com.lttrung.notepro.database.data.networks.impl.LoginRetrofitServiceImpl
 import com.lttrung.notepro.database.data.networks.impl.MemberRetrofitServiceImpl
 import com.lttrung.notepro.database.data.networks.impl.NoteRetrofitServiceImpl
@@ -36,7 +37,9 @@ class AppProvidesModules {
     @Provides
     @Singleton
     fun providesCurrentUserDatabase(@ApplicationContext context: Context): UserDatabase {
-        return Room.databaseBuilder(context, UserDatabase::class.java, USER_DATABASE_NAME).build()
+        return Room.databaseBuilder(context, UserDatabase::class.java, USER_DATABASE_NAME)
+            .addMigrations(MIGRATION_1_2)
+            .build()
     }
 
     @Provides

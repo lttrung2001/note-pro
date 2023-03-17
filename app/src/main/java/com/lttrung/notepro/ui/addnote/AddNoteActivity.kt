@@ -7,9 +7,11 @@ import android.view.MenuItem
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
+import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.networks.models.Image
-import com.lttrung.notepro.database.data.networks.models.Note
+import com.lttrung.notepro.database.data.locals.entities.Image
+import com.lttrung.notepro.database.data.locals.entities.Note
 import com.lttrung.notepro.databinding.ActivityAddNoteBinding
 import com.lttrung.notepro.ui.base.activities.AddImagesActivity
 import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
@@ -19,7 +21,6 @@ import com.lttrung.notepro.utils.Resource
 import com.ramotion.cardslider.CardSliderLayoutManager
 import com.ramotion.cardslider.CardSnapHelper
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.math.absoluteValue
 
 @AndroidEntryPoint
 class AddNoteActivity : AddImagesActivity() {
@@ -49,7 +50,7 @@ class AddNoteActivity : AddImagesActivity() {
                     finish()
                 }
                 is Resource.Error -> {
-
+                    Snackbar.make(binding.root, resource.message, LENGTH_LONG).show()
                 }
             }
         }

@@ -31,10 +31,10 @@ class UserRetrofitServiceImpl @Inject constructor(
         fun changePassword(
             @Field("oldPassword") oldPassword: String,
             @Field("newPassword") newPassword: String
-        ): Single<Response<ApiResponse<Unit>>>
+        ): Single<Response<ApiResponse<String>>>
     }
 
-    override fun changePassword(oldPassword: String, newPassword: String): Single<Unit> {
+    override fun changePassword(oldPassword: String, newPassword: String): Single<String> {
         return service.changePassword(oldPassword, newPassword).map { response ->
             if (response.code() == HttpStatusCodes.OK.code) {
                 response.body()!!.data

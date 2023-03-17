@@ -10,7 +10,7 @@ import javax.inject.Singleton
 interface UserRepositories {
     val networks: UserNetworks
     val locals: UserLocals
-    fun changePassword(oldPassword: String, newPassword: String): Single<Unit>
+    fun changePassword(oldPassword: String, newPassword: String): Single<String>
     fun changeProfile(fullName: String, phoneNumber: String): Single<User>
     fun getProfile(): Single<User>
 }

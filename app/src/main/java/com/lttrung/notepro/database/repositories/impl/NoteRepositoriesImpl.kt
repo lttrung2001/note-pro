@@ -1,7 +1,7 @@
 package com.lttrung.notepro.database.repositories.impl
 
 import com.lttrung.notepro.database.data.networks.NoteNetworks
-import com.lttrung.notepro.database.data.networks.models.Note
+import com.lttrung.notepro.database.data.locals.entities.Note
 import com.lttrung.notepro.database.repositories.NoteRepositories
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject

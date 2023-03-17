@@ -10,6 +10,8 @@ import com.github.razir.progressbutton.attachTextChangeAnimator
 import com.github.razir.progressbutton.bindProgressButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityRegisterBinding
 import com.lttrung.notepro.utils.Resource
@@ -92,6 +94,9 @@ class RegisterActivity : AppCompatActivity() {
                 is Resource.Error -> {
                     binding.btnRegister.isClickable = true
                     binding.btnRegister.hideProgress(R.string.register)
+                    Snackbar.make(binding.root, resource.message,
+                        BaseTransientBottomBar.LENGTH_LONG
+                    ).show()
                 }
             }
         }

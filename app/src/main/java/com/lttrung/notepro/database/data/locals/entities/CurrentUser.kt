@@ -6,5 +6,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class CurrentUser(
     @PrimaryKey val email: String,
-    val password: String
+    var password: String,
+    var fullName: String? = null,
+    var phoneNumber: String? = null
 )

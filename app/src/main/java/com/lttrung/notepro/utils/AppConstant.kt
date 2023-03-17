@@ -14,7 +14,7 @@ class AppConstant {
 
 
 
-        const val USER_DATABASE_VERSION = 1
+        const val USER_DATABASE_VERSION = 2
         const val USER_DATABASE_NAME = "com.lttrung.notepro.USER_DATABASE"
 
         const val DEFAULT_PREFERENCES_NAME = "com.lttrung.notepro.DEFAULT_PREFERENCES_NAME"

@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.util.Log
 import com.auth0.android.jwt.JWT
 import com.google.gson.Gson
+import com.lttrung.notepro.database.data.locals.UserLocals
 import com.lttrung.notepro.database.data.networks.models.ApiResponse
 import com.lttrung.notepro.exceptions.InvalidTokenException
 import com.lttrung.notepro.ui.login.LoginActivity
@@ -15,13 +16,13 @@ import com.lttrung.notepro.utils.RetrofitUtils.BASE_URL
 import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
-import java.util.*
 import javax.inject.Inject
 
 class AuthorizationInterceptor @Inject constructor(
     @ApplicationContext private val context: Context,
     private val sharedPreferences: SharedPreferences,
-    private val httpLoggingInterceptor: HttpLoggingInterceptor
+    private val httpLoggingInterceptor: HttpLoggingInterceptor,
+    private val userLocals: UserLocals
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val builder = chain.request().newBuilder()
@@ -30,9 +31,7 @@ class AuthorizationInterceptor @Inject constructor(
             val token = sharedPreferences.getString(ACCESS_TOKEN, "")
             // If access token is empty or null, then fetch access token using refresh token
             if (token.isNullOrEmpty()) {
-                fetchAccessToken().also {
-                    sharedPreferences.edit().putString(ACCESS_TOKEN, it).apply()
-                }
+                fetchAccessToken()
             } else {
                 // Decode access token
                 val decoded = JWT(token)
@@ -40,9 +39,7 @@ class AuthorizationInterceptor @Inject constructor(
                 val exp = decoded.getClaim("exp").asLong()!!
                 // If token expired
                 if (exp < System.currentTimeMillis() / 1000 + 30) { // 30 seconds to handle request
-                    fetchAccessToken().also {
-                        sharedPreferences.edit().putString(ACCESS_TOKEN, it).apply()
-                    }
+                    fetchAccessToken()
                 } else {
                     token
                 }
@@ -76,7 +73,10 @@ class AuthorizationInterceptor @Inject constructor(
             // Send request to api server and wait for response
             val response = client.newCall(request).execute()
             // Convert response to object
-            return Gson().fromJson(response.body?.string(), ApiResponse::class.java).data as String
+            val accessToken =
+                Gson().fromJson(response.body?.string(), ApiResponse::class.java).data as String
+            userLocals.fetchAccessToken(accessToken)
+            return accessToken
         } catch (ex: Exception) {
             throw InvalidTokenException()
         }

@@ -11,17 +11,21 @@ class UserRepositoriesImpl @Inject constructor(
     override val networks: UserNetworks,
     override val locals: UserLocals
 ) : UserRepositories {
-    override fun changePassword(oldPassword: String, newPassword: String): Single<Unit> {
-        return networks.changePassword(oldPassword, newPassword).doAfterSuccess {
-            locals.changePassword(newPassword)
+    override fun changePassword(oldPassword: String, newPassword: String): Single<String> {
+        return networks.changePassword(oldPassword, newPassword).doAfterSuccess { refreshToken ->
+            locals.changePassword(newPassword, refreshToken)
         }
     }
 
     override fun changeProfile(fullName: String, phoneNumber: String): Single<User> {
-        return networks.changeProfile(fullName, phoneNumber)
+        return networks.changeProfile(fullName, phoneNumber).doAfterSuccess {
+            locals.changeProfile(fullName, phoneNumber)
+        }
     }
 
     override fun getProfile(): Single<User> {
-        return networks.getProfile()
+        return networks.getProfile().doAfterSuccess { user ->
+            locals.changeProfile(user.fullName, user.phoneNumber)
+        }
     }
 }

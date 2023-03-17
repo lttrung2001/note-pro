@@ -11,8 +11,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.networks.models.Note
+import com.lttrung.notepro.database.data.locals.entities.Note
 import com.lttrung.notepro.databinding.ActivityMainBinding
 import com.lttrung.notepro.ui.addnote.AddNoteActivity
 import com.lttrung.notepro.ui.base.adapters.note.NoteAdapter
@@ -131,9 +133,13 @@ class MainActivity : AppCompatActivity() {
                     binding.refreshLayout.isRefreshing = false
                     val pinNotes = resource.data.filter {
                         it.isPin
+                    }.sortedByDescending {
+                        it.lastModified
                     }
                     val normalNotes = resource.data.filter {
                         !it.isPin
+                    }.sortedByDescending {
+                        it.lastModified
                     }
                     pinNotesAdapter.submitList(pinNotes)
                     normalNotesAdapter.submitList(normalNotes)
@@ -141,6 +147,9 @@ class MainActivity : AppCompatActivity() {
                 is Resource.Error -> {
                     binding.refreshLayout.isRefreshing = false
                     Log.e("ERROR", resource.message)
+                    Snackbar.make(binding.root, resource.message,
+                        BaseTransientBottomBar.LENGTH_LONG
+                    ).show()
                 }
             }
         }
@@ -198,51 +207,27 @@ class MainActivity : AppCompatActivity() {
                     val editedNote = intent.getSerializableExtra(EDITED_NOTE) as Note?
                     val deletedNote = intent.getSerializableExtra(DELETED_NOTE) as Note?
                     addedNote?.let { note ->
-                        if (note.isPin) {
-                            val currentList = pinNotesAdapter.currentList.toMutableList()
-                            currentList.add(note)
-                            pinNotesAdapter.submitList(currentList)
-                        } else {
-                            val currentList = normalNotesAdapter.currentList.toMutableList()
-                            currentList.add(note)
-                            normalNotesAdapter.submitList(currentList)
-                        }
+                        val previousResource = mainViewModel.getNotes.value as Resource.Success<List<Note>>
+                        val notes = previousResource.data.toMutableList()
+                        notes.add(note)
+                        mainViewModel.getNotes.postValue(Resource.Success(notes))
                     }
                     editedNote?.let { note ->
-                        if (note.isPin) {
-                            normalNotesAdapter.currentList.find {
-                                it.id == note.id
-                            }?.let { findingNote ->
-                                val normalNotes = normalNotesAdapter.currentList.toMutableList()
-                                normalNotes.remove(findingNote)
-                                normalNotesAdapter.submitList(normalNotes)
-                                val pinNotes = pinNotesAdapter.currentList.toMutableList()
-                                pinNotes.add(note)
-                                pinNotesAdapter.submitList(pinNotes)
-                            }
-                        } else {
-                            pinNotesAdapter.currentList.find {
-                                it.id == note.id
-                            }?.let { findingNote ->
-                                val pinNotes = pinNotesAdapter.currentList.toMutableList()
-                                pinNotes.remove(findingNote)
-                                pinNotesAdapter.submitList(pinNotes)
-                                val normalNotes = normalNotesAdapter.currentList.toMutableList()
-                                normalNotes.add(note)
-                                normalNotesAdapter.submitList(normalNotes)
-                            }
+                        val previousResource = mainViewModel.getNotes.value as Resource.Success<List<Note>>
+                        val notes = previousResource.data.toMutableList()
+                        val oldNote = notes.find {
+                            it.id == note.id
                         }
-
+                        notes.remove(oldNote)
+                        notes.add(note)
+                        mainViewModel.getNotes.postValue(Resource.Success(notes))
                     }
                     deletedNote?.let { note ->
-                        val pinNotes = pinNotesAdapter.currentList.toMutableList()
-                        val normalNotes = normalNotesAdapter.currentList.toMutableList()
-                        pinNotesAdapter.submitList(pinNotes.filter {
+                        val previousResource = mainViewModel.getNotes.value as Resource.Success<List<Note>>
+                        val notes = previousResource.data.toMutableList().filter {
                             it.id != note.id
-                        })
-                        normalNotesAdapter.submitList(normalNotes.filter {
-                            it.id != note.id
-                        })
+                        }
+                        mainViewModel.getNotes.postValue(Resource.Success(notes))
                     }
                 }
             }

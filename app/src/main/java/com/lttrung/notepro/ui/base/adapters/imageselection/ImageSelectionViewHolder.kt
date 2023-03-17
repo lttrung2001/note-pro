@@ -1,10 +1,9 @@
 package com.lttrung.notepro.ui.base.adapters.imageselection
 
-import android.net.Uri
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.networks.models.Image
+import com.lttrung.notepro.database.data.locals.entities.Image
 import com.lttrung.notepro.databinding.LayoutImageSelectionBinding
 
 class ImageSelectionViewHolder(private val binding: LayoutImageSelectionBinding) :

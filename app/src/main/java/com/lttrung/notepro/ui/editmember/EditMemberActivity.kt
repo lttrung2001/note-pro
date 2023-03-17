@@ -13,9 +13,11 @@ import com.github.razir.progressbutton.attachTextChangeAnimator
 import com.github.razir.progressbutton.bindProgressButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.networks.models.Member
-import com.lttrung.notepro.database.data.networks.models.Note
+import com.lttrung.notepro.database.data.locals.entities.Member
+import com.lttrung.notepro.database.data.locals.entities.Note
 import com.lttrung.notepro.databinding.ActivityEditMemberBinding
 import com.lttrung.notepro.utils.AppConstant.Companion.DELETED_MEMBER
 import com.lttrung.notepro.utils.AppConstant.Companion.EDITED_MEMBER
@@ -81,6 +83,9 @@ class EditMemberActivity : AppCompatActivity() {
                     binding.deleteButton.isClickable = true
                     binding.deleteButton.hideProgress(R.string.remove)
                     Log.e("ERROR", resource.message)
+                    Snackbar.make(binding.root, resource.message,
+                        BaseTransientBottomBar.LENGTH_LONG
+                    ).show()
                 }
             }
         }

@@ -8,16 +8,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.github.razir.progressbutton.attachTextChangeAnimator
 import com.github.razir.progressbutton.bindProgressButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.networks.models.Note
+import com.lttrung.notepro.database.data.locals.entities.Note
 import com.lttrung.notepro.databinding.FragmentAddMemberBinding
-import com.lttrung.notepro.ui.showmembers.ShowMembersViewModel
+import com.lttrung.notepro.ui.showmembers.ShowMembersActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,7 +27,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class AddMemberFragment : BottomSheetDialogFragment() {
     private var binding: FragmentAddMemberBinding? = null
-    private val addMemberViewModel: ShowMembersViewModel by activityViewModels()
+    private val addMemberViewModel: AddMemberViewModel by viewModels()
     private lateinit var roleAdapter: ArrayAdapter<String>
 
     override fun onCreateView(
@@ -68,12 +70,18 @@ class AddMemberFragment : BottomSheetDialogFragment() {
                 is Resource.Success -> {
                     binding!!.addButton.isClickable = true
                     binding!!.addButton.hideProgress(R.string.add)
+                    val parentActivity = (requireActivity() as ShowMembersActivity)
+                    parentActivity.addMemberResult(resource.data)
                 }
 
                 is Resource.Error -> {
                     binding!!.addButton.isClickable = true
                     binding!!.addButton.hideProgress(R.string.add)
                     Log.e("ERROR", resource.message)
+                    Snackbar.make(
+                        binding!!.root, resource.message,
+                        BaseTransientBottomBar.LENGTH_LONG
+                    ).show()
                 }
             }
         }

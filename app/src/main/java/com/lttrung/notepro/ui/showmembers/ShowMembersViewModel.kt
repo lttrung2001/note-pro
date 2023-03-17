@@ -3,7 +3,7 @@ package com.lttrung.notepro.ui.showmembers
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lttrung.notepro.database.data.networks.models.Member
+import com.lttrung.notepro.database.data.locals.entities.Member
 import com.lttrung.notepro.database.data.networks.models.Paging
 import com.lttrung.notepro.exceptions.ConnectivityException
 import com.lttrung.notepro.utils.Resource
@@ -32,7 +32,23 @@ class ShowMembersViewModel @Inject constructor(
 
     private val getMembersObserver: Consumer<Paging<Member>> by lazy {
         Consumer {
-            getMembers.postValue(Resource.Success(it))
+            val previousResource = getMembers.value
+            if (previousResource is Resource.Success<Paging<Member>>) {
+                val paging = previousResource.data
+                val members = paging.data.toMutableList()
+                members.addAll(it.data)
+                getMembers.postValue(
+                    Resource.Success(
+                        Paging(
+                            it.hasPreviousPage,
+                            it.hasNextPage,
+                            members
+                        )
+                    )
+                )
+            } else if (previousResource is Resource.Loading) {
+                getMembers.postValue(Resource.Success(it))
+            }
         }
     }
 
@@ -56,34 +72,5 @@ class ShowMembersViewModel @Inject constructor(
                 }
             getMembersDisposable?.let { composite.add(it) }
         }
-    }
-
-    val member: MutableLiveData<Resource<Member>> by lazy {
-        MutableLiveData<Resource<Member>>()
-    }
-
-    private var memberDisposable: Disposable? = null
-
-    private val memberObserver: Consumer<Member> by lazy {
-        Consumer {
-            member.postValue(Resource.Success(it))
-        }
-    }
-
-    fun addMember(noteId: String, email: String, role: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            member.postValue(Resource.Loading())
-            memberDisposable?.let {
-                composite.remove(it)
-            }
-            memberDisposable =
-                useCase.addMember(noteId, email, role).observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(memberObserver, this@ShowMembersViewModel::addMemberError)
-            memberDisposable?.let { composite.add(it) }
-        }
-    }
-
-    private fun addMemberError(t: Throwable) {
-        member.postValue(Resource.Error(t.message ?: "Unknown error"))
     }
 }

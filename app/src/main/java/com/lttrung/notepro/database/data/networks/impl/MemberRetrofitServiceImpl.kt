@@ -2,7 +2,7 @@ package com.lttrung.notepro.database.data.networks.impl
 
 import com.lttrung.notepro.database.data.networks.MemberNetworks
 import com.lttrung.notepro.database.data.networks.models.ApiResponse
-import com.lttrung.notepro.database.data.networks.models.Member
+import com.lttrung.notepro.database.data.locals.entities.Member
 import com.lttrung.notepro.database.data.networks.models.Paging
 import com.lttrung.notepro.utils.HttpStatusCodes
 import io.reactivex.rxjava3.core.Single
@@ -47,6 +47,12 @@ class MemberRetrofitServiceImpl @Inject constructor(private val service: Service
             @Query("pageIndex") pageIndex: Int,
             @Query("limit") limit: Int
         ): Single<Response<ApiResponse<Paging<Member>>>>
+        @FormUrlEncoded
+        @PUT("$PATH/update-pin")
+        fun updatePin(
+            @Query("noteId") noteId: String,
+            @Field("isPin") isPin: Boolean
+        ): Single<Response<ApiResponse<Boolean>>>
     }
 
     override fun addMember(noteId: String, email: String, role: String): Single<Member> {
@@ -91,6 +97,16 @@ class MemberRetrofitServiceImpl @Inject constructor(private val service: Service
 
     override fun getMembers(noteId: String, pageIndex: Int, limit: Int): Single<Paging<Member>> {
         return service.getMembers(noteId, pageIndex, limit).map { response ->
+            if (response.code() == HttpStatusCodes.OK.code) {
+                response.body()!!.data
+            } else {
+                throw Exception(response.body()!!.message)
+            }
+        }
+    }
+
+    override fun updatePin(noteId: String, isPin: Boolean): Single<Boolean> {
+        return service.updatePin(noteId, isPin).map { response ->
             if (response.code() == HttpStatusCodes.OK.code) {
                 response.body()!!.data
             } else {
