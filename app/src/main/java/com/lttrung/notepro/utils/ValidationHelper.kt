@@ -10,7 +10,7 @@ object ValidationHelper {
     }
 
     fun matchesFullName(fullName: String): Boolean {
-        val value = fullName.split(" ").size == 2
+        val value = fullName.split(" ").size < 2
         hasError = !value
         return value
     }
