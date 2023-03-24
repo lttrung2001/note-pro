@@ -8,6 +8,7 @@ import com.google.gson.GsonBuilder
 import com.lttrung.notepro.database.data.locals.room.CurrentUserDao
 import com.lttrung.notepro.database.data.locals.room.UserDatabase
 import com.lttrung.notepro.database.data.locals.room.UserDatabase.Companion.MIGRATION_1_2
+import com.lttrung.notepro.database.data.locals.room.UserDatabase.Companion.MIGRATION_2_3
 import com.lttrung.notepro.database.data.networks.impl.LoginRetrofitServiceImpl
 import com.lttrung.notepro.database.data.networks.impl.MemberRetrofitServiceImpl
 import com.lttrung.notepro.database.data.networks.impl.NoteRetrofitServiceImpl
@@ -39,6 +40,7 @@ class AppProvidesModules {
     fun providesCurrentUserDatabase(@ApplicationContext context: Context): UserDatabase {
         return Room.databaseBuilder(context, UserDatabase::class.java, USER_DATABASE_NAME)
             .addMigrations(MIGRATION_1_2)
+            .addMigrations(MIGRATION_2_3)
             .build()
     }
 
@@ -70,6 +72,7 @@ class AppProvidesModules {
             .writeTimeout(30, TimeUnit.SECONDS)
             .build()
     }
+
     @Provides
     @Singleton
     @Named("NoTokenOkHttp")

@@ -116,4 +116,6 @@
     <string name="invalid_full_name">Invalid full name!</string>
     <string name="phone_number_check">Phone number must have 10 digits!</string>
     <string name="code_check">Code must not be empty!</string>
+    <string name="conservation">Conservation</string>
+    <string name="message">Message</string>
 </resources>

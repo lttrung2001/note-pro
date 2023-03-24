@@ -16,6 +16,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
 import com.lttrung.notepro.database.data.locals.entities.Note
 import com.lttrung.notepro.databinding.ActivityMainBinding
+import com.lttrung.notepro.services.ChatSocketService
 import com.lttrung.notepro.ui.addnote.AddNoteActivity
 import com.lttrung.notepro.ui.base.adapters.note.NoteAdapter
 import com.lttrung.notepro.ui.base.adapters.note.NoteListener
@@ -143,6 +144,8 @@ class MainActivity : AppCompatActivity() {
                     }
                     pinNotesAdapter.submitList(pinNotes)
                     normalNotesAdapter.submitList(normalNotes)
+
+                    startService(Intent(this, ChatSocketService::class.java))
                 }
                 is Resource.Error -> {
                     binding.refreshLayout.isRefreshing = false

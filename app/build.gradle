@@ -65,6 +65,7 @@ dependencies {
     jwt()
     image()
     customUI()
+    socketIO()
 
     // Circle image
     implementation 'de.hdodenhof:circleimageview:3.1.0'
@@ -128,6 +129,12 @@ private void customUI() {
     dependencies.implementation 'com.ramotion.cardslider:card-slider:0.3.1'
     dependencies.implementation 'com.github.razir.progressbutton:progressbutton:2.1.0'
     dependencies.implementation 'it.xabaras.android:recyclerview-swipedecorator:1.4'
+}
+
+private void socketIO() {
+    dependencies.implementation ('io.socket:socket.io-client:2.0.0') {
+        exclude group: 'org.json', module: 'json'
+    }
 }
 
 kapt {

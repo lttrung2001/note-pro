@@ -26,6 +26,8 @@ import com.lttrung.notepro.ui.changepassword.ChangePasswordUseCase
 import com.lttrung.notepro.ui.changepassword.ChangePasswordUseCaseImpl
 import com.lttrung.notepro.ui.changeprofile.ChangeProfileUseCase
 import com.lttrung.notepro.ui.changeprofile.ChangeProfileUseCaseImpl
+import com.lttrung.notepro.ui.chat.ChatUseCase
+import com.lttrung.notepro.ui.chat.ChatUseCaseImpl
 import com.lttrung.notepro.ui.editmember.EditMemberUseCase
 import com.lttrung.notepro.ui.editmember.EditMemberUseCaseImpl
 import com.lttrung.notepro.ui.editnote.EditNoteUseCase
@@ -95,6 +97,8 @@ abstract class AppBindsModules {
     abstract fun bindsAddMemberUseCase(impl: AddMemberUseCaseImpl): AddMemberUseCase
     @Binds
     abstract fun bindsSettingUseCase(impl: SettingUseCaseImpl): SettingUseCase
+    @Binds
+    abstract fun bindsChatUseCase(impl: ChatUseCaseImpl): ChatUseCase
     @Binds
     abstract fun bindsLoginRepositories(impl: LoginRepositoriesImpl): LoginRepositories
 

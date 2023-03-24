@@ -8,5 +8,6 @@ data class CurrentUser(
     @PrimaryKey val email: String,
     var password: String,
     var fullName: String? = null,
-    var phoneNumber: String? = null
+    var phoneNumber: String? = null,
+    var id: String? = null
 )

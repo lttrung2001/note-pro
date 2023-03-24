@@ -9,8 +9,8 @@ import com.lttrung.notepro.utils.AppConstant.Companion.USER_DATABASE_VERSION
 
 @Database(
     entities = [CurrentUser::class],
-    version = USER_DATABASE_VERSION,
-    exportSchema = true)
+    version = USER_DATABASE_VERSION
+)
 abstract class UserDatabase : RoomDatabase() {
     abstract fun currentUserDao(): CurrentUserDao
 
@@ -20,6 +20,14 @@ abstract class UserDatabase : RoomDatabase() {
                 database.beginTransaction()
                 database.execSQL("ALTER TABLE CurrentUser ADD COLUMN fullName TEXT DEFAULT ''")
                 database.execSQL("ALTER TABLE CurrentUser ADD COLUMN phoneNumber TEXT DEFAULT ''")
+                database.setTransactionSuccessful()
+                database.endTransaction()
+            }
+        }
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.beginTransaction()
+                database.execSQL("ALTER TABLE CurrentUser ADD COLUMN id TEXT DEFAULT ''")
                 database.setTransactionSuccessful()
                 database.endTransaction()
             }

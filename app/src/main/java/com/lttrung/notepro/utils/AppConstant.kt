@@ -13,18 +13,29 @@ class AppConstant {
 
 
 
+        const val CHAT_CHANNEL_ID = "com.lttrung.notepro.CHAT_CHANNEL_ID"
 
-        const val USER_DATABASE_VERSION = 2
+
+
+        const val USER_DATABASE_VERSION = 3
         const val USER_DATABASE_NAME = "com.lttrung.notepro.USER_DATABASE"
+
+
 
         const val DEFAULT_PREFERENCES_NAME = "com.lttrung.notepro.DEFAULT_PREFERENCES_NAME"
         const val REFRESH_TOKEN = "com.lttrung.notepro.REFRESH_TOKEN"
         const val ACCESS_TOKEN = "com.lttrung.notepro.ACCESS_TOKEN"
 
+
+
         const val CAMERA_REQUEST = 100
         const val READ_EXTERNAL_STORAGE_REQUEST = 101
 
+
+
         const val RC_SIGN_IN = 9001
+
+
 
         const val PAGE_LIMIT = 10
     }

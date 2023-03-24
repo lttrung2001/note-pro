@@ -17,6 +17,7 @@ import com.lttrung.notepro.database.data.locals.entities.Note
 import com.lttrung.notepro.databinding.ActivityEditNoteBinding
 import com.lttrung.notepro.ui.base.activities.AddImagesActivity
 import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
+import com.lttrung.notepro.ui.chat.ChatActivity
 import com.lttrung.notepro.ui.showmembers.ShowMembersActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.DELETED_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.EDITED_NOTE
@@ -82,7 +83,8 @@ class EditNoteActivity : AddImagesActivity() {
                 }
                 is Resource.Error -> {
                     Log.e("ERROR", resource.message)
-                    Snackbar.make(binding.root, resource.message,
+                    Snackbar.make(
+                        binding.root, resource.message,
                         BaseTransientBottomBar.LENGTH_LONG
                     ).show()
                 }
@@ -103,7 +105,8 @@ class EditNoteActivity : AddImagesActivity() {
                 }
                 is Resource.Error -> {
                     Log.e("ERROR", resource.message)
-                    Snackbar.make(binding.root, resource.message,
+                    Snackbar.make(
+                        binding.root, resource.message,
                         BaseTransientBottomBar.LENGTH_LONG
                     ).show()
                 }
@@ -125,7 +128,8 @@ class EditNoteActivity : AddImagesActivity() {
                 }
                 is Resource.Error -> {
                     Log.e("ERROR", resource.message)
-                    Snackbar.make(binding.root, resource.message,
+                    Snackbar.make(
+                        binding.root, resource.message,
                         BaseTransientBottomBar.LENGTH_LONG
                     ).show()
                 }
@@ -178,6 +182,14 @@ class EditNoteActivity : AddImagesActivity() {
                 val note = intent.getSerializableExtra(NOTE) as Note
                 showMembersIntent.putExtra(NOTE, note)
                 startActivity(showMembersIntent)
+                true
+            }
+            R.id.action_show_conservation -> {
+                val note = intent.getSerializableExtra(NOTE) as Note
+                val showConservationIntent =
+                    Intent(this@EditNoteActivity, ChatActivity::class.java)
+                showConservationIntent.putExtra(NOTE, note)
+                startActivity(showConservationIntent)
                 true
             }
             R.id.action_save -> {

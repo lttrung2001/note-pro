@@ -66,4 +66,6 @@
     <string name="invalid_full_name">Họ tên đầy đủ không đúng định dạng!</string>
     <string name="phone_number_check">Số điện thoại phải có 10 chữ số!</string>
     <string name="code_check">Không để trống mã xác thực</string>
+    <string name="conservation">Cuộc hội thoại</string>
+    <string name="message">Tin nhắn</string>
 </resources>

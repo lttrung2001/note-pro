@@ -38,8 +38,10 @@ class UserLocalsImpl @Inject constructor(
     override fun fetchAccessToken(accessToken: String) {
         val decoded = JWT(accessToken)
         val currentUser = currentUserDao.getCurrentUser()
-        currentUser.fullName = decoded.getClaim("name").asString() ?: ""
-        currentUser.phoneNumber = decoded.getClaim("phone_number").asString() ?: ""
+        Log.i("INFO", decoded.getClaim("user_id").asString().toString())
+        currentUser.fullName = decoded.getClaim("name").asString().toString()
+        currentUser.phoneNumber = decoded.getClaim("phone_number").asString().toString()
+        currentUser.id = decoded.getClaim("user_id").asString().toString()
         currentUserDao.updateCurrentUser(currentUser)
         sharedPreferences.edit().putString(ACCESS_TOKEN, accessToken).apply()
     }

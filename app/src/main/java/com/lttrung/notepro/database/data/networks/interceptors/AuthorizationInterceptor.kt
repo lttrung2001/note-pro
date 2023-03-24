@@ -45,6 +45,7 @@ class AuthorizationInterceptor @Inject constructor(
                 }
             }
         } catch (ex: Exception) {
+            userLocals.logout()
             context.startActivity(Intent(context, LoginActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             })

@@ -13,6 +13,7 @@ import com.lttrung.notepro.R
 import com.lttrung.notepro.database.data.locals.entities.Note
 import com.lttrung.notepro.databinding.ActivityNoteDetailsBinding
 import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
+import com.lttrung.notepro.ui.chat.ChatActivity
 import com.lttrung.notepro.ui.showmembers.ShowMembersActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.EDITED_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
@@ -85,7 +86,7 @@ class NoteDetailsActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_note_detail, menu)
+        menuInflater.inflate(R.menu.menu_note_details, menu)
         this.menu = menu!!
         val noteDetails = intent.getSerializableExtra(NOTE) as Note
         val pinButton = menu.getItem(0)
@@ -115,6 +116,14 @@ class NoteDetailsActivity : AppCompatActivity() {
                 val note = intent.getSerializableExtra(NOTE) as Note
                 showMembersIntent.putExtra(NOTE, note)
                 startActivity(showMembersIntent)
+                true
+            }
+            R.id.action_show_conservation -> {
+                val note = intent.getSerializableExtra(NOTE) as Note
+                val showConservationIntent =
+                    Intent(this@NoteDetailsActivity, ChatActivity::class.java)
+                showConservationIntent.putExtra(NOTE, note)
+                startActivity(showConservationIntent)
                 true
             }
             else -> {
