@@ -63,23 +63,27 @@ class AuthorizationInterceptor @Inject constructor(
         }
         try {
             // Create client object
-            val client = OkHttpClient.Builder()
-                .addInterceptor(httpLoggingInterceptor)
-                .build()
-            // Create form data
-            val formBody: RequestBody = FormBody.Builder().add("refreshToken", refreshToken).build()
-            val request =
-                Request.Builder().post(formBody).url(BASE_URL + "api/v1/get-access-token")
-                    .build()
-            // Send request to api server and wait for response
-            val response = client.newCall(request).execute()
-            // Convert response to object
-            val accessToken =
-                Gson().fromJson(response.body?.string(), ApiResponse::class.java).data as String
-            userLocals.fetchAccessToken(accessToken)
-            return accessToken
+            return callGetAccessTokenApi(refreshToken)
         } catch (ex: Exception) {
             throw InvalidTokenException()
         }
+    }
+
+    private fun callGetAccessTokenApi(refreshToken: String): String {
+        val client = OkHttpClient.Builder()
+            .addInterceptor(httpLoggingInterceptor)
+            .build()
+        // Create form data
+        val formBody: RequestBody = FormBody.Builder().add("refreshToken", refreshToken).build()
+        val request =
+            Request.Builder().post(formBody).url(BASE_URL + "api/v1/get-access-token")
+                .build()
+        // Send request to api server and wait for response
+        val response = client.newCall(request).execute()
+        // Convert response to object
+        val accessToken =
+            Gson().fromJson(response.body!!.string(), ApiResponse::class.java).data as String
+        userLocals.fetchAccessToken(accessToken)
+        return accessToken
     }
 }

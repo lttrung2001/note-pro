@@ -126,7 +126,8 @@ class ChatActivity : AppCompatActivity() {
             user?.id ?: "",
             user?.fullName ?: "",
             content,
-            room
+            room,
+            0L
         )
         socketService.sendMessage(message)
 

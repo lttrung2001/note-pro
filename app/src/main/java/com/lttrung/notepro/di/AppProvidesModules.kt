@@ -21,6 +21,7 @@ import com.lttrung.notepro.utils.RetrofitUtils.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.internal.managers.ApplicationComponentManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
@@ -68,8 +69,8 @@ class AppProvidesModules {
             .addInterceptor(networksInterceptor)
             .addInterceptor(authorizationInterceptor)
             .addInterceptor(loggingInterceptor)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
+            .writeTimeout(10, TimeUnit.SECONDS)
             .build()
     }
 
@@ -83,15 +84,15 @@ class AppProvidesModules {
         return OkHttpClient.Builder()
             .addInterceptor(networksInterceptor)
             .addInterceptor(loggingInterceptor)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
+            .writeTimeout(10, TimeUnit.SECONDS)
             .build()
     }
 
     @Provides
     @Singleton
     fun providesGson(): Gson {
-        return GsonBuilder().setDateFormat("dd/MM/yyyy HH:mm").create()
+        return GsonBuilder().create()
     }
 
     @Provides

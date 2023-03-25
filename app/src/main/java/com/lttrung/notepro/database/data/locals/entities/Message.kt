@@ -5,5 +5,6 @@ data class Message(
     val userId: String,
     val userName: String,
     val content: String,
-    val room: String
+    val room: String,
+    val time: Long
 )

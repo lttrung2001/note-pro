@@ -3,7 +3,6 @@ package com.lttrung.notepro.database.repositories.impl
 import com.lttrung.notepro.database.data.locals.UserLocals
 import com.lttrung.notepro.database.data.locals.entities.CurrentUser
 import com.lttrung.notepro.database.data.networks.LoginNetworks
-import com.lttrung.notepro.database.data.networks.models.User
 import com.lttrung.notepro.database.repositories.LoginRepositories
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
