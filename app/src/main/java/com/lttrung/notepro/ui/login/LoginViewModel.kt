@@ -58,7 +58,7 @@ class LoginViewModel @Inject constructor(
                 login.postValue(Resource.Error(t.message))
             }
             else -> {
-                login.postValue(Resource.Error("Unknown error"))
+                login.postValue(Resource.Error(t.message ?: "Unknown error"))
             }
         }
     }

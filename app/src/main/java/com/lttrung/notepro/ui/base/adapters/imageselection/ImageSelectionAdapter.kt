@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import com.lttrung.notepro.database.data.locals.entities.Image
+import com.lttrung.notepro.database.data.networks.models.Image
 import com.lttrung.notepro.databinding.LayoutImageSelectionBinding
 
 class ImageSelectionAdapter : ListAdapter<Image, ImageSelectionViewHolder>(itemCallback) {

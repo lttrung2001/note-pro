@@ -1,7 +1,7 @@
 package com.lttrung.notepro.database.repositories
 
 import com.lttrung.notepro.database.data.networks.MemberNetworks
-import com.lttrung.notepro.database.data.locals.entities.Member
+import com.lttrung.notepro.database.data.networks.models.Member
 import com.lttrung.notepro.database.data.networks.models.Paging
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Singleton

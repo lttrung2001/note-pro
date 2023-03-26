@@ -10,8 +10,8 @@ import androidx.activity.viewModels
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
 import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.locals.entities.Image
-import com.lttrung.notepro.database.data.locals.entities.Note
+import com.lttrung.notepro.database.data.networks.models.Image
+import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityAddNoteBinding
 import com.lttrung.notepro.ui.base.activities.AddImagesActivity
 import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
@@ -101,7 +101,7 @@ class AddNoteActivity : AddImagesActivity() {
                     String(),
                     binding.edtNoteTitle.text?.trim().toString(),
                     binding.edtNoteDesc.text?.trim().toString(),
-                    0,
+                    0L,
                     menu.getItem(0).isChecked,
                     String(),
                     imagesAdapter.currentList

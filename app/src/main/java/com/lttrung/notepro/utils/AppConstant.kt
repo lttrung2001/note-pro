@@ -10,10 +10,14 @@ class AppConstant {
         const val MEMBER = "com.lttrung.notepro.MEMBER"
         const val EDITED_MEMBER = "com.lttrung.notepro.EDITED_MEMBER"
         const val DELETED_MEMBER = "com.lttrung.notepro.DELETED_MEMBER"
+        const val ROOM_ID = "com.lttrung.notepro.ROOM_ID"
+        const val MESSAGE = "com.lttrung.notepro.MESSAGE"
 
 
 
+        const val CHAT_LISTENER_NOTIFICATION_ID = 1
         const val CHAT_CHANNEL_ID = "com.lttrung.notepro.CHAT_CHANNEL_ID"
+        const val CHAT_LISTENER_CHANNEL_ID = "com.lttrung.notepro.CHAT_LISTENER_CHANNEL_ID"
 
 
 

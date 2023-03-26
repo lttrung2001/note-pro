@@ -1,33 +1,43 @@
 package com.lttrung.notepro
 
 import android.app.Application
-import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.os.Build
-import com.lttrung.notepro.utils.AppConstant
+import com.lttrung.notepro.services.ChatSocketService
+import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_CHANNEL_ID
+import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_LISTENER_CHANNEL_ID
+import com.lttrung.notepro.utils.NotificationChannelManager
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class NoteProApplication : Application() {
+    var chatService: ChatSocketService? = null
+    var isChatActivity: Boolean = false
     override fun onCreate() {
         super.onCreate()
 
+        registerChatListenerChannel()
         registerChatChannel()
     }
 
-    fun registerChatChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Create the NotificationChannel.
-            val name = "Chat channel"
-            val descriptionText = "This channel use to notify chat message."
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val mChannel = NotificationChannel(AppConstant.CHAT_CHANNEL_ID, name, importance)
-            mChannel.description = descriptionText
-            // Register the channel with the system. You can't change the importance
-            // or other notification behaviors after this.
-            val notificationManager =
-                applicationContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(mChannel)
-        }
+    private fun registerChatListenerChannel() {
+        val manager = NotificationChannelManager
+        manager.registerChannel(
+            this,
+            CHAT_LISTENER_CHANNEL_ID,
+            "Chat listener channel",
+            "This service use to listen incoming message from background.",
+            NotificationManager.IMPORTANCE_HIGH
+        )
+    }
+
+    private fun registerChatChannel() {
+        val manager = NotificationChannelManager
+        manager.registerChannel(
+            this,
+            CHAT_CHANNEL_ID,
+            "Chat channel",
+            "This channel use to notify incoming message from background.",
+            NotificationManager.IMPORTANCE_HIGH
+        )
     }
 }

@@ -2,7 +2,7 @@ package com.lttrung.notepro.database.data.networks.impl
 
 import com.lttrung.notepro.database.data.networks.MemberNetworks
 import com.lttrung.notepro.database.data.networks.models.ApiResponse
-import com.lttrung.notepro.database.data.locals.entities.Member
+import com.lttrung.notepro.database.data.networks.models.Member
 import com.lttrung.notepro.database.data.networks.models.Paging
 import com.lttrung.notepro.utils.HttpStatusCodes
 import io.reactivex.rxjava3.core.Single

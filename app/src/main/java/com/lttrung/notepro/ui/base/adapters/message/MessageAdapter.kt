@@ -1,6 +1,5 @@
 package com.lttrung.notepro.ui.base.adapters.message
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -31,7 +30,6 @@ class MessageAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val type = getItemViewType(position)
-        Log.i("INFO TYPE", type.toString())
         if (type == MY_MESSAGE) {
             holder as MyMessageViewHolder
             holder.bind(getItem(position))
@@ -43,9 +41,7 @@ class MessageAdapter(
 
     override fun getItemViewType(position: Int): Int {
         val message = getItem(position)
-        Log.i("INFO USER ID", userId)
-        Log.i("INFO MESSAGE", message.toString())
-        return if (message.userId == userId) {
+        return if (message.user.id == userId) {
             MY_MESSAGE
         } else {
             OTHER_MESSAGE

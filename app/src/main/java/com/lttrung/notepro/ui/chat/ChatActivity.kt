@@ -6,18 +6,23 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.lttrung.notepro.NoteProApplication
 import com.lttrung.notepro.database.data.locals.entities.Message
-import com.lttrung.notepro.database.data.locals.entities.Note
+import com.lttrung.notepro.database.data.locals.entities.User
+import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityChatBinding
 import com.lttrung.notepro.services.ChatSocketService
 import com.lttrung.notepro.ui.base.adapters.message.MessageAdapter
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_CHANNEL_ID
+import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
+import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
 import com.lttrung.notepro.utils.NotificationHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -51,8 +56,7 @@ class ChatActivity : AppCompatActivity() {
 
     private fun initObservers() {
         socketService.messageLiveData.observe(this) { message ->
-            val note = intent.getSerializableExtra(NOTE) as Note
-            val room = note.id
+            val room = intent.getStringExtra(ROOM_ID)
             if (message.room == room) {
                 val messages = messageAdapter.currentList.toMutableList()
                 messages.add(message)
@@ -63,7 +67,8 @@ class ChatActivity : AppCompatActivity() {
                     applicationContext,
                     CHAT_CHANNEL_ID,
                     message.room,
-                    "From ${message.userName}: ${message.content}"
+                    "From ${message.user.fullName}: ${message.content}",
+                    message
                 )
             }
         }
@@ -71,6 +76,7 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        (application as NoteProApplication).isChatActivity = true
         Intent(this, ChatSocketService::class.java).also { intent ->
             bindService(intent, connection, Context.BIND_AUTO_CREATE)
         }
@@ -78,6 +84,7 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
+        (application as NoteProApplication).isChatActivity = false
         socketService.messageLiveData.removeObservers(this)
         unbindService(connection)
     }
@@ -95,12 +102,20 @@ class ChatActivity : AppCompatActivity() {
             val linearLayoutManager = LinearLayoutManager(this@ChatActivity).apply {
                 stackFromEnd = true
             }
-            val data = mutableListOf<Message>()
             binding.messages.apply {
                 adapter = messageAdapter
                 layoutManager = linearLayoutManager
             }
-            messageAdapter.submitList(data)
+            val messageFromNotification = intent.getSerializableExtra(MESSAGE) as Message?
+            if (messageFromNotification == null) {
+                Log.e("ERROR", "NULL")
+            }
+            messageFromNotification?.let {
+                Log.i("INFO", it.toString())
+                val messages = messageAdapter.currentList.toMutableList()
+                messages.add(it)
+                messageAdapter.submitList(messages)
+            }
         }
     }
 
@@ -117,17 +132,16 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun sendMessage() {
-        val user = chatViewModel.userLiveData.value
+        val user = chatViewModel.userLiveData.value!!
         val content = binding.messageBox.text?.trim().toString()
-        val room = (intent.getSerializableExtra(NOTE) as Note).id
+        val room = intent.getSerializableExtra(ROOM_ID) as String
 
         val message = Message(
             System.currentTimeMillis().toString(),
-            user?.id ?: "",
-            user?.fullName ?: "",
             content,
             room,
-            0L
+            0L,
+            User(user.id ?: "", user.fullName ?: "")
         )
         socketService.sendMessage(message)
 

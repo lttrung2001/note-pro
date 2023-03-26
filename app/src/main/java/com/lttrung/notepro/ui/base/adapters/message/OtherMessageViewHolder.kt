@@ -10,7 +10,7 @@ data class OtherMessageViewHolder(
 ) : ViewHolder(binding.root) {
     fun bind(message: Message) {
         binding.imgAvt.setImageResource(R.drawable.me)
-        binding.name.text = message.userName
+        binding.name.text = message.user.fullName
         binding.message.text = message.content
     }
 }

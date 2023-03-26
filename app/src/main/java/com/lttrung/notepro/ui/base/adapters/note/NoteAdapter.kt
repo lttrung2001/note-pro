@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.locals.entities.Note
+import com.lttrung.notepro.database.data.networks.models.Note
 
 class NoteAdapter(private val onClickListener: NoteListener) :
     ListAdapter<Note, NoteViewHolder>(object : DiffUtil.ItemCallback<Note>() {
@@ -18,11 +18,6 @@ class NoteAdapter(private val onClickListener: NoteListener) :
         }
 
     }) {
-
-//    override fun submitList(list: MutableList<Note>?) {
-//        list?.sortByDescending { it.lastModified }
-//        super.submitList(list)
-//    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_note, parent, false)

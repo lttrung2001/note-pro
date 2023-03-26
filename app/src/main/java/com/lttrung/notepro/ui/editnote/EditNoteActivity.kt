@@ -12,8 +12,8 @@ import androidx.activity.viewModels
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.locals.entities.Image
-import com.lttrung.notepro.database.data.locals.entities.Note
+import com.lttrung.notepro.database.data.networks.models.Image
+import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityEditNoteBinding
 import com.lttrung.notepro.ui.base.activities.AddImagesActivity
 import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
@@ -22,7 +22,9 @@ import com.lttrung.notepro.ui.showmembers.ShowMembersActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.DELETED_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.EDITED_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
+import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.SELECTED_IMAGES
+import com.lttrung.notepro.utils.Converter
 import com.lttrung.notepro.utils.Resource
 import com.ramotion.cardslider.CardSliderLayoutManager
 import com.ramotion.cardslider.CardSnapHelper
@@ -54,7 +56,7 @@ class EditNoteActivity : AddImagesActivity() {
         binding.apply {
             edtNoteTitle.setText(note.title)
             edtNoteDesc.setText(note.content)
-            tvLastModified.text = note.lastModified.toString()
+            tvLastModified.text = Converter.longToDate(note.lastModified)
         }
         imagesAdapter.submitList(note.images)
     }
@@ -123,7 +125,7 @@ class EditNoteActivity : AddImagesActivity() {
                     intent.putExtra(NOTE, note)
                     binding.edtNoteTitle.setText(note.title)
                     binding.edtNoteDesc.setText(note.content)
-                    binding.tvLastModified.text = note.lastModified.toString()
+                    binding.tvLastModified.text = Converter.longToDate(note.lastModified)
                     imagesAdapter.submitList(note.images)
                 }
                 is Resource.Error -> {
@@ -188,7 +190,7 @@ class EditNoteActivity : AddImagesActivity() {
                 val note = intent.getSerializableExtra(NOTE) as Note
                 val showConservationIntent =
                     Intent(this@EditNoteActivity, ChatActivity::class.java)
-                showConservationIntent.putExtra(NOTE, note)
+                showConservationIntent.putExtra(ROOM_ID, note.id)
                 startActivity(showConservationIntent)
                 true
             }

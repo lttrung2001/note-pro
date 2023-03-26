@@ -4,7 +4,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.locals.entities.Note
+import com.lttrung.notepro.database.data.networks.models.Note
 
 class NoteViewHolder(itemView: View) :
     RecyclerView.ViewHolder(itemView) {

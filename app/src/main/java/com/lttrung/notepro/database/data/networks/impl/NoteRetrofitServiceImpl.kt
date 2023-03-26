@@ -3,7 +3,7 @@ package com.lttrung.notepro.database.data.networks.impl
 import android.webkit.URLUtil
 import com.lttrung.notepro.database.data.networks.NoteNetworks
 import com.lttrung.notepro.database.data.networks.models.ApiResponse
-import com.lttrung.notepro.database.data.locals.entities.Note
+import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.utils.HttpStatusCodes
 import io.reactivex.rxjava3.core.Single
 import okhttp3.MultipartBody

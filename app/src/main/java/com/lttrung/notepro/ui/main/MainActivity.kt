@@ -13,8 +13,9 @@ import androidx.appcompat.widget.SearchView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
+import com.lttrung.notepro.NoteProApplication
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.locals.entities.Note
+import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityMainBinding
 import com.lttrung.notepro.services.ChatSocketService
 import com.lttrung.notepro.ui.addnote.AddNoteActivity
@@ -145,7 +146,10 @@ class MainActivity : AppCompatActivity() {
                     pinNotesAdapter.submitList(pinNotes)
                     normalNotesAdapter.submitList(normalNotes)
 
-                    startService(Intent(this, ChatSocketService::class.java))
+                    val service = (application as NoteProApplication).chatService
+                    if (service == null) {
+                        startService(Intent(this, ChatSocketService::class.java))
+                    }
                 }
                 is Resource.Error -> {
                     binding.refreshLayout.isRefreshing = false

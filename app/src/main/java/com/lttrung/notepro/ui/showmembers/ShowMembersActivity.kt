@@ -12,8 +12,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.locals.entities.Member
-import com.lttrung.notepro.database.data.locals.entities.Note
+import com.lttrung.notepro.database.data.networks.models.Member
+import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.database.data.networks.models.Paging
 import com.lttrung.notepro.databinding.ActivityShowMembersBinding
 import com.lttrung.notepro.ui.addmember.AddMemberFragment

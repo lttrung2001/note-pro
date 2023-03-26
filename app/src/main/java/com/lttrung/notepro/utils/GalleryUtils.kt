@@ -5,7 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import com.lttrung.notepro.database.data.locals.entities.Image
+import com.lttrung.notepro.database.data.networks.models.Image
 import com.lttrung.notepro.database.data.networks.models.Paging
 import io.reactivex.rxjava3.core.Single
 

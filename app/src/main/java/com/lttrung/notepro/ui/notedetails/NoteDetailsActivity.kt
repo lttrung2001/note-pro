@@ -10,13 +10,15 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.locals.entities.Note
+import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityNoteDetailsBinding
 import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
 import com.lttrung.notepro.ui.chat.ChatActivity
 import com.lttrung.notepro.ui.showmembers.ShowMembersActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.EDITED_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
+import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
+import com.lttrung.notepro.utils.Converter
 import com.lttrung.notepro.utils.Resource
 import com.ramotion.cardslider.CardSliderLayoutManager
 import com.ramotion.cardslider.CardSnapHelper
@@ -62,7 +64,7 @@ class NoteDetailsActivity : AppCompatActivity() {
                     intent.putExtra(NOTE, note)
                     binding.edtNoteTitle.text = note.title
                     binding.edtNoteDesc.text = note.content
-                    binding.tvLastModified.text = note.lastModified.toString()
+                    binding.tvLastModified.text = Converter.longToDate(note.lastModified)
                     imagesAdapter.submitList(note.images)
                 }
                 is Resource.Error -> {
@@ -80,7 +82,7 @@ class NoteDetailsActivity : AppCompatActivity() {
         val note = intent.getSerializableExtra(NOTE) as Note
         binding.edtNoteTitle.text = note.title
         binding.edtNoteDesc.text = note.content
-        binding.tvLastModified.text = note.lastModified.toString()
+        binding.tvLastModified.text = Converter.longToDate(note.lastModified)
 
         noteDetailsViewModel.getNoteDetails(note)
     }
@@ -122,7 +124,7 @@ class NoteDetailsActivity : AppCompatActivity() {
                 val note = intent.getSerializableExtra(NOTE) as Note
                 val showConservationIntent =
                     Intent(this@NoteDetailsActivity, ChatActivity::class.java)
-                showConservationIntent.putExtra(NOTE, note)
+                showConservationIntent.putExtra(ROOM_ID, note.id)
                 startActivity(showConservationIntent)
                 true
             }

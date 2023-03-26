@@ -1,32 +1,39 @@
 package com.lttrung.notepro.services
 
 import android.app.ActivityManager
+import android.app.Notification
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Binder
 import android.os.IBinder
-import android.util.Log
+import androidx.core.app.NotificationCompat
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
+import com.lttrung.notepro.NoteProApplication
+import com.lttrung.notepro.R
 import com.lttrung.notepro.database.data.locals.entities.Message
+import com.lttrung.notepro.database.data.networks.models.ApiResponse
+import com.lttrung.notepro.exceptions.InvalidTokenException
+import com.lttrung.notepro.ui.login.LoginActivity
 import com.lttrung.notepro.utils.AppConstant
-import com.lttrung.notepro.utils.AppConstant.Companion.ACCESS_TOKEN
+import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_LISTENER_CHANNEL_ID
+import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_LISTENER_NOTIFICATION_ID
+import com.lttrung.notepro.utils.AppConstant.Companion.REFRESH_TOKEN
 import com.lttrung.notepro.utils.NotificationHelper
 import com.lttrung.notepro.utils.RetrofitUtils.BASE_URL
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.qualifiers.ApplicationContext
 import io.socket.client.IO
 import io.socket.client.Socket
+import okhttp3.FormBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class ChatSocketService : Service() {
-    @Inject
-    @ApplicationContext
-    lateinit var context: Context
-
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
@@ -40,34 +47,64 @@ class ChatSocketService : Service() {
     }
 
     private val socket: Socket by lazy {
-        IO.socket(BASE_URL, IO.Options.builder().setAuth(buildMap {
-            val accessToken = sharedPreferences.getString(ACCESS_TOKEN, "")
-            this@buildMap["token"] = accessToken
+        IO.socket(BASE_URL, IO.Options.builder().setReconnection(true).setAuth(buildMap {
+            val refreshToken = sharedPreferences.getString(REFRESH_TOKEN, "")
+            if (refreshToken.isNullOrEmpty()) {
+                requireLogin()
+            }
+            try {
+                val accessToken = callGetAccessTokenApi(refreshToken!!)
+                if (accessToken.isEmpty()) {
+                    throw InvalidTokenException()
+                }
+                this["token"] = accessToken
+            } catch (e: Exception) {
+                requireLogin()
+            }
         }).build())
+    }
+
+    private fun requireLogin() {
+        val loginIntent = Intent(baseContext, LoginActivity::class.java)
+        loginIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        baseContext.startActivity(loginIntent)
     }
 
     override fun onBind(intent: Intent): IBinder {
         return binder
     }
 
+    override fun onCreate() {
+        super.onCreate()
+        val notification: Notification =
+            NotificationCompat.Builder(baseContext, CHAT_LISTENER_CHANNEL_ID)
+                .setContentTitle("Chat listener service")
+                .setContentText("Service is running")
+                .setSmallIcon(R.drawable.app)
+                .build()
+        startForeground(CHAT_LISTENER_NOTIFICATION_ID, notification)
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         socket.connect()
-        socket.on("chat") { data ->
-            val message = gson.fromJson(data[0].toString(), Message::class.java)
+        socket.on("chat") { args ->
+            val message = gson.fromJson(args[0].toString(), Message::class.java)
             val process = ActivityManager.RunningAppProcessInfo()
             ActivityManager.getMyMemoryState(process)
-            if (process.importance != ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+            val isChatActivity = (application as NoteProApplication).isChatActivity
+            if (process.importance != ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND || !isChatActivity) {
                 NotificationHelper.pushNotification(
                     applicationContext,
                     AppConstant.CHAT_CHANNEL_ID,
                     message.room,
-                    "From ${message.userName}: ${message.content}"
+                    "From ${message.user.fullName}: ${message.content}",
+                    message
                 )
             } else {
-                Log.i("INFO", "${message.room}: ${message.content}")
                 messageLiveData.postValue(message)
             }
         }
+        (application as NoteProApplication).chatService = this@ChatSocketService
         return START_STICKY
     }
 
@@ -78,5 +115,35 @@ class ChatSocketService : Service() {
     inner class LocalBinder : Binder() {
         // Return this instance of LocalService so clients can call public methods.
         fun getService(): ChatSocketService = this@ChatSocketService
+    }
+
+    private fun callGetAccessTokenApi(refreshToken: String): String {
+        var accessToken = ""
+        val thread = Thread {
+            val client = OkHttpClient.Builder()
+                .build()
+            // Create form data
+            val formBody: RequestBody = FormBody.Builder().add("refreshToken", refreshToken).build()
+            val request =
+                Request.Builder().post(formBody).url(BASE_URL + "api/v1/get-access-token")
+                    .build()
+            try {
+                // Send request to api server and wait for response
+                val response = client.newCall(request).execute()
+                // Convert response to object
+                accessToken =
+                    Gson().fromJson(
+                        response.body!!.string(),
+                        ApiResponse::class.java
+                    ).data as String
+            } catch (e: Exception) {
+                throw e
+            }
+        }
+        // Start thread
+        thread.start()
+        // Wait until thread die to get final response
+        thread.join()
+        return accessToken
     }
 }

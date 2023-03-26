@@ -3,7 +3,7 @@ package com.lttrung.notepro.ui.showmembers
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lttrung.notepro.database.data.locals.entities.Member
+import com.lttrung.notepro.database.data.networks.models.Member
 import com.lttrung.notepro.database.data.networks.models.Paging
 import com.lttrung.notepro.exceptions.ConnectivityException
 import com.lttrung.notepro.utils.Resource
