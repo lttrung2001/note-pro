@@ -171,7 +171,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initListeners() {
         binding.fab.setOnClickListener(fabOnClickListener)
-        binding.refreshLayout.setOnScrollChangeListener(fabOnScrollChangeListener)
+        binding.nestedScrollView.setOnScrollChangeListener(fabOnScrollChangeListener)
         binding.refreshLayout.setOnRefreshListener(refreshListener)
     }
 

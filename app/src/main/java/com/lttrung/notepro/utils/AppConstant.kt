@@ -41,6 +41,6 @@ class AppConstant {
 
 
 
-        const val PAGE_LIMIT = 10
+        const val PAGE_LIMIT = 1
     }
 }
