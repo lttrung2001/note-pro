@@ -12,6 +12,7 @@ import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -69,6 +70,22 @@ class ShowMembersActivity : AppCompatActivity() {
         }
     }
 
+    private val onScrollListener: RecyclerView.OnScrollListener by lazy {
+        object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    val note = intent.getSerializableExtra(NOTE) as Note
+                    getMembersViewModel.getMembers(
+                        note.id,
+                        memberAdapter.itemCount / PAGE_LIMIT,
+                        PAGE_LIMIT
+                    )
+                }
+            }
+        }
+    }
+
     private fun initListeners() {
         binding.refreshLayout.setOnRefreshListener(refreshListener)
     }
@@ -83,11 +100,19 @@ class ShowMembersActivity : AppCompatActivity() {
             when (resource) {
                 is Resource.Loading -> {
                     binding.refreshLayout.isRefreshing = true
+                    binding.rcvMembers.removeOnScrollListener(onScrollListener)
                 }
                 is Resource.Success -> {
                     binding.refreshLayout.isRefreshing = false
-                    Log.i("INFO SUCCESS", resource.data.toString())
-                    memberAdapter.submitList(resource.data.data)
+                    val paging = resource.data
+                    val members = memberAdapter.currentList.toMutableList()
+                    members.addAll(paging.data)
+                    memberAdapter.submitList(members)
+                    if (paging.hasNextPage) {
+                        binding.rcvMembers.addOnScrollListener(onScrollListener)
+                    } else {
+                        binding.rcvMembers.removeOnScrollListener(onScrollListener)
+                    }
                 }
                 is Resource.Error -> {
                     binding.refreshLayout.isRefreshing = false
@@ -95,6 +120,7 @@ class ShowMembersActivity : AppCompatActivity() {
                         binding.root, resource.message,
                         BaseTransientBottomBar.LENGTH_LONG
                     ).show()
+                    binding.rcvMembers.removeOnScrollListener(onScrollListener)
                 }
             }
         }

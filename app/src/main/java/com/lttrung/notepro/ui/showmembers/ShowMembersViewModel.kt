@@ -20,6 +20,7 @@ import javax.inject.Inject
 class ShowMembersViewModel @Inject constructor(
     private val useCase: ShowMembersUseCase
 ) : ViewModel() {
+
     val getMembers: MutableLiveData<Resource<Paging<Member>>> by lazy {
         MutableLiveData<Resource<Paging<Member>>>()
     }
