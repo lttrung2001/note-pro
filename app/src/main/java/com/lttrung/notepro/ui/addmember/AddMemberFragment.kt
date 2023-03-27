@@ -34,7 +34,6 @@ class AddMemberFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.i("INFO", "onCreateView")
         binding = FragmentAddMemberBinding.inflate(layoutInflater)
 
         initViews()
@@ -109,10 +108,5 @@ class AddMemberFragment : BottomSheetDialogFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        Log.i("INFO", "onDetach")
     }
 }

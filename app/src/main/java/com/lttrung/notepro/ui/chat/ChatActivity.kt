@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -15,13 +14,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.lttrung.notepro.NoteProApplication
 import com.lttrung.notepro.database.data.locals.entities.Message
 import com.lttrung.notepro.database.data.locals.entities.User
-import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityChatBinding
 import com.lttrung.notepro.services.ChatSocketService
 import com.lttrung.notepro.ui.base.adapters.message.MessageAdapter
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_CHANNEL_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE
-import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
 import com.lttrung.notepro.utils.NotificationHelper
 import dagger.hilt.android.AndroidEntryPoint
@@ -85,7 +82,7 @@ class ChatActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         (application as NoteProApplication).isChatActivity = false
-        socketService.messageLiveData.removeObservers(this)
+        socketService.messageLiveData.removeObservers(this@ChatActivity)
         unbindService(connection)
     }
 
@@ -107,11 +104,7 @@ class ChatActivity : AppCompatActivity() {
                 layoutManager = linearLayoutManager
             }
             val messageFromNotification = intent.getSerializableExtra(MESSAGE) as Message?
-            if (messageFromNotification == null) {
-                Log.e("ERROR", "NULL")
-            }
             messageFromNotification?.let {
-                Log.i("INFO", it.toString())
                 val messages = messageAdapter.currentList.toMutableList()
                 messages.add(it)
                 messageAdapter.submitList(messages)

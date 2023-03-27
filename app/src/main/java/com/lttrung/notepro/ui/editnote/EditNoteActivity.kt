@@ -1,7 +1,11 @@
 package com.lttrung.notepro.ui.editnote
 
+import android.app.Service
+import android.content.ComponentName
 import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -15,6 +19,7 @@ import com.lttrung.notepro.R
 import com.lttrung.notepro.database.data.networks.models.Image
 import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityEditNoteBinding
+import com.lttrung.notepro.services.ChatSocketService
 import com.lttrung.notepro.ui.base.activities.AddImagesActivity
 import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
 import com.lttrung.notepro.ui.chat.ChatActivity
@@ -36,6 +41,20 @@ class EditNoteActivity : AddImagesActivity() {
     private lateinit var imagesAdapter: ImagesAdapter
     private lateinit var menu: Menu
     private val editNoteViewModel: EditNoteViewModel by viewModels()
+    private lateinit var socketService: ChatSocketService
+
+    private val connection: ServiceConnection by lazy {
+        object : ServiceConnection {
+            override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                val binder = service as ChatSocketService.LocalBinder
+                socketService = binder.getService()
+            }
+
+            override fun onServiceDisconnected(name: ComponentName?) {
+
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +68,18 @@ class EditNoteActivity : AddImagesActivity() {
             val note = intent.getSerializableExtra(NOTE) as Note
             editNoteViewModel.getNoteDetails(note.id)
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Intent(this@EditNoteActivity, ChatSocketService::class.java).also { intent ->
+            bindService(intent, connection, Service.BIND_AUTO_CREATE)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unbindService(connection)
     }
 
     private fun initData() {
@@ -100,6 +131,10 @@ class EditNoteActivity : AddImagesActivity() {
                 }
                 is Resource.Success -> {
                     val note = intent.getSerializableExtra(NOTE) as Note
+                    val roomId = note.id
+
+                    socketService.sendDeleteNoteMessage(roomId)
+
                     val resultIntent = Intent()
                     resultIntent.putExtra(DELETED_NOTE, note)
                     setResult(RESULT_OK, resultIntent)

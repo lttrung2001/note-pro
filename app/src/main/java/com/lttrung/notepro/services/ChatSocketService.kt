@@ -112,6 +112,22 @@ class ChatSocketService : Service() {
         socket.emit("chat", gson.toJson(message))
     }
 
+    fun sendAddNoteMessage(roomId: String) {
+        socket.emit("add_note", roomId)
+    }
+
+    fun sendDeleteNoteMessage(roomId: String) {
+        socket.emit("delete_note", roomId)
+    }
+
+    fun sendAddMemberMessage(roomId: String, email: String) {
+        socket.emit("add_member", roomId, email)
+    }
+
+    fun sendRemoveMemberMessage(roomId: String, email: String) {
+        socket.emit("remove_member", roomId, email)
+    }
+
     inner class LocalBinder : Binder() {
         // Return this instance of LocalService so clients can call public methods.
         fun getService(): ChatSocketService = this@ChatSocketService

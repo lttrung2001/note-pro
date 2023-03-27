@@ -1,7 +1,11 @@
 package com.lttrung.notepro.ui.addnote
 
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.ActivityResultLauncher
@@ -13,6 +17,7 @@ import com.lttrung.notepro.R
 import com.lttrung.notepro.database.data.networks.models.Image
 import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityAddNoteBinding
+import com.lttrung.notepro.services.ChatSocketService
 import com.lttrung.notepro.ui.base.activities.AddImagesActivity
 import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
@@ -28,6 +33,20 @@ class AddNoteActivity : AddImagesActivity() {
     private lateinit var imagesAdapter: ImagesAdapter
     private lateinit var menu: Menu
     private val addNoteViewModel: AddNoteViewModel by viewModels()
+    private lateinit var socketService: ChatSocketService
+
+    private val connection: ServiceConnection by lazy {
+        object: ServiceConnection {
+            override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                val binder = service as ChatSocketService.LocalBinder
+                socketService = binder.getService()
+            }
+
+            override fun onServiceDisconnected(name: ComponentName?) {
+
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +56,18 @@ class AddNoteActivity : AddImagesActivity() {
         initObservers()
     }
 
+    override fun onStart() {
+        super.onStart()
+        Intent(this@AddNoteActivity, ChatSocketService::class.java).also { intent ->
+            bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unbindService(connection)
+    }
+
     private fun initObservers() {
         addNoteViewModel.addNote.observe(this) { resource ->
             when (resource) {
@@ -44,6 +75,8 @@ class AddNoteActivity : AddImagesActivity() {
 
                 }
                 is Resource.Success -> {
+
+
                     val resultIntent = Intent()
                     resultIntent.putExtra(NOTE, resource.data)
                     setResult(RESULT_OK, resultIntent)

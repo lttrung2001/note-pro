@@ -1,7 +1,11 @@
 package com.lttrung.notepro.ui.showmembers
 
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -16,6 +20,7 @@ import com.lttrung.notepro.database.data.networks.models.Member
 import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.database.data.networks.models.Paging
 import com.lttrung.notepro.databinding.ActivityShowMembersBinding
+import com.lttrung.notepro.services.ChatSocketService
 import com.lttrung.notepro.ui.addmember.AddMemberFragment
 import com.lttrung.notepro.ui.base.adapters.member.MemberAdapter
 import com.lttrung.notepro.ui.base.adapters.member.MemberListener
@@ -34,6 +39,7 @@ class ShowMembersActivity : AppCompatActivity() {
     private val getMembersViewModel: ShowMembersViewModel by viewModels()
     private lateinit var memberAdapter: MemberAdapter
     private lateinit var toAddMemberButton: MenuItem
+    private lateinit var socketService: ChatSocketService
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initViews()
@@ -43,6 +49,18 @@ class ShowMembersActivity : AppCompatActivity() {
         if (getMembersViewModel.getMembers.value == null) {
             initData()
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Intent(this@ShowMembersActivity, ChatSocketService::class.java).also { intent ->
+            bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unbindService(connection)
     }
 
     private val refreshListener: SwipeRefreshLayout.OnRefreshListener by lazy {
@@ -119,11 +137,11 @@ class ShowMembersActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val resultIntent = result.data
-                resultIntent?.let { intent ->
+                resultIntent?.let { rIntent ->
                     val editedMember =
-                        intent.getSerializableExtra(AppConstant.EDITED_MEMBER) as Member?
+                        rIntent.getSerializableExtra(AppConstant.EDITED_MEMBER) as Member?
                     val deletedMember =
-                        intent.getSerializableExtra(AppConstant.DELETED_MEMBER) as Member?
+                        rIntent.getSerializableExtra(AppConstant.DELETED_MEMBER) as Member?
                     val paging = getPaging()
                     val members = paging.data.toMutableList()
                     editedMember?.let { member ->
@@ -132,11 +150,13 @@ class ShowMembersActivity : AppCompatActivity() {
                         }
                         members.remove(findingMember)
                         members.add(member)
-                        Log.i("INFO", Paging(
-                            paging.hasPreviousPage,
-                            paging.hasNextPage,
-                            members
-                        ).toString())
+                        Log.i(
+                            "INFO", Paging(
+                                paging.hasPreviousPage,
+                                paging.hasNextPage,
+                                members
+                            ).toString()
+                        )
                         getMembersViewModel.getMembers.postValue(
                             Resource.Success(
                                 Paging(
@@ -161,6 +181,10 @@ class ShowMembersActivity : AppCompatActivity() {
                                 )
                             )
                         )
+
+                        val note = intent.getSerializableExtra(NOTE) as Note
+                        val roomId = note.id
+                        socketService.sendRemoveMemberMessage(roomId, member.email)
                     }
                 }
             }
@@ -196,10 +220,25 @@ class ShowMembersActivity : AppCompatActivity() {
                 )
             )
         )
+
+        val note = intent.getSerializableExtra(NOTE) as Note
+        val roomId = note.id
+        socketService.sendAddMemberMessage(roomId, member.email)
     }
 
     private fun getPaging(): Paging<Member> {
         val resource = getMembersViewModel.getMembers.value as Resource.Success<Paging<Member>>
         return resource.data
+    }
+
+    private val connection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as ChatSocketService.LocalBinder
+            socketService = binder.getService()
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+
+        }
     }
 }
