@@ -2,7 +2,7 @@ package com.lttrung.notepro.database.repositories.impl
 
 import com.lttrung.notepro.database.data.locals.UserLocals
 import com.lttrung.notepro.database.data.networks.UserNetworks
-import com.lttrung.notepro.database.data.networks.models.User
+import com.lttrung.notepro.database.data.networks.models.UserInfo
 import com.lttrung.notepro.database.repositories.UserRepositories
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
@@ -17,13 +17,13 @@ class UserRepositoriesImpl @Inject constructor(
         }
     }
 
-    override fun changeProfile(fullName: String, phoneNumber: String): Single<User> {
+    override fun changeProfile(fullName: String, phoneNumber: String): Single<UserInfo> {
         return networks.changeProfile(fullName, phoneNumber).doAfterSuccess {
             locals.changeProfile(fullName, phoneNumber)
         }
     }
 
-    override fun getProfile(): Single<User> {
+    override fun getProfile(): Single<UserInfo> {
         return networks.getProfile().doAfterSuccess { user ->
             locals.changeProfile(user.fullName, user.phoneNumber)
         }

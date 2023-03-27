@@ -57,8 +57,8 @@ class GalleryUtils {
                             cs.getInt(idColumnIndex).toString(),
                             cs.getString(nameColumnIndex),
                             cs.getString(dataColumnIndex),
-                            null,
-                            null,
+                            System.currentTimeMillis(),
+                            "",
                             false
                         )
                     )

@@ -12,7 +12,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.lttrung.notepro.NoteProApplication
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.locals.entities.Message
+import com.lttrung.notepro.database.data.networks.models.Message
 import com.lttrung.notepro.database.data.networks.models.ApiResponse
 import com.lttrung.notepro.exceptions.InvalidTokenException
 import com.lttrung.notepro.ui.login.LoginActivity

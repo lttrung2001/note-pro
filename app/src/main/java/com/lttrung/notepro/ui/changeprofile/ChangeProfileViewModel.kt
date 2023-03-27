@@ -3,7 +3,7 @@ package com.lttrung.notepro.ui.changeprofile
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lttrung.notepro.database.data.networks.models.User
+import com.lttrung.notepro.database.data.networks.models.UserInfo
 import com.lttrung.notepro.exceptions.ConnectivityException
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,8 +19,8 @@ import javax.inject.Inject
 class ChangeProfileViewModel @Inject constructor(
     private val useCase: ChangeProfileUseCase
 ) : ViewModel() {
-    val changeProfile: MutableLiveData<Resource<User>> by lazy {
-        MutableLiveData<Resource<User>>()
+    val changeProfile: MutableLiveData<Resource<UserInfo>> by lazy {
+        MutableLiveData<Resource<UserInfo>>()
     }
 
     private val composite: CompositeDisposable by lazy {
@@ -29,7 +29,7 @@ class ChangeProfileViewModel @Inject constructor(
 
     private var changeProfileDisposable: Disposable? = null
 
-    private val changeProfileObserver: Consumer<User> by lazy {
+    private val changeProfileObserver: Consumer<UserInfo> by lazy {
         Consumer {
             changeProfile.postValue(Resource.Success(it))
         }
