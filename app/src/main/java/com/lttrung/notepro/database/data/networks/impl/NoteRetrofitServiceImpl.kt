@@ -1,6 +1,8 @@
 package com.lttrung.notepro.database.data.networks.impl
 
+import android.util.Log
 import android.webkit.URLUtil
+import com.google.gson.Gson
 import com.lttrung.notepro.database.data.networks.NoteNetworks
 import com.lttrung.notepro.database.data.networks.models.ApiResponse
 import com.lttrung.notepro.database.data.networks.models.Note
@@ -17,7 +19,8 @@ import java.util.*
 import javax.inject.Inject
 
 class NoteRetrofitServiceImpl @Inject constructor(
-    private val service: Service
+    private val service: Service,
+    private val gson: Gson
 ) : NoteNetworks {
     companion object {
         private const val PATH = "/api/v1/notes"
@@ -40,7 +43,7 @@ class NoteRetrofitServiceImpl @Inject constructor(
             @Part("title") title: RequestBody,
             @Part("content") content: RequestBody,
             @Part("isPin") isPin: Boolean,
-            @Part("deleteImageIds") ids: List<String>,
+            @Part("deleteImageIds") ids: RequestBody,
             @Part images: List<MultipartBody.Part>?
         ): Single<Response<ApiResponse<Note>>>
 
@@ -72,19 +75,20 @@ class NoteRetrofitServiceImpl @Inject constructor(
     }
 
     override fun editNote(note: Note, deleteImageIds: List<String>): Single<Note> {
-        val newImages = note.images?.filter { image ->
+        val newImages = note.images.filter { image ->
             !URLUtil.isNetworkUrl(image.url)
-        }?.map { image ->
+        }.map { image ->
             val file = File(image.url)
             val requestBody = file.asRequestBody(MultipartBody.FORM)
             MultipartBody.Part.createFormData("images", file.name, requestBody)
         }
+        Log.i("INFO", gson.toJson(deleteImageIds))
         return service.editNote(
             note.id,
             note.title.toRequestBody(MultipartBody.FORM),
             note.content.toRequestBody(MultipartBody.FORM),
             note.isPin,
-            deleteImageIds,
+            gson.toJson(deleteImageIds).toRequestBody(MultipartBody.FORM),
             newImages
         ).map { response ->
             if (response.code() == HttpStatusCodes.OK.code) {

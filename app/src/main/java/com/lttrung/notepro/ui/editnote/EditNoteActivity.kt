@@ -93,7 +93,7 @@ class EditNoteActivity : AddImagesActivity() {
     }
 
     private fun initAdapter() {
-        imagesAdapter = ImagesAdapter()
+        imagesAdapter = ImagesAdapter(imageListener)
         binding.rcvImages.adapter = imagesAdapter
     }
 
@@ -241,7 +241,7 @@ class EditNoteActivity : AddImagesActivity() {
                     noteDetails.role,
                     imagesAdapter.currentList
                 )
-                editNoteViewModel.editNote(note, emptyList())
+                editNoteViewModel.editNote(note)
                 true
             }
             else -> {
@@ -268,6 +268,18 @@ class EditNoteActivity : AddImagesActivity() {
         View.OnClickListener {
             val note = intent.getSerializableExtra(NOTE) as Note
             editNoteViewModel.deleteNote(note.id)
+        }
+    }
+
+    private val imageListener: ImagesAdapter.ImageListener by lazy {
+        object : ImagesAdapter.ImageListener {
+            override fun onClick(image: Image) {
+                // Start image details activity
+            }
+
+            override fun onDelete(image: Image) {
+                editNoteViewModel.deleteImage(image)
+            }
         }
     }
 }

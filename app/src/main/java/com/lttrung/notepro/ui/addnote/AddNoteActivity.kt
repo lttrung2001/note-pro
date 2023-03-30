@@ -36,7 +36,7 @@ class AddNoteActivity : AddImagesActivity() {
     private lateinit var socketService: ChatSocketService
 
     private val connection: ServiceConnection by lazy {
-        object: ServiceConnection {
+        object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
                 val binder = service as ChatSocketService.LocalBinder
                 socketService = binder.getService()
@@ -90,7 +90,7 @@ class AddNoteActivity : AddImagesActivity() {
     }
 
     private fun initAdapter() {
-        imagesAdapter = ImagesAdapter()
+        imagesAdapter = ImagesAdapter(imageListener)
         binding.rcvImages.apply {
             adapter = imagesAdapter
             layoutManager = CardSliderLayoutManager(this@AddNoteActivity)
@@ -159,4 +159,18 @@ class AddNoteActivity : AddImagesActivity() {
                 }
             }
         }
+
+    private val imageListener: ImagesAdapter.ImageListener by lazy {
+        object : ImagesAdapter.ImageListener {
+            override fun onClick(image: Image) {
+                // Start image details activity
+            }
+
+            override fun onDelete(image: Image) {
+                val currentList = imagesAdapter.currentList.toMutableList()
+                currentList.remove(image)
+                imagesAdapter.submitList(currentList)
+            }
+        }
+    }
 }

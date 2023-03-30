@@ -10,10 +10,17 @@ class ImageViewHolder(
     private val binding: LayoutImageBinding
 ) : ViewHolder(binding.root) {
 
-    fun bind(image: Image) {
+    fun bind(image: Image, listener: ImagesAdapter.ImageListener) {
         binding.img.load(image.url) {
             crossfade(true)
             placeholder(R.drawable.me)
+        }
+        binding.root.setOnClickListener {
+            // Start image details activity
+            listener.onClick(image)
+        }
+        binding.buttonDeleteImg.setOnClickListener {
+            listener.onDelete(image)
         }
     }
 }
