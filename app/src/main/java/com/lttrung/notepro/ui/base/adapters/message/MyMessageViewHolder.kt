@@ -1,7 +1,7 @@
 package com.lttrung.notepro.ui.base.adapters.message
 
 import androidx.recyclerview.widget.RecyclerView
-import com.lttrung.notepro.database.data.locals.entities.Message
+import com.lttrung.notepro.database.data.networks.models.Message
 import com.lttrung.notepro.databinding.LayoutMyMessageBinding
 
 class MyMessageViewHolder(private val binding: LayoutMyMessageBinding) :

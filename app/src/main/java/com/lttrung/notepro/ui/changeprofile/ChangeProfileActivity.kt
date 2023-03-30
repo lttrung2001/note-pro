@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.networks.models.User
+import com.lttrung.notepro.database.data.networks.models.UserInfo
 import com.lttrung.notepro.databinding.ActivityChangeProfileBinding
 import com.lttrung.notepro.utils.AppConstant.Companion.USER
 import com.lttrung.notepro.utils.Resource
@@ -54,7 +54,7 @@ class ChangeProfileActivity : AppCompatActivity() {
     }
 
     private fun initData() {
-        val user = intent.getSerializableExtra(USER) as User
+        val user = intent.getSerializableExtra(USER) as UserInfo
         binding.tvId.text = user.id
         binding.tvEmail.text = user.email
         binding.tvFullName.setText(user.fullName)
@@ -85,8 +85,8 @@ class ChangeProfileActivity : AppCompatActivity() {
                     binding.tvPhoneNumber.error = getString(R.string.phone_number_check)
                 }
                 if (!helper.hasError) {
-                    val user = intent.getSerializableExtra(USER) as User
-                    intent.putExtra(USER, User(user.id, user.email, fullName, phoneNumber))
+                    val user = intent.getSerializableExtra(USER) as UserInfo
+                    intent.putExtra(USER, UserInfo(user.id, user.email, fullName, phoneNumber))
                     changeProfileViewModel.changeProfile(fullName, phoneNumber)
                 }
             }

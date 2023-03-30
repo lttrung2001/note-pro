@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.networks.models.User
+import com.lttrung.notepro.database.data.networks.models.UserInfo
 import com.lttrung.notepro.databinding.ActivityViewProfileBinding
 import com.lttrung.notepro.ui.changeprofile.ChangeProfileActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.USER
@@ -68,7 +68,7 @@ class ViewProfileActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.action_edit_info -> {
                 val editProfileIntent = Intent(this, ChangeProfileActivity::class.java)
-                val user = User(
+                val user = UserInfo(
                     binding.tvId.text.toString(),
                     binding.tvEmail.text.toString(),
                     binding.tvFullName.text.toString(),
@@ -89,7 +89,7 @@ class ViewProfileActivity : AppCompatActivity() {
             if (result.resultCode == RESULT_OK) {
                 val resultIntent = result.data
                 resultIntent?.let {
-                    val user = resultIntent.getSerializableExtra(USER) as User
+                    val user = resultIntent.getSerializableExtra(USER) as UserInfo
                     binding.tvFullName.text = user.fullName
                     binding.tvPhoneNumber.text = user.phoneNumber
                 }

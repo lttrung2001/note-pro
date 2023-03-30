@@ -2,7 +2,7 @@ package com.lttrung.notepro.database.data.networks.impl
 
 import com.lttrung.notepro.database.data.networks.UserNetworks
 import com.lttrung.notepro.database.data.networks.models.ApiResponse
-import com.lttrung.notepro.database.data.networks.models.User
+import com.lttrung.notepro.database.data.networks.models.UserInfo
 import com.lttrung.notepro.utils.HttpStatusCodes
 import io.reactivex.rxjava3.core.Single
 import retrofit2.Response
@@ -17,14 +17,14 @@ class UserRetrofitServiceImpl @Inject constructor(
 ) : UserNetworks {
     interface Service {
         @GET("$PATH/get-user-details")
-        fun getProfile(): Single<Response<ApiResponse<User>>>
+        fun getProfile(): Single<Response<ApiResponse<UserInfo>>>
 
         @FormUrlEncoded
         @PUT("$PATH/change-infor")
         fun changeProfile(
             @Field("fullName") fullName: String,
             @Field("phoneNumber") phoneNumber: String
-        ): Single<Response<ApiResponse<User>>>
+        ): Single<Response<ApiResponse<UserInfo>>>
 
         @FormUrlEncoded
         @PUT("$PATH/change-password")
@@ -44,7 +44,7 @@ class UserRetrofitServiceImpl @Inject constructor(
         }
     }
 
-    override fun changeProfile(fullName: String, phoneNumber: String): Single<User> {
+    override fun changeProfile(fullName: String, phoneNumber: String): Single<UserInfo> {
         return service.changeProfile(fullName, phoneNumber).map { response ->
             if (response.code() == HttpStatusCodes.OK.code) {
                 response.body()!!.data
@@ -54,7 +54,7 @@ class UserRetrofitServiceImpl @Inject constructor(
         }
     }
 
-    override fun getProfile(): Single<User> {
+    override fun getProfile(): Single<UserInfo> {
         return service.getProfile().map { response ->
             if (response.code() == HttpStatusCodes.OK.code) {
                 response.body()!!.data

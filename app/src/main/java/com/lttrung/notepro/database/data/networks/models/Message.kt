@@ -1,4 +1,4 @@
-package com.lttrung.notepro.database.data.locals.entities
+package com.lttrung.notepro.database.data.networks.models
 
 import java.io.Serializable
 

@@ -1,7 +1,6 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'com.google.gms.google-services'
 
     id 'kotlin-android'
     id 'kotlin-kapt'
@@ -69,10 +68,6 @@ dependencies {
 
     // Circle image
     implementation 'de.hdodenhof:circleimageview:3.1.0'
-
-    // Google service
-    implementation 'com.google.firebase:firebase-auth:21.1.0'
-    implementation 'com.google.android.gms:play-services-auth:20.4.1'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'

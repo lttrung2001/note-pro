@@ -1,6 +1,5 @@
 package com.lttrung.notepro.database.data.networks
 
-import com.lttrung.notepro.database.data.networks.models.User
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Singleton
 

@@ -12,8 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lttrung.notepro.NoteProApplication
-import com.lttrung.notepro.database.data.locals.entities.Message
-import com.lttrung.notepro.database.data.locals.entities.User
+import com.lttrung.notepro.database.data.networks.models.Message
+import com.lttrung.notepro.database.data.networks.models.User
 import com.lttrung.notepro.databinding.ActivityChatBinding
 import com.lttrung.notepro.services.ChatSocketService
 import com.lttrung.notepro.ui.base.adapters.message.MessageAdapter

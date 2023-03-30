@@ -9,7 +9,7 @@ data class Note(
     val lastModified: Long,
     val isPin: Boolean,
     val role: String,
-    val images: List<Image>? = null
+    val images: List<Image> = emptyList()
 ) : Serializable {
     fun hasEditPermission(): Boolean {
         return role == "owner" || role == "editor"
@@ -18,4 +18,8 @@ data class Note(
     fun isOwner(): Boolean {
         return role == "owner"
     }
+
+    constructor(note: Note, images: List<Image>) : this(
+        note.id, note.title, note.content, note.lastModified, note.isPin, note.role, images
+    )
 }

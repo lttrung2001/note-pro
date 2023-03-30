@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
+import com.lttrung.notepro.database.data.networks.models.Image
 import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityNoteDetailsBinding
 import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
@@ -47,7 +48,7 @@ class NoteDetailsActivity : AppCompatActivity() {
     }
 
     private fun initAdapters() {
-        imagesAdapter = ImagesAdapter()
+        imagesAdapter = ImagesAdapter(imageListener)
         binding.rcvImages.adapter = imagesAdapter
         binding.rcvImages.layoutManager = CardSliderLayoutManager(this)
         CardSnapHelper().attachToRecyclerView(binding.rcvImages)
@@ -149,6 +150,19 @@ class NoteDetailsActivity : AppCompatActivity() {
                 setResult(RESULT_OK, resultIntent)
                 finish()
                 true
+            }
+        }
+    }
+
+    private val imageListener: ImagesAdapter.ImageListener by lazy {
+        object: ImagesAdapter.ImageListener {
+            override fun onClick(image: Image) {
+                // Start image details activity
+                return
+            }
+
+            override fun onDelete(image: Image) {
+                return
             }
         }
     }

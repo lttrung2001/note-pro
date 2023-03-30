@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.lttrung.notepro.database.data.locals.entities.Message
+import com.lttrung.notepro.database.data.networks.models.Message
 import com.lttrung.notepro.databinding.LayoutMyMessageBinding
 import com.lttrung.notepro.databinding.LayoutOtherMessageBinding
 
