@@ -103,7 +103,7 @@ class NoteDetailsActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
+        when (item.itemId) {
             R.id.action_pin -> {
                 if (item.isChecked) {
                     item.icon.setTint(resources.getColor(R.color.black, theme))
@@ -111,23 +111,14 @@ class NoteDetailsActivity : AppCompatActivity() {
                     item.icon.setTint(resources.getColor(R.color.primary, theme))
                 }
                 item.isChecked = !item.isChecked
-                true
-            }
-            R.id.action_show_members -> {
-                // Start show members activity
-                val showMembersIntent = Intent(this, ShowMembersActivity::class.java)
-                val note = intent.getSerializableExtra(NOTE) as Note
-                showMembersIntent.putExtra(NOTE, note)
-                startActivity(showMembersIntent)
-                true
             }
             R.id.action_show_conservation -> {
                 val note = intent.getSerializableExtra(NOTE) as Note
                 val showConservationIntent =
                     Intent(this@NoteDetailsActivity, ChatActivity::class.java)
                 showConservationIntent.putExtra(ROOM_ID, note.id)
+                showConservationIntent.putExtra(NOTE, note)
                 startActivity(showConservationIntent)
-                true
             }
             else -> {
                 // Update pin here...
@@ -149,9 +140,9 @@ class NoteDetailsActivity : AppCompatActivity() {
                 )
                 setResult(RESULT_OK, resultIntent)
                 finish()
-                true
             }
         }
+        return true
     }
 
     private val imageListener: ImagesAdapter.ImageListener by lazy {

@@ -12,5 +12,6 @@ interface UserLocals {
     fun changeProfile(fullName: String, phoneNumber: String)
     fun fetchAccessToken(accessToken: String)
     fun getCurrentUserInfo(): CurrentUser
+    fun getCurrentUserId(): String
     fun logout()
 }

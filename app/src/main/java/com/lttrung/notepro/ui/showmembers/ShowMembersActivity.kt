@@ -140,14 +140,13 @@ class ShowMembersActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return if (item.itemId == R.id.action_add_member) {
+        if (item.itemId == R.id.action_add_member) {
             val addMemberFragment = AddMemberFragment()
             addMemberFragment.show(supportFragmentManager, addMemberFragment.tag)
-            true
         } else {
-            onBackPressed()
-            true
+            finish()
         }
+        return true
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

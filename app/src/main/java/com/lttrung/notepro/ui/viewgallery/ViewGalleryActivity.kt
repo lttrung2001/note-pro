@@ -64,7 +64,7 @@ class ViewGalleryActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
+        when (item.itemId) {
             R.id.action_select_images -> {
                 val selectedImages = adapter.currentList.filter { image ->
                     image.isSelected
@@ -73,12 +73,11 @@ class ViewGalleryActivity : AppCompatActivity() {
                 resultIntent.putExtra(SELECTED_IMAGES, selectedImages as Serializable)
                 setResult(RESULT_OK, resultIntent)
                 finish()
-                true
             }
             else -> {
                 onBackPressed()
-                true
             }
         }
+        return true
     }
 }

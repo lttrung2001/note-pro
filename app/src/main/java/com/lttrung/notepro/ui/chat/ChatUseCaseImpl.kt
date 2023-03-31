@@ -7,7 +7,7 @@ import javax.inject.Inject
 class ChatUseCaseImpl @Inject constructor(
     private val userRepositories: UserRepositories
 ) : ChatUseCase {
-    override fun getCurrentUser(): CurrentUser {
-        return userRepositories.locals.getCurrentUserInfo()
+    override fun getCurrentUserId(): String {
+        return userRepositories.locals.getCurrentUserId()
     }
 }

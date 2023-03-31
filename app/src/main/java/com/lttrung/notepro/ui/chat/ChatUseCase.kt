@@ -5,5 +5,5 @@ import javax.inject.Singleton
 
 @Singleton
 interface ChatUseCase {
-    fun getCurrentUser(): CurrentUser
+    fun getCurrentUserId(): String
 }

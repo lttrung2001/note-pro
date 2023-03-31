@@ -119,7 +119,7 @@ class AddNoteActivity : AddImagesActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         menu
-        return when (item.itemId) {
+        when (item.itemId) {
             R.id.action_pin -> {
                 if (item.isChecked) {
                     item.icon.setTint(resources.getColor(R.color.black, theme))
@@ -127,7 +127,6 @@ class AddNoteActivity : AddImagesActivity() {
                     item.icon.setTint(resources.getColor(R.color.primary, theme))
                 }
                 item.isChecked = !item.isChecked
-                true
             }
             R.id.action_save -> {
                 val note = Note(
@@ -140,13 +139,12 @@ class AddNoteActivity : AddImagesActivity() {
                     imagesAdapter.currentList
                 )
                 addNoteViewModel.addNote(note)
-                true
             }
             else -> {
-                onBackPressed()
-                true
+                finish()
             }
         }
+        return true
     }
 
     override val launcher: ActivityResultLauncher<Intent> =

@@ -91,7 +91,7 @@ class ChangeProfileActivity : AppCompatActivity() {
                 }
             }
             else -> {
-                onBackPressed()
+                finish()
             }
         }
         return true

@@ -3,6 +3,7 @@ package com.lttrung.notepro
 import android.app.Application
 import android.app.NotificationManager
 import com.lttrung.notepro.services.ChatSocketService
+import com.lttrung.notepro.ui.chat.ChatActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_CHANNEL_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_LISTENER_CHANNEL_ID
 import com.lttrung.notepro.utils.NotificationChannelManager
@@ -11,7 +12,7 @@ import dagger.hilt.android.HiltAndroidApp
 @HiltAndroidApp
 class NoteProApplication : Application() {
     var chatService: ChatSocketService? = null
-    var isChatActivity: Boolean = false
+    var chatActivity: ChatActivity? = null
     override fun onCreate() {
         super.onCreate()
 

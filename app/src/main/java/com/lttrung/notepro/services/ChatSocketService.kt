@@ -1,24 +1,21 @@
 package com.lttrung.notepro.services
 
 import android.app.ActivityManager
-import android.app.Notification
 import android.app.Service
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Binder
 import android.os.IBinder
-import androidx.core.app.NotificationCompat
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.lttrung.notepro.NoteProApplication
-import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.networks.models.Message
 import com.lttrung.notepro.database.data.networks.models.ApiResponse
-import com.lttrung.notepro.exceptions.InvalidTokenException
+import com.lttrung.notepro.database.data.networks.models.Message
 import com.lttrung.notepro.ui.login.LoginActivity
 import com.lttrung.notepro.utils.AppConstant
-import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_LISTENER_CHANNEL_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_LISTENER_NOTIFICATION_ID
+import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE
+import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE_RECEIVED
 import com.lttrung.notepro.utils.AppConstant.Companion.REFRESH_TOKEN
 import com.lttrung.notepro.utils.NotificationHelper
 import com.lttrung.notepro.utils.RetrofitUtils.BASE_URL
@@ -40,22 +37,24 @@ class ChatSocketService : Service() {
     @Inject
     lateinit var gson: Gson
 
-    val messageLiveData = MutableLiveData<Message>()
+    private val noteProApplication: NoteProApplication by lazy {
+        application as NoteProApplication
+    }
 
     private val binder: Binder by lazy {
         LocalBinder()
     }
 
-    private val socket: Socket by lazy {
+    val socket: Socket by lazy {
         IO.socket(BASE_URL, IO.Options.builder().setReconnection(true).setAuth(buildMap {
-            val refreshToken = sharedPreferences.getString(REFRESH_TOKEN, "")
-            if (refreshToken.isNullOrEmpty()) {
-                requireLogin()
-            }
             try {
-                val accessToken = callGetAccessTokenApi(refreshToken!!)
+                val refreshToken = sharedPreferences.getString(REFRESH_TOKEN, "")!!
+                if (refreshToken.isEmpty()) {
+                    requireLogin()
+                }
+                val accessToken = callGetAccessTokenApi(refreshToken)
                 if (accessToken.isEmpty()) {
-                    throw InvalidTokenException()
+                    requireLogin()
                 }
                 this["token"] = accessToken
             } catch (e: Exception) {
@@ -76,13 +75,8 @@ class ChatSocketService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        val notification: Notification =
-            NotificationCompat.Builder(baseContext, CHAT_LISTENER_CHANNEL_ID)
-                .setContentTitle("Chat listener service")
-                .setContentText("Service is running")
-                .setSmallIcon(R.drawable.app)
-                .build()
-        startForeground(CHAT_LISTENER_NOTIFICATION_ID, notification)
+        val chatListenerNotification = NotificationHelper.buildChatListenerNotification(baseContext)
+        startForeground(CHAT_LISTENER_NOTIFICATION_ID, chatListenerNotification)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -91,20 +85,21 @@ class ChatSocketService : Service() {
             val message = gson.fromJson(args[0].toString(), Message::class.java)
             val process = ActivityManager.RunningAppProcessInfo()
             ActivityManager.getMyMemoryState(process)
-            val isChatActivity = (application as NoteProApplication).isChatActivity
+            val isChatActivity = noteProApplication.chatActivity != null
             if (process.importance != ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND || !isChatActivity) {
                 NotificationHelper.pushNotification(
-                    applicationContext,
+                    baseContext,
                     AppConstant.CHAT_CHANNEL_ID,
-                    message.room,
-                    "From ${message.user.fullName}: ${message.content}",
                     message
                 )
             } else {
-                messageLiveData.postValue(message)
+                // Send broadcast
+                val messageReceivedIntent = Intent(MESSAGE_RECEIVED)
+                messageReceivedIntent.putExtra(MESSAGE, message)
+                sendBroadcast(messageReceivedIntent)
             }
         }
-        (application as NoteProApplication).chatService = this@ChatSocketService
+        noteProApplication.chatService = this@ChatSocketService
         return START_STICKY
     }
 
@@ -126,6 +121,10 @@ class ChatSocketService : Service() {
 
     fun sendRemoveMemberMessage(roomId: String, email: String) {
         socket.emit("remove_member", roomId, email)
+    }
+
+    fun getMessages(roomId: String) {
+        socket.emit("load_messages", roomId)
     }
 
     inner class LocalBinder : Binder() {
@@ -158,8 +157,9 @@ class ChatSocketService : Service() {
         }
         // Start thread
         thread.start()
-        // Wait until thread die to get final response
+        // Join thread
         thread.join()
+
         return accessToken
     }
 }

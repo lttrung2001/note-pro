@@ -8,6 +8,8 @@ import com.lttrung.notepro.database.data.locals.entities.CurrentUser
 import com.lttrung.notepro.database.data.locals.room.CurrentUserDao
 import com.lttrung.notepro.utils.AppConstant.Companion.ACCESS_TOKEN
 import com.lttrung.notepro.utils.AppConstant.Companion.REFRESH_TOKEN
+import com.lttrung.notepro.utils.AppConstant.Companion.USER
+import com.lttrung.notepro.utils.AppConstant.Companion.USER_ID
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
@@ -38,18 +40,22 @@ class UserLocalsImpl @Inject constructor(
     override fun fetchAccessToken(accessToken: String) {
         val decoded = JWT(accessToken)
         val currentUser = currentUserDao.getCurrentUser()
-        Log.i("INFO", decoded.getClaim("user_id").asString().toString())
         currentUser.fullName = decoded.getClaim("name").asString().toString()
         currentUser.phoneNumber = decoded.getClaim("phone_number").asString().toString()
         currentUser.id = decoded.getClaim("user_id").asString().toString()
         currentUserDao.updateCurrentUser(currentUser)
         sharedPreferences.edit().putString(ACCESS_TOKEN, accessToken).apply()
+        sharedPreferences.edit().putString(USER_ID, currentUser.id).apply()
     }
 
     override fun getCurrentUserInfo(): CurrentUser {
         val currentUser = currentUserDao.getCurrentUser()
         currentUser.password = ""
         return currentUser
+    }
+
+    override fun getCurrentUserId(): String {
+        return sharedPreferences.getString(USER_ID, "")!!
     }
 
     override fun logout() {
