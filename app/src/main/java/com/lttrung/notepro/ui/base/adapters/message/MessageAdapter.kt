@@ -9,9 +9,8 @@ import com.lttrung.notepro.database.data.networks.models.Message
 import com.lttrung.notepro.databinding.LayoutMyMessageBinding
 import com.lttrung.notepro.databinding.LayoutOtherMessageBinding
 
-class MessageAdapter(
-    private val userId: String
-) : ListAdapter<Message, ViewHolder>(CALLBACK) {
+class MessageAdapter : ListAdapter<Message, ViewHolder>(CALLBACK) {
+    var userId = ""
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return if (viewType == MY_MESSAGE) {
             val binding =

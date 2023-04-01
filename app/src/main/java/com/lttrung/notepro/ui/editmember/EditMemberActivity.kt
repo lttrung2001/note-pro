@@ -156,7 +156,7 @@ class EditMemberActivity : AppCompatActivity() {
                 editMemberViewModel.editMember(note.id, member)
             }
             else -> {
-                onBackPressed()
+                finish()
             }
         }
         return true

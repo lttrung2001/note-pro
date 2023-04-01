@@ -17,9 +17,9 @@ import com.lttrung.notepro.R
 import com.lttrung.notepro.database.data.networks.models.Image
 import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityAddNoteBinding
-import com.lttrung.notepro.services.ChatSocketService
 import com.lttrung.notepro.ui.base.activities.AddImagesActivity
 import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
+import com.lttrung.notepro.ui.chat.ChatSocketService
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.SELECTED_IMAGES
 import com.lttrung.notepro.utils.Resource
@@ -75,11 +75,13 @@ class AddNoteActivity : AddImagesActivity() {
 
                 }
                 is Resource.Success -> {
-
-
                     val resultIntent = Intent()
-                    resultIntent.putExtra(NOTE, resource.data)
+                    val note = resource.data
+                    resultIntent.putExtra(NOTE, note)
                     setResult(RESULT_OK, resultIntent)
+
+                    socketService.sendAddNoteMessage(note.id)
+
                     finish()
                 }
                 is Resource.Error -> {
@@ -119,7 +121,7 @@ class AddNoteActivity : AddImagesActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         menu
-        return when (item.itemId) {
+        when (item.itemId) {
             R.id.action_pin -> {
                 if (item.isChecked) {
                     item.icon.setTint(resources.getColor(R.color.black, theme))
@@ -127,7 +129,6 @@ class AddNoteActivity : AddImagesActivity() {
                     item.icon.setTint(resources.getColor(R.color.primary, theme))
                 }
                 item.isChecked = !item.isChecked
-                true
             }
             R.id.action_save -> {
                 val note = Note(
@@ -140,13 +141,12 @@ class AddNoteActivity : AddImagesActivity() {
                     imagesAdapter.currentList
                 )
                 addNoteViewModel.addNote(note)
-                true
             }
             else -> {
-                onBackPressed()
-                true
+                finish()
             }
         }
+        return true
     }
 
     override val launcher: ActivityResultLauncher<Intent> =

@@ -19,11 +19,10 @@ import com.lttrung.notepro.R
 import com.lttrung.notepro.database.data.networks.models.Image
 import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityEditNoteBinding
-import com.lttrung.notepro.services.ChatSocketService
+import com.lttrung.notepro.ui.chat.ChatSocketService
 import com.lttrung.notepro.ui.base.activities.AddImagesActivity
 import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
 import com.lttrung.notepro.ui.chat.ChatActivity
-import com.lttrung.notepro.ui.showmembers.ShowMembersActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.DELETED_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.EDITED_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
@@ -203,7 +202,7 @@ class EditNoteActivity : AddImagesActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
+        when (item.itemId) {
             R.id.action_pin -> {
                 if (item.isChecked) {
                     item.icon.setTint(resources.getColor(R.color.black, theme))
@@ -211,23 +210,14 @@ class EditNoteActivity : AddImagesActivity() {
                     item.icon.setTint(resources.getColor(R.color.primary, theme))
                 }
                 item.isChecked = !item.isChecked
-                true
-            }
-            R.id.action_show_members -> {
-                // Start show members activity
-                val showMembersIntent = Intent(this, ShowMembersActivity::class.java)
-                val note = intent.getSerializableExtra(NOTE) as Note
-                showMembersIntent.putExtra(NOTE, note)
-                startActivity(showMembersIntent)
-                true
             }
             R.id.action_show_conservation -> {
                 val note = intent.getSerializableExtra(NOTE) as Note
                 val showConservationIntent =
                     Intent(this@EditNoteActivity, ChatActivity::class.java)
+                showConservationIntent.putExtra(NOTE, note)
                 showConservationIntent.putExtra(ROOM_ID, note.id)
                 startActivity(showConservationIntent)
-                true
             }
             R.id.action_save -> {
                 // Save note
@@ -242,13 +232,12 @@ class EditNoteActivity : AddImagesActivity() {
                     imagesAdapter.currentList
                 )
                 editNoteViewModel.editNote(note)
-                true
             }
             else -> {
-                onBackPressed()
-                true
+                finish()
             }
         }
+        return true
     }
 
     override val launcher: ActivityResultLauncher<Intent> =

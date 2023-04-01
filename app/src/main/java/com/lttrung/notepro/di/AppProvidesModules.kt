@@ -35,6 +35,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class AppProvidesModules {
+
     @Provides
     @Singleton
     fun providesCurrentUserDatabase(@ApplicationContext context: Context): UserDatabase {

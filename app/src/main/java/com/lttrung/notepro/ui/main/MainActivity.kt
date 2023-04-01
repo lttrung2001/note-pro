@@ -17,7 +17,7 @@ import com.lttrung.notepro.NoteProApplication
 import com.lttrung.notepro.R
 import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityMainBinding
-import com.lttrung.notepro.services.ChatSocketService
+import com.lttrung.notepro.ui.chat.ChatSocketService
 import com.lttrung.notepro.ui.addnote.AddNoteActivity
 import com.lttrung.notepro.ui.base.adapters.note.NoteAdapter
 import com.lttrung.notepro.ui.base.adapters.note.NoteListener
