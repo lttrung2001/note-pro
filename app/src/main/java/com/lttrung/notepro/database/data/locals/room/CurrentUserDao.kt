@@ -18,5 +18,5 @@ interface CurrentUserDao {
     fun deleteCurrentUser()
 
     @Query("SELECT * FROM CurrentUser LIMIT 1")
-    fun getCurrentUser(): CurrentUser
+    fun getCurrentUser(): Single<CurrentUser>
 }

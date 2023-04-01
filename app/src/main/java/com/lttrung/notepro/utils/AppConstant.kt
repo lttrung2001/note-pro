@@ -12,7 +12,9 @@ class AppConstant {
         const val DELETED_MEMBER = "com.lttrung.notepro.DELETED_MEMBER"
         const val ROOM_ID = "com.lttrung.notepro.ROOM_ID"
         const val MESSAGE = "com.lttrung.notepro.MESSAGE"
+        const val MESSAGES_JSON = "com.lttrung.notepro.MESSAGES_JSON"
         const val MESSAGE_RECEIVED = "com.lttrung.notepro.MESSAGE_RECEIVED"
+        const val LOAD_MESSAGES_RECEIVED = "com.lttrung.notepro.LOAD_MESSAGES_RECEIVED"
 
 
 
@@ -43,6 +45,6 @@ class AppConstant {
 
 
 
-        const val PAGE_LIMIT = 1
+        const val PAGE_LIMIT = 20
     }
 }

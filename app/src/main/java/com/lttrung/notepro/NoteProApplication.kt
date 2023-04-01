@@ -2,7 +2,7 @@ package com.lttrung.notepro
 
 import android.app.Application
 import android.app.NotificationManager
-import com.lttrung.notepro.services.ChatSocketService
+import com.lttrung.notepro.ui.chat.ChatSocketService
 import com.lttrung.notepro.ui.chat.ChatActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_CHANNEL_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_LISTENER_CHANNEL_ID

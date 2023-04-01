@@ -23,7 +23,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <service
-            android:name=".services.ChatSocketService"
+            android:name=".ui.chat.ChatSocketService"
             android:enabled="true"
             android:exported="false" />
 

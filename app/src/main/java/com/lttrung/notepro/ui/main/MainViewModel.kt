@@ -51,7 +51,7 @@ class MainViewModel @Inject constructor(
     private fun getNotesError(t: Throwable) {
         when (t) {
             is ConnectivityException -> {
-                getNotes.postValue(Resource.Error(t.message ?: "Unknown error"))
+                getNotes.postValue(Resource.Error(t.message))
             }
             else -> {
                 getNotes.postValue(Resource.Error(t.message ?: "Unknown error"))

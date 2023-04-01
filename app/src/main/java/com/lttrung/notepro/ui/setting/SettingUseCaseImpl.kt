@@ -10,7 +10,7 @@ class SettingUseCaseImpl @Inject constructor(
 ) : SettingUseCase {
     override fun getCurrentUserInfo(): Single<CurrentUser> {
         val currentUser = userLocals.getCurrentUserInfo()
-        return Single.just(currentUser)
+        return currentUser
     }
 
     override fun logout(): Single<Unit> {

@@ -10,6 +10,7 @@ import androidx.core.app.Person
 import com.lttrung.notepro.R
 import com.lttrung.notepro.database.data.networks.models.Message
 import com.lttrung.notepro.ui.chat.ChatActivity
+import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_LISTENER_NOTIFICATION_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE
 import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
 
@@ -20,7 +21,8 @@ object NotificationHelper {
         val intent = Intent(context, ChatActivity::class.java).apply {
             putExtra(ROOM_ID, message.room)
             putExtra(MESSAGE, message)
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_TASK_ON_HOME
+            flags =
+                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_TASK_ON_HOME
         }
         val pendingIntent: PendingIntent = PendingIntent.getActivity(
             context, 0, intent, PendingIntent.FLAG_IMMUTABLE
@@ -46,5 +48,20 @@ object NotificationHelper {
             .setContentText("Service is running")
             .setSmallIcon(R.drawable.app)
             .build()
+    }
+
+    fun pushNotification(
+        context: Context, channelId: String, title: String, content: String
+    ) {
+        val notification = NotificationCompat.Builder(context, channelId)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setChannelId(channelId)
+            .setContentTitle(title)
+            .setContentText(content)
+            .setSmallIcon(R.drawable.app).setAutoCancel(true)
+            .build()
+        with(NotificationManagerCompat.from(context)) {
+            notify(CHAT_LISTENER_NOTIFICATION_ID, notification)
+        }
     }
 }
