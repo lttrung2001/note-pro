@@ -5,7 +5,6 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.lttrung.notepro.NoteProApplication

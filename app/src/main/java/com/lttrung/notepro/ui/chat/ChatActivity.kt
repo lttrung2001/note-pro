@@ -66,8 +66,15 @@ class ChatActivity : AppCompatActivity() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 chatViewModel.page += 1
                 val messagesJson = intent?.getStringExtra(MESSAGES_JSON)
+                // Parse JsonArray to Array
                 val olderMessages =
                     Gson().fromJson(messagesJson, Array<Message>::class.java).toList()
+                // Update scroll listener
+                if (olderMessages.isEmpty()) {
+                    binding.messages.removeOnScrollListener(onScrollListener)
+                } else {
+                    binding.messages.addOnScrollListener(onScrollListener)
+                }
                 val messages = messageAdapter.currentList.toMutableList()
                 messages.addAll(0, olderMessages)
                 // Update live data
@@ -147,11 +154,6 @@ class ChatActivity : AppCompatActivity() {
                 is Resource.Success -> {
                     messageAdapter.hideLoading(resource.data.toMutableList())
                     binding.sendMessageButton.isClickable = true
-                    if (resource.data.isEmpty()) {
-                        binding.messages.removeOnScrollListener(onScrollListener)
-                    } else {
-                        binding.messages.addOnScrollListener(onScrollListener)
-                    }
                 }
                 is Resource.Error -> {
                     messageAdapter.removeLoadingElement()
