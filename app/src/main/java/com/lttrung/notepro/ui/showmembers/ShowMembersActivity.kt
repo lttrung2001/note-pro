@@ -6,14 +6,12 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
@@ -21,10 +19,10 @@ import com.lttrung.notepro.database.data.networks.models.Member
 import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.database.data.networks.models.Paging
 import com.lttrung.notepro.databinding.ActivityShowMembersBinding
-import com.lttrung.notepro.ui.chat.ChatSocketService
 import com.lttrung.notepro.ui.addmember.AddMemberFragment
 import com.lttrung.notepro.ui.base.adapters.member.MemberAdapter
 import com.lttrung.notepro.ui.base.adapters.member.MemberListener
+import com.lttrung.notepro.ui.chat.ChatSocketService
 import com.lttrung.notepro.ui.editmember.EditMemberActivity
 import com.lttrung.notepro.utils.AppConstant
 import com.lttrung.notepro.utils.AppConstant.Companion.MEMBER
@@ -64,12 +62,6 @@ class ShowMembersActivity : AppCompatActivity() {
         unbindService(connection)
     }
 
-    private val refreshListener: SwipeRefreshLayout.OnRefreshListener by lazy {
-        SwipeRefreshLayout.OnRefreshListener {
-            initData()
-        }
-    }
-
     private val onScrollListener: RecyclerView.OnScrollListener by lazy {
         object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -78,7 +70,7 @@ class ShowMembersActivity : AppCompatActivity() {
                     val note = intent.getSerializableExtra(NOTE) as Note
                     getMembersViewModel.getMembers(
                         note.id,
-                        memberAdapter.itemCount / PAGE_LIMIT,
+                        getMembersViewModel.page,
                         PAGE_LIMIT
                     )
                 }
@@ -87,7 +79,6 @@ class ShowMembersActivity : AppCompatActivity() {
     }
 
     private fun initListeners() {
-        binding.refreshLayout.setOnRefreshListener(refreshListener)
     }
 
     private fun initAdapters() {
@@ -99,15 +90,13 @@ class ShowMembersActivity : AppCompatActivity() {
         getMembersViewModel.getMembers.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-                    binding.refreshLayout.isRefreshing = true
+                    memberAdapter.showLoading()
                     binding.rcvMembers.removeOnScrollListener(onScrollListener)
                 }
                 is Resource.Success -> {
-                    binding.refreshLayout.isRefreshing = false
+                    memberAdapter.hideLoading()
                     val paging = resource.data
-                    val members = memberAdapter.currentList.toMutableList()
-                    members.addAll(paging.data)
-                    memberAdapter.submitList(members)
+                    memberAdapter.setPaging(paging)
                     if (paging.hasNextPage) {
                         binding.rcvMembers.addOnScrollListener(onScrollListener)
                     } else {
@@ -115,7 +104,7 @@ class ShowMembersActivity : AppCompatActivity() {
                     }
                 }
                 is Resource.Error -> {
-                    binding.refreshLayout.isRefreshing = false
+                    memberAdapter.hideLoading()
                     Snackbar.make(
                         binding.root, resource.message,
                         BaseTransientBottomBar.LENGTH_LONG
@@ -129,7 +118,7 @@ class ShowMembersActivity : AppCompatActivity() {
     private fun initData() {
         val note = intent.getSerializableExtra(NOTE) as Note
         getMembersViewModel.getMembers(
-            note.id, memberAdapter.currentList.size / PAGE_LIMIT, PAGE_LIMIT
+            note.id, getMembersViewModel.page, PAGE_LIMIT
         )
     }
 
@@ -167,7 +156,7 @@ class ShowMembersActivity : AppCompatActivity() {
                         rIntent.getSerializableExtra(AppConstant.EDITED_MEMBER) as Member?
                     val deletedMember =
                         rIntent.getSerializableExtra(AppConstant.DELETED_MEMBER) as Member?
-                    val paging = getPaging()
+                    val paging = memberAdapter.getPaging()
                     val members = paging.data.toMutableList()
                     editedMember?.let { member ->
                         val findingMember = members.find {
@@ -175,13 +164,6 @@ class ShowMembersActivity : AppCompatActivity() {
                         }
                         members.remove(findingMember)
                         members.add(member)
-                        Log.i(
-                            "INFO", Paging(
-                                paging.hasPreviousPage,
-                                paging.hasNextPage,
-                                members
-                            ).toString()
-                        )
                         getMembersViewModel.getMembers.postValue(
                             Resource.Success(
                                 Paging(
@@ -225,15 +207,13 @@ class ShowMembersActivity : AppCompatActivity() {
                     editMemberIntent.putExtra(NOTE, note)
                     editMemberIntent.putExtra(MEMBER, member)
                     launcher.launch(editMemberIntent)
-                } else {
-
                 }
             }
         }
     }
 
     fun addMemberResult(member: Member) {
-        val paging = getPaging()
+        val paging = memberAdapter.getPaging()
         val members = paging.data.toMutableList()
         members.add(member)
         getMembersViewModel.getMembers.postValue(
@@ -249,11 +229,6 @@ class ShowMembersActivity : AppCompatActivity() {
         val note = intent.getSerializableExtra(NOTE) as Note
         val roomId = note.id
         socketService.sendAddMemberMessage(roomId, member.email)
-    }
-
-    private fun getPaging(): Paging<Member> {
-        val resource = getMembersViewModel.getMembers.value as Resource.Success<Paging<Member>>
-        return resource.data
     }
 
     private val connection = object : ServiceConnection {

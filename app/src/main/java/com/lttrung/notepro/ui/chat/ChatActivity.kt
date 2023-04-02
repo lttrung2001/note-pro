@@ -3,7 +3,6 @@ package com.lttrung.notepro.ui.chat
 import android.content.*
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
@@ -41,7 +40,6 @@ class ChatActivity : AppCompatActivity() {
         object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 val message = intent?.getSerializableExtra(MESSAGE) as Message
-                Log.i("INFO", message.toString())
                 val room = this@ChatActivity.intent.getStringExtra(ROOM_ID)
                 if (message.room == room) {
                     val messages = messageAdapter.currentList.toMutableList()
@@ -68,8 +66,15 @@ class ChatActivity : AppCompatActivity() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 chatViewModel.page += 1
                 val messagesJson = intent?.getStringExtra(MESSAGES_JSON)
+                // Parse JsonArray to Array
                 val olderMessages =
                     Gson().fromJson(messagesJson, Array<Message>::class.java).toList()
+                // Update scroll listener
+                if (olderMessages.isEmpty()) {
+                    binding.messages.removeOnScrollListener(onScrollListener)
+                } else {
+                    binding.messages.addOnScrollListener(onScrollListener)
+                }
                 val messages = messageAdapter.currentList.toMutableList()
                 messages.addAll(0, olderMessages)
                 // Update live data
@@ -141,14 +146,17 @@ class ChatActivity : AppCompatActivity() {
         chatViewModel.messagesLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
+                    binding.messages.removeOnScrollListener(onScrollListener)
+                    messageAdapter.showLoading()
+                    binding.messages.smoothScrollToPosition(0)
                     binding.sendMessageButton.isClickable = false
                 }
                 is Resource.Success -> {
+                    messageAdapter.hideLoading(resource.data.toMutableList())
                     binding.sendMessageButton.isClickable = true
-                    messageAdapter.submitList(resource.data)
-//                    binding.messages.smoothScrollToPosition(messageAdapter.itemCount - 1)
                 }
                 is Resource.Error -> {
+                    messageAdapter.removeLoadingElement()
                     binding.sendMessageButton.isClickable = true
                 }
             }
@@ -183,7 +191,7 @@ class ChatActivity : AppCompatActivity() {
         binding.sendMessageButton.setOnClickListener {
             sendMessage()
         }
-        binding.messages.addOnScrollListener(onScrollListener)
+
     }
 
     private fun initAdapters() {
