@@ -3,7 +3,6 @@ package com.lttrung.notepro.database.data.networks.interceptors
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.util.Log
 import com.auth0.android.jwt.JWT
 import com.google.gson.Gson
 import com.lttrung.notepro.database.data.locals.UserLocals
@@ -57,7 +56,6 @@ class AuthorizationInterceptor @Inject constructor(
     private fun fetchAccessToken(): String {
         // Get refresh token
         val refreshToken = sharedPreferences.getString(REFRESH_TOKEN, "")
-        Log.i("INFO", refreshToken ?: "Refresh token empty")
         if (refreshToken.isNullOrEmpty()) {
             throw InvalidTokenException("Refresh token not found or empty")
         }

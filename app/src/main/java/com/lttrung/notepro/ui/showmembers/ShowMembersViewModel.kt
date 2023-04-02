@@ -20,6 +20,7 @@ import javax.inject.Inject
 class ShowMembersViewModel @Inject constructor(
     private val useCase: ShowMembersUseCase
 ) : ViewModel() {
+    var page = 0
 
     val getMembers: MutableLiveData<Resource<Paging<Member>>> by lazy {
         MutableLiveData<Resource<Paging<Member>>>()
@@ -33,29 +34,27 @@ class ShowMembersViewModel @Inject constructor(
 
     private val getMembersObserver: Consumer<Paging<Member>> by lazy {
         Consumer {
-            val previousResource = getMembers.value
-            if (previousResource is Resource.Success<Paging<Member>>) {
-                val paging = previousResource.data
-                val members = paging.data.toMutableList()
-                members.addAll(it.data)
-                getMembers.postValue(
-                    Resource.Success(
-                        Paging(
-                            it.hasPreviousPage,
-                            it.hasNextPage,
-                            members
-                        )
-                    )
-                )
-            } else if (previousResource is Resource.Loading) {
-                getMembers.postValue(Resource.Success(it))
+            page++
+            val oldResource = getMembers.value
+            if (oldResource is Resource.Loading<Paging<Member>>) {
+                val members = oldResource.data?.data?.toMutableList()
+                members?.addAll(it.data)
+                val newPaging = Paging(it.hasPreviousPage, it.hasNextPage, members ?: it.data)
+                getMembers.postValue(Resource.Success(newPaging))
             }
         }
     }
 
     fun getMembers(noteId: String, pageIndex: Int, limit: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            getMembers.postValue(Resource.Loading())
+            val value = getMembers.value
+            if (value is Resource.Success<Paging<Member>>) {
+                val oldPaging = value.data
+                getMembers.postValue(Resource.Loading(oldPaging))
+            } else {
+                getMembers.postValue(Resource.Loading())
+            }
+
             getMembersDisposable?.let {
                 composite.remove(it)
                 it.dispose()
