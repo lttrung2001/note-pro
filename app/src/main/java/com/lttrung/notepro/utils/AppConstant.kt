@@ -3,6 +3,7 @@ package com.lttrung.notepro.utils
 class AppConstant {
     companion object {
         const val NOTE = "com.lttrung.notepro.NOTE"
+        const val POSITION = "com.lttrung.notepro.POSITION"
         const val EDITED_NOTE = "com.lttrung.notepro.EDITED_NOTE"
         const val DELETED_NOTE = "com.lttrung.notepro.DELETED_NOTE"
         const val SELECTED_IMAGES = "com.lttrung.notepro.SELECTED_IMAGES"
@@ -13,6 +14,7 @@ class AppConstant {
         const val ROOM_ID = "com.lttrung.notepro.ROOM_ID"
         const val MESSAGE = "com.lttrung.notepro.MESSAGE"
         const val MESSAGES_JSON = "com.lttrung.notepro.MESSAGES_JSON"
+        const val IMAGES_JSON = "com.lttrung.notepro.IMAGES_JSON"
         const val MESSAGE_RECEIVED = "com.lttrung.notepro.MESSAGE_RECEIVED"
         const val LOAD_MESSAGES_RECEIVED = "com.lttrung.notepro.LOAD_MESSAGES_RECEIVED"
 

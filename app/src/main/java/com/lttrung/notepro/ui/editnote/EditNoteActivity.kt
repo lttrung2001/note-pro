@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
 import com.lttrung.notepro.R
 import com.lttrung.notepro.database.data.networks.models.Image
 import com.lttrung.notepro.database.data.networks.models.Note
@@ -23,6 +24,8 @@ import com.lttrung.notepro.ui.chat.ChatSocketService
 import com.lttrung.notepro.ui.base.activities.AddImagesActivity
 import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
 import com.lttrung.notepro.ui.chat.ChatActivity
+import com.lttrung.notepro.ui.viewimagedetails.ViewImageDetailsActivity
+import com.lttrung.notepro.utils.AppConstant
 import com.lttrung.notepro.utils.AppConstant.Companion.DELETED_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.EDITED_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
@@ -264,6 +267,14 @@ class EditNoteActivity : AddImagesActivity() {
         object : ImagesAdapter.ImageListener {
             override fun onClick(image: Image) {
                 // Start image details activity
+                startActivity(
+                    Intent(
+                        this@EditNoteActivity,
+                        ViewImageDetailsActivity::class.java
+                    ).apply {
+                        putExtra(AppConstant.IMAGES_JSON, Gson().toJson(imagesAdapter.currentList))
+                    }
+                )
             }
 
             override fun onDelete(image: Image) {

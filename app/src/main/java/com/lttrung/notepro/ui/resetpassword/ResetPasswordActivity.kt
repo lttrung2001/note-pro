@@ -74,7 +74,7 @@ class ResetPasswordActivity : AppCompatActivity() {
         View.OnClickListener {
             val code = binding.edtCode.text?.trim().toString()
             val password = binding.edtPassword.text?.trim().toString()
-            val helper = ValidationHelper
+            val helper = ValidationHelper()
             if (code.isBlank()) {
                 helper.hasError = true
                 binding.codeLayout.error = getString(R.string.code_check)
