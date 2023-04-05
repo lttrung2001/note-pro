@@ -73,7 +73,7 @@ class ChangePasswordActivity : AppCompatActivity() {
             val oldPassword = binding.currentPassword.text?.trim().toString()
             val newPassword = binding.newPassword.text?.trim().toString()
             val confirmPassword = binding.confirmPassword.text?.trim().toString()
-            val helper = ValidationHelper
+            val helper = ValidationHelper()
 
             if (oldPassword == newPassword) {
                 helper.hasError = true

@@ -36,7 +36,7 @@ class RegisterActivity : AppCompatActivity() {
             val confirmPassword = binding.edtConfirmPassword.text.toString()
             val fullName = binding.edtFullName.text.toString()
             val phoneNumber = binding.edtPhoneNumber.text.toString()
-            val helper = ValidationHelper
+            val helper = ValidationHelper()
             if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 helper.hasError = true
                 binding.emailLayout.error = getString(R.string.this_text_is_not_email_type)

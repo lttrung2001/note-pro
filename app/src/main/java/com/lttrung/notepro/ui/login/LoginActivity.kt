@@ -35,7 +35,7 @@ class LoginActivity : AppCompatActivity() {
         View.OnClickListener {
             val email = binding.edtEmail.text?.trim().toString()
             val password = binding.edtPassword.text?.trim().toString()
-            val helper = ValidationHelper
+            val helper = ValidationHelper()
             if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 helper.hasError = true
                 binding.emailLayout.error = getString(R.string.this_text_is_not_email_type)

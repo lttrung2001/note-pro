@@ -77,7 +77,7 @@ class ChangeProfileActivity : AppCompatActivity() {
             R.id.action_save_info -> {
                 val fullName = binding.tvFullName.text?.trim().toString()
                 val phoneNumber = binding.tvPhoneNumber.text?.trim().toString()
-                val helper = ValidationHelper
+                val helper = ValidationHelper()
                 if (!helper.matchesFullName(fullName)) {
                     binding.tvFullName.error = getString(R.string.invalid_full_name)
                 }

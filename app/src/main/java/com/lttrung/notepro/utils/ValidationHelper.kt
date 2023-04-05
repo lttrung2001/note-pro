@@ -1,6 +1,6 @@
 package com.lttrung.notepro.utils
 
-object ValidationHelper {
+class ValidationHelper {
     var hasError = false
     fun matchesPasswordLength(password: String): Boolean {
         val length = password.length

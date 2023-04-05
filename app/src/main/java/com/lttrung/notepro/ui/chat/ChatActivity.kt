@@ -235,8 +235,13 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun sendMessage() {
-        val uid = messageAdapter.userId
         val content = binding.messageBox.text?.trim().toString()
+
+        if (content.isBlank()) {
+            return
+        }
+
+        val uid = messageAdapter.userId
         val room = intent.getStringExtra(ROOM_ID)!!
 
         val message = Message(

@@ -9,15 +9,18 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
 import com.lttrung.notepro.R
 import com.lttrung.notepro.database.data.networks.models.Image
 import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityNoteDetailsBinding
 import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
 import com.lttrung.notepro.ui.chat.ChatActivity
-import com.lttrung.notepro.ui.showmembers.ShowMembersActivity
+import com.lttrung.notepro.ui.viewimagedetails.ViewImageDetailsActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.EDITED_NOTE
+import com.lttrung.notepro.utils.AppConstant.Companion.IMAGES_JSON
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
+import com.lttrung.notepro.utils.AppConstant.Companion.POSITION
 import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
 import com.lttrung.notepro.utils.Converter
 import com.lttrung.notepro.utils.Resource
@@ -149,7 +152,14 @@ class NoteDetailsActivity : AppCompatActivity() {
         object: ImagesAdapter.ImageListener {
             override fun onClick(image: Image) {
                 // Start image details activity
-                return
+                startActivity(
+                    Intent(
+                        this@NoteDetailsActivity,
+                        ViewImageDetailsActivity::class.java
+                    ).apply {
+                        putExtra(IMAGES_JSON, Gson().toJson(imagesAdapter.currentList))
+                    }
+                )
             }
 
             override fun onDelete(image: Image) {
