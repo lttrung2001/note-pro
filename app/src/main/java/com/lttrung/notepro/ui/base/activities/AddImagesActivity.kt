@@ -13,6 +13,9 @@ import com.lttrung.notepro.ui.viewgallery.ViewGalleryActivity
 import com.lttrung.notepro.utils.AppConstant
 
 abstract class AddImagesActivity : AppCompatActivity() {
+    val bottomSheet: AddImagesFragment by lazy {
+        AddImagesFragment()
+    }
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -50,7 +53,6 @@ abstract class AddImagesActivity : AppCompatActivity() {
     }
 
     private fun openBottomSheetMenu() {
-        val bottomSheet = AddImagesFragment()
         bottomSheet.show(supportFragmentManager, bottomSheet.tag)
     }
 

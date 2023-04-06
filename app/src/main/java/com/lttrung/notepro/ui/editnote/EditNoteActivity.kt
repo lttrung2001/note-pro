@@ -252,6 +252,7 @@ class EditNoteActivity : AddImagesActivity() {
                     val tempList = imagesAdapter.currentList.toMutableList()
                     tempList.addAll(images)
                     imagesAdapter.submitList(tempList)
+                    bottomSheet.dismiss()
                 }
             }
         }

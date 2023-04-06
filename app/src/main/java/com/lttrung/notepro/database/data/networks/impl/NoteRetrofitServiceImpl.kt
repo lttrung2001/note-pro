@@ -69,7 +69,7 @@ class NoteRetrofitServiceImpl @Inject constructor(
             if (response.code() == HttpStatusCodes.OK.code) {
                 response.body()!!.data
             } else {
-                throw Exception(response.body()!!.message)
+                throw Exception(response.message())
             }
         }
     }
@@ -94,7 +94,7 @@ class NoteRetrofitServiceImpl @Inject constructor(
             if (response.code() == HttpStatusCodes.OK.code) {
                 response.body()!!.data
             } else {
-                throw Exception(response.body()!!.message)
+                throw Exception(response.message())
             }
         }
     }
@@ -104,7 +104,7 @@ class NoteRetrofitServiceImpl @Inject constructor(
             if (response.code() == HttpStatusCodes.OK.code) {
                 response.body()!!.data
             } else {
-                throw Exception(response.body()!!.message)
+                throw Exception(response.message())
             }
         }
     }
@@ -114,7 +114,7 @@ class NoteRetrofitServiceImpl @Inject constructor(
             if (response.code() == HttpStatusCodes.OK.code) {
                 response.body()!!.data
             } else {
-                throw Exception(response.body()!!.message)
+                throw Exception(response.message())
             }
         }
     }
@@ -124,7 +124,7 @@ class NoteRetrofitServiceImpl @Inject constructor(
             if (response.code() == HttpStatusCodes.OK.code) {
                 response.body()!!.data
             } else {
-                throw Exception(response.body()!!.message)
+                throw Exception(response.message())
             }
         }
     }

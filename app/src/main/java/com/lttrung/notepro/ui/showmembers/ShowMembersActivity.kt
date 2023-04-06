@@ -39,6 +39,9 @@ class ShowMembersActivity : AppCompatActivity() {
     private lateinit var memberAdapter: MemberAdapter
     private lateinit var toAddMemberButton: MenuItem
     private lateinit var socketService: ChatSocketService
+    private val addMemberFragment: AddMemberFragment by lazy {
+        AddMemberFragment()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initViews()
@@ -130,7 +133,6 @@ class ShowMembersActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_add_member) {
-            val addMemberFragment = AddMemberFragment()
             addMemberFragment.show(supportFragmentManager, addMemberFragment.tag)
         } else {
             finish()
@@ -213,6 +215,7 @@ class ShowMembersActivity : AppCompatActivity() {
     }
 
     fun addMemberResult(member: Member) {
+        addMemberFragment.dismiss()
         val paging = memberAdapter.getPaging()
         val members = paging.data.toMutableList()
         members.add(member)
@@ -229,6 +232,10 @@ class ShowMembersActivity : AppCompatActivity() {
         val note = intent.getSerializableExtra(NOTE) as Note
         val roomId = note.id
         socketService.sendAddMemberMessage(roomId, member.email)
+    }
+
+    fun onAddMemberFragmentDestroyView() {
+        addMemberFragment.dismiss()
     }
 
     private val connection = object : ServiceConnection {

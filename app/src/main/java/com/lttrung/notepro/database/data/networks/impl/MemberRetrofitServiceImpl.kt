@@ -60,7 +60,7 @@ class MemberRetrofitServiceImpl @Inject constructor(private val service: Service
             if (response.code() == HttpStatusCodes.OK.code) {
                 response.body()!!.data
             } else {
-                throw Exception(response.body()!!.message)
+                throw Exception(response.message())
             }
         }
     }
@@ -70,7 +70,7 @@ class MemberRetrofitServiceImpl @Inject constructor(private val service: Service
             if (response.code() == HttpStatusCodes.OK.code) {
                 response.body()!!.data
             } else {
-                throw Exception(response.body()!!.message)
+                throw Exception(response.message())
             }
         }
     }
@@ -80,7 +80,7 @@ class MemberRetrofitServiceImpl @Inject constructor(private val service: Service
             if (response.code() == HttpStatusCodes.OK.code) {
                 response.body()!!.data
             } else {
-                throw Exception(response.body()!!.message)
+                throw Exception(response.message())
             }
         }
     }
@@ -90,7 +90,7 @@ class MemberRetrofitServiceImpl @Inject constructor(private val service: Service
             if (response.code() == HttpStatusCodes.OK.code) {
                 response.body()!!.data
             } else {
-                throw Exception(response.body()!!.message)
+                throw Exception(response.message())
             }
         }
     }
@@ -100,7 +100,7 @@ class MemberRetrofitServiceImpl @Inject constructor(private val service: Service
             if (response.code() == HttpStatusCodes.OK.code) {
                 response.body()!!.data
             } else {
-                throw Exception(response.body()!!.message)
+                throw Exception(response.message())
             }
         }
     }
@@ -110,7 +110,7 @@ class MemberRetrofitServiceImpl @Inject constructor(private val service: Service
             if (response.code() == HttpStatusCodes.OK.code) {
                 response.body()!!.data
             } else {
-                throw Exception(response.body()!!.message)
+                throw Exception(response.message())
             }
         }
     }

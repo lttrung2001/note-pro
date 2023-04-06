@@ -47,7 +47,7 @@ class LoginRetrofitServiceImpl @Inject constructor(private val service: Service)
             if (it.code() == HttpStatusCodes.OK.code) {
                 it.body()!!.data
             } else {
-                throw Exception(it.body()!!.message)
+                throw Exception(it.message())
             }
         }
     }
@@ -62,7 +62,7 @@ class LoginRetrofitServiceImpl @Inject constructor(private val service: Service)
             if (it.code() == HttpStatusCodes.OK.code) {
                 it.body()!!.data
             } else {
-                throw Exception(it.body()!!.message)
+                throw Exception(it.message())
             }
         }
     }
@@ -72,7 +72,7 @@ class LoginRetrofitServiceImpl @Inject constructor(private val service: Service)
             if (it.code() == HttpStatusCodes.OK.code) {
                 it.body()!!.data
             } else {
-                throw Exception(it.body()!!.message)
+                throw Exception(it.message())
             }
         }
     }
@@ -82,7 +82,7 @@ class LoginRetrofitServiceImpl @Inject constructor(private val service: Service)
             if (it.code() == HttpStatusCodes.OK.code) {
                 it.body()!!.data
             } else {
-                throw Exception(it.body()!!.message)
+                throw Exception(it.message())
             }
         }
     }

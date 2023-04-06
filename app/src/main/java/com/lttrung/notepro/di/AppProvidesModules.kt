@@ -69,8 +69,8 @@ class AppProvidesModules {
             .addInterceptor(networksInterceptor)
             .addInterceptor(authorizationInterceptor)
             .addInterceptor(loggingInterceptor)
-            .readTimeout(10, TimeUnit.SECONDS)
-            .writeTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
             .build()
     }
 
@@ -84,8 +84,8 @@ class AppProvidesModules {
         return OkHttpClient.Builder()
             .addInterceptor(networksInterceptor)
             .addInterceptor(loggingInterceptor)
-            .readTimeout(10, TimeUnit.SECONDS)
-            .writeTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
             .build()
     }
 

@@ -39,7 +39,7 @@ class UserRetrofitServiceImpl @Inject constructor(
             if (response.code() == HttpStatusCodes.OK.code) {
                 response.body()!!.data
             } else {
-                throw Exception(response.body()!!.message)
+                throw Exception(response.message())
             }
         }
     }
@@ -49,7 +49,7 @@ class UserRetrofitServiceImpl @Inject constructor(
             if (response.code() == HttpStatusCodes.OK.code) {
                 response.body()!!.data
             } else {
-                throw Exception(response.body()!!.message)
+                throw Exception(response.message())
             }
         }
     }
@@ -59,7 +59,7 @@ class UserRetrofitServiceImpl @Inject constructor(
             if (response.code() == HttpStatusCodes.OK.code) {
                 response.body()!!.data
             } else {
-                throw Exception(response.body()!!.message)
+                throw Exception(response.message())
             }
         }
     }

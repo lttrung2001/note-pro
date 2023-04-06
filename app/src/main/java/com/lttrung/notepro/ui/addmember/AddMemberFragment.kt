@@ -1,5 +1,6 @@
 package com.lttrung.notepro.ui.addmember
 
+import android.app.Dialog
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -8,11 +9,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.github.razir.progressbutton.attachTextChangeAnimator
 import com.github.razir.progressbutton.bindProgressButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -27,7 +31,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class AddMemberFragment : BottomSheetDialogFragment() {
     private var binding: FragmentAddMemberBinding? = null
-    private val addMemberViewModel: AddMemberViewModel by viewModels()
+    private val addMemberViewModel: AddMemberViewModel by activityViewModels()
     private lateinit var roleAdapter: ArrayAdapter<String>
 
     override fun onCreateView(
@@ -35,7 +39,6 @@ class AddMemberFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentAddMemberBinding.inflate(layoutInflater)
-
         initViews()
         initAdapters()
         initListeners()
@@ -108,5 +111,7 @@ class AddMemberFragment : BottomSheetDialogFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
+        val parentActivity = (requireActivity() as ShowMembersActivity)
+        parentActivity.onAddMemberFragmentDestroyView()
     }
 }

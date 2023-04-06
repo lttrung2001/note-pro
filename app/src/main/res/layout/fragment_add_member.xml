@@ -28,9 +28,10 @@
     <androidx.appcompat.widget.AppCompatSpinner
         android:id="@+id/role_spinner"
         android:layout_width="match_parent"
+        android:prompt="@string/role"
         android:layout_height="wrap_content"
         android:padding="12dp"
-        android:spinnerMode="dropdown"
+        android:spinnerMode="dialog"
         tools:listitem="@android:layout/list_content" />
 
     <com.google.android.material.button.MaterialButton

@@ -24,6 +24,7 @@
         tools:targetApi="31">
         <activity
             android:name=".ui.viewimagedetails.ViewImageDetailsActivity"
+            android:label="@string/images"
             android:exported="false" />
 
         <service
@@ -33,29 +34,32 @@
 
         <activity
             android:name=".ui.chat.ChatActivity"
+            android:label="Conservation"
             android:exported="false" />
         <activity
             android:name=".ui.editmember.EditMemberActivity"
+            android:label="Edit member"
             android:exported="false" />
         <activity
             android:name=".ui.viewgallery.ViewGalleryActivity"
+            android:label="Gallery"
             android:exported="false" />
         <activity
             android:name=".ui.changeprofile.ChangeProfileActivity"
+            android:label="Edit profile"
             android:exported="false"
-            android:label="@string/back"
             android:parentActivityName=".ui.viewprofile.ViewProfileActivity"
             android:theme="@style/Theme.NotePro" />
         <activity
             android:name=".ui.resetpassword.ResetPasswordActivity"
             android:exported="true"
-            android:label="@string/back"
+            android:label="Reset password"
             android:parentActivityName=".ui.forgotpassword.ForgotPasswordActivity"
             android:theme="@style/Theme.NotePro" />
         <activity
             android:name=".ui.forgotpassword.ForgotPasswordActivity"
             android:exported="false"
-            android:label="@string/back"
+            android:label="Forgot password"
             android:parentActivityName=".ui.login.LoginActivity"
             android:theme="@style/Theme.NotePro" />
         <activity
@@ -106,6 +110,7 @@
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="true"
+            android:label="Dashboard"
             android:theme="@style/Theme.NotePro">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -120,5 +125,4 @@
             android:parentActivityName=".ui.setting.SettingActivity"
             android:theme="@style/Theme.NotePro" />
     </application>
-
 </manifest>

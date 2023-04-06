@@ -156,6 +156,7 @@ class AddNoteActivity : AddImagesActivity() {
                 resultIntent?.let {
                     val images = it.getSerializableExtra(SELECTED_IMAGES) as List<Image>
                     imagesAdapter.submitList(images)
+                    bottomSheet.dismiss()
                 }
             }
         }

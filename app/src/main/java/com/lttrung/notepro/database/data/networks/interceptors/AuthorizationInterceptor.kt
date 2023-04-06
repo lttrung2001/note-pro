@@ -11,10 +11,12 @@ import com.lttrung.notepro.exceptions.InvalidTokenException
 import com.lttrung.notepro.ui.login.LoginActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.ACCESS_TOKEN
 import com.lttrung.notepro.utils.AppConstant.Companion.REFRESH_TOKEN
+import com.lttrung.notepro.utils.HttpStatusCodes
 import com.lttrung.notepro.utils.RetrofitUtils.BASE_URL
 import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
+import java.net.SocketTimeoutException
 import javax.inject.Inject
 
 class AuthorizationInterceptor @Inject constructor(
@@ -44,13 +46,14 @@ class AuthorizationInterceptor @Inject constructor(
                 }
             }
         } catch (ex: Exception) {
-            userLocals.logout()
-            context.startActivity(Intent(context, LoginActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            })
+            requireLogin()
         }
         val newRequest = builder.addHeader("Authorization", "Bearer $accessToken").build()
-        return chain.proceed(newRequest)
+        val response = chain.proceed(newRequest)
+        if (response.code == HttpStatusCodes.UNAUTHORIZED.code) {
+            requireLogin()
+        }
+        return response
     }
 
     private fun fetchAccessToken(): String {
@@ -62,8 +65,8 @@ class AuthorizationInterceptor @Inject constructor(
         try {
             // Create client object
             return callGetAccessTokenApi(refreshToken)
-        } catch (ex: Exception) {
-            throw InvalidTokenException()
+        } catch (ex: SocketTimeoutException) {
+            throw SocketTimeoutException()
         }
     }
 
@@ -83,5 +86,12 @@ class AuthorizationInterceptor @Inject constructor(
             Gson().fromJson(response.body!!.string(), ApiResponse::class.java).data as String
         userLocals.fetchAccessToken(accessToken)
         return accessToken
+    }
+
+    private fun requireLogin() {
+        userLocals.logout()
+        context.startActivity(Intent(context, LoginActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        })
     }
 }
