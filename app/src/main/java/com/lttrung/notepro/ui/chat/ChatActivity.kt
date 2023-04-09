@@ -64,7 +64,6 @@ class ChatActivity : AppCompatActivity() {
     private val loadMessagesReceiver: BroadcastReceiver by lazy {
         object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                chatViewModel.page += 1
                 val messagesJson = intent?.getStringExtra(MESSAGES_JSON)
                 // Parse JsonArray to Array
                 val olderMessages =
@@ -79,6 +78,7 @@ class ChatActivity : AppCompatActivity() {
                 messages.addAll(0, olderMessages)
                 // Update live data
                 chatViewModel.messagesLiveData.postValue(Resource.Success(messages))
+                chatViewModel.page += 1
             }
         }
     }
@@ -87,14 +87,16 @@ class ChatActivity : AppCompatActivity() {
         object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
-                if (!recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    val note = intent.getSerializableExtra(NOTE) as Note
-                    socketService.getMessages(
-                        note.id,
-                        chatViewModel.page,
-                        PAGE_LIMIT
-                    )
-                    chatViewModel.messagesLiveData.postValue(Resource.Loading())
+                if (chatViewModel.messagesLiveData.value !is Resource.Loading) {
+                    if (!recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        chatViewModel.messagesLiveData.postValue(Resource.Loading())
+                        val note = intent.getSerializableExtra(NOTE) as Note
+                        socketService.getMessages(
+                            note.id,
+                            chatViewModel.page,
+                            PAGE_LIMIT
+                        )
+                    }
                 }
             }
         }
@@ -104,13 +106,13 @@ class ChatActivity : AppCompatActivity() {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             val binder = service as ChatSocketService.LocalBinder
             socketService = binder.getService()
+            chatViewModel.messagesLiveData.postValue(Resource.Loading())
             val roomId = intent.getStringExtra(ROOM_ID)!!
             socketService.getMessages(
-                roomId,
-                chatViewModel.page,
-                PAGE_LIMIT
+                    roomId,
+            chatViewModel.page,
+            PAGE_LIMIT
             )
-            chatViewModel.messagesLiveData.postValue(Resource.Loading())
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -179,6 +181,10 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
+
+        if (chatViewModel.messagesLiveData.value is Resource.Loading) {
+            messageAdapter.removeLoadingElement()
+        }
 
         unregisterReceiver(messageReceiver)
         unregisterReceiver(loadMessagesReceiver)
