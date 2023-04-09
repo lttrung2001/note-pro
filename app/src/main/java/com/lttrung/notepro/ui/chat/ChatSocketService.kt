@@ -174,6 +174,10 @@ class ChatSocketService : Service(), ChatEvents {
 
     private fun startConnection() {
         socket.connect()
+        socket.on(Socket.EVENT_CONNECT_ERROR) {
+            userLocals.logout()
+            stopSelf()
+        }
         socket.on("chat") { args ->
             val message = gson.fromJson(args[0].toString(), Message::class.java)
             val process = ActivityManager.RunningAppProcessInfo()
