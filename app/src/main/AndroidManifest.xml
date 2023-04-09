@@ -110,7 +110,6 @@
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="true"
-            android:label="Dashboard"
             android:theme="@style/Theme.NotePro">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
