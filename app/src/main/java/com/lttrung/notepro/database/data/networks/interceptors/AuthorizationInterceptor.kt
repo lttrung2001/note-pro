@@ -8,6 +8,7 @@ import com.google.gson.Gson
 import com.lttrung.notepro.database.data.locals.UserLocals
 import com.lttrung.notepro.database.data.networks.models.ApiResponse
 import com.lttrung.notepro.exceptions.InvalidTokenException
+import com.lttrung.notepro.ui.chat.ChatSocketService
 import com.lttrung.notepro.ui.login.LoginActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.ACCESS_TOKEN
 import com.lttrung.notepro.utils.AppConstant.Companion.REFRESH_TOKEN
@@ -93,5 +94,6 @@ class AuthorizationInterceptor @Inject constructor(
         context.startActivity(Intent(context, LoginActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         })
+        context.stopService(Intent(context, ChatSocketService::class.java))
     }
 }
