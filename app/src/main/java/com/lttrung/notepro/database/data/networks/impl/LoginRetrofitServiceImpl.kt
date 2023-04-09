@@ -2,6 +2,7 @@ package com.lttrung.notepro.database.data.networks.impl
 
 import com.lttrung.notepro.database.data.networks.LoginNetworks
 import com.lttrung.notepro.database.data.networks.models.ApiResponse
+import com.lttrung.notepro.exceptions.VerifiedEmailException
 import com.lttrung.notepro.utils.HttpStatusCodes
 import io.reactivex.rxjava3.core.Single
 import retrofit2.Response
@@ -44,10 +45,10 @@ class LoginRetrofitServiceImpl @Inject constructor(private val service: Service)
 
     override fun login(email: String, password: String): Single<String> {
         return service.login(email, password).map {
-            if (it.code() == HttpStatusCodes.OK.code) {
-                it.body()!!.data
-            } else {
-                throw Exception(it.message())
+            when (it.code()) {
+                HttpStatusCodes.OK.code -> it.body()!!.data
+                HttpStatusCodes.FORBIDDEN.code -> throw VerifiedEmailException()
+                else -> throw RuntimeException(it.message())
             }
         }
     }

@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lttrung.notepro.exceptions.ConnectivityException
+import com.lttrung.notepro.exceptions.VerifiedEmailException
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -54,12 +55,9 @@ class LoginViewModel @Inject constructor(
 
     private fun loginError(t: Throwable) {
         when (t) {
-            is ConnectivityException -> {
-                login.postValue(Resource.Error(t.message))
-            }
-            else -> {
-                login.postValue(Resource.Error(t.message ?: "Unknown error"))
-            }
+            is ConnectivityException -> login.postValue(Resource.Error(t.message))
+            is VerifiedEmailException -> login.postValue(Resource.Error(t.message))
+            else -> login.postValue(Resource.Error(t.message ?: "Unknown error"))
         }
     }
 }

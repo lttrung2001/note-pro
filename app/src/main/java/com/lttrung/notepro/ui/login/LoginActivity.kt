@@ -11,6 +11,7 @@ import com.github.razir.progressbutton.attachTextChangeAnimator
 import com.github.razir.progressbutton.bindProgressButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
+import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityLoginBinding
 import com.lttrung.notepro.ui.forgotpassword.ForgotPasswordActivity
@@ -83,9 +84,14 @@ class LoginActivity : AppCompatActivity() {
                     switchToMain()
                 }
                 is Resource.Error -> {
+                    Snackbar.make(
+                        this@LoginActivity,
+                        binding.linearLayout,
+                        resource.message,
+                        Snackbar.LENGTH_LONG
+                    ).show()
                     binding.btnLogin.hideProgress(R.string.login)
                     binding.btnLogin.isClickable = true
-                    binding.passwordLayout.error = resource.message
                 }
             }
         }
