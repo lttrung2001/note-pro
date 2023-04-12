@@ -29,6 +29,10 @@ import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
 import com.lttrung.notepro.utils.NotificationHelper
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
+import org.jitsi.meet.sdk.JitsiMeet
+import org.jitsi.meet.sdk.JitsiMeetActivity
+import org.jitsi.meet.sdk.JitsiMeetConferenceOptions
+import java.net.URL
 
 @AndroidEntryPoint
 class ChatActivity : AppCompatActivity() {
@@ -232,6 +236,20 @@ class ChatActivity : AppCompatActivity() {
                         putExtra(NOTE, note)
                     }
                 startActivity(viewMembersIntent)
+            }
+            R.id.action_call -> {
+                // Set default JitsiMeetConferenceOptions
+                val defaultOptions = JitsiMeetConferenceOptions.Builder()
+                    .build()
+                JitsiMeet.setDefaultConferenceOptions(defaultOptions)
+
+                // Launch a Jitsi Meet activity
+                val options = JitsiMeetConferenceOptions.Builder()
+                    .setRoom("com.lttrung.notepro.TEST_JITSI")
+                    .setAudioMuted(true)
+                    .setVideoMuted(true)
+                    .build()
+                JitsiMeetActivity.launch(this, options)
             }
             else -> {
                 finish()

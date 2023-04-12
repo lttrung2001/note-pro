@@ -23,9 +23,30 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".ui.viewimagedetails.ViewImageDetailsActivity"
-            android:label="@string/images"
+            tools:replace="android:configChanges"
+            android:name="org.jitsi.meet.sdk.JitsiMeetActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:launchMode="singleTask"
+            android:resizeableActivity="true"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- Add your domain here -->
+                <data android:scheme="https" android:host="meet.jit.si" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.call.IncomingCallActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.viewimagedetails.ViewImageDetailsActivity"
+            android:exported="false"
+            android:label="@string/images" />
 
         <service
             android:name=".ui.chat.ChatSocketService"
@@ -34,20 +55,20 @@
 
         <activity
             android:name=".ui.chat.ChatActivity"
-            android:label="Conservation"
-            android:exported="false" />
+            android:exported="false"
+            android:label="Conservation" />
         <activity
             android:name=".ui.editmember.EditMemberActivity"
-            android:label="Edit member"
-            android:exported="false" />
+            android:exported="false"
+            android:label="Edit member" />
         <activity
             android:name=".ui.viewgallery.ViewGalleryActivity"
-            android:label="Gallery"
-            android:exported="false" />
+            android:exported="false"
+            android:label="Gallery" />
         <activity
             android:name=".ui.changeprofile.ChangeProfileActivity"
-            android:label="Edit profile"
             android:exported="false"
+            android:label="Edit profile"
             android:parentActivityName=".ui.viewprofile.ViewProfileActivity"
             android:theme="@style/Theme.NotePro" />
         <activity
@@ -124,4 +145,5 @@
             android:parentActivityName=".ui.setting.SettingActivity"
             android:theme="@style/Theme.NotePro" />
     </application>
+
 </manifest>

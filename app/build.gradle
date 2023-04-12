@@ -65,6 +65,7 @@ dependencies {
     image()
     customUI()
     socketIO()
+    jitsiSDK()
 
     // Circle image
     implementation 'de.hdodenhof:circleimageview:3.1.0'
@@ -130,6 +131,10 @@ private void socketIO() {
     dependencies.implementation ('io.socket:socket.io-client:2.0.0') {
         exclude group: 'org.json', module: 'json'
     }
+}
+
+private void jitsiSDK() {
+    dependencies.implementation ('org.jitsi.react:jitsi-meet-sdk:+') { transitive = true }
 }
 
 kapt {
