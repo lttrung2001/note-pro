@@ -32,6 +32,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.jitsi.meet.sdk.JitsiMeet
 import org.jitsi.meet.sdk.JitsiMeetActivity
 import org.jitsi.meet.sdk.JitsiMeetConferenceOptions
+import org.jitsi.meet.sdk.JitsiMeetUserInfo
 import java.net.URL
 
 @AndroidEntryPoint
@@ -238,6 +239,10 @@ class ChatActivity : AppCompatActivity() {
                 startActivity(viewMembersIntent)
             }
             R.id.action_call -> {
+                val serverUrl = "https://meet.jit.si"
+                val roomName = "com.lttrung.notepro.TEST_JITSI"
+                val password = "asdasdasd"
+                val url = "$serverUrl/$roomName?pwd=$password"
                 // Set default JitsiMeetConferenceOptions
                 val defaultOptions = JitsiMeetConferenceOptions.Builder()
                     .build()
@@ -245,9 +250,12 @@ class ChatActivity : AppCompatActivity() {
 
                 // Launch a Jitsi Meet activity
                 val options = JitsiMeetConferenceOptions.Builder()
-                    .setRoom("com.lttrung.notepro.TEST_JITSI")
-                    .setAudioMuted(true)
+                    .setRoom(url)
+                    .setAudioMuted(false)
                     .setVideoMuted(true)
+                    .setFeatureFlag("meeting-password.enabled", true)
+                    .setFeatureFlag("chat.enabled", false)
+                    .setFeatureFlag("invite.enabled", false)
                     .build()
                 JitsiMeetActivity.launch(this, options)
             }
