@@ -19,15 +19,15 @@ import javax.inject.Inject
 class ChatViewModel @Inject constructor(
     private val useCase: ChatUseCase
 ) : ViewModel() {
-    val currentUserLiveData: MutableLiveData<Resource<CurrentUser>> by lazy {
+    internal val currentUserLiveData: MutableLiveData<Resource<CurrentUser>> by lazy {
         MutableLiveData<Resource<CurrentUser>>()
     }
 
-    val messagesLiveData: MutableLiveData<Resource<List<Message>>> by lazy {
+    internal val messagesLiveData: MutableLiveData<Resource<List<Message>>> by lazy {
         MutableLiveData<Resource<List<Message>>>()
     }
 
-    var page = 0
+    internal var page = 0
 
     private val composite: CompositeDisposable by lazy {
         CompositeDisposable()
@@ -41,7 +41,7 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    fun getCurrentUser() {
+    internal fun getCurrentUser() {
         viewModelScope.launch(Dispatchers.IO) {
             currentUserLiveData.postValue(Resource.Loading())
             currentUserDisposable?.let { composite.remove(it) }

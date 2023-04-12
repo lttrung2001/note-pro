@@ -17,13 +17,13 @@ import javax.inject.Inject
 class SettingViewModel @Inject constructor(
     private val useCase: SettingUseCase
 ) : ViewModel() {
-    fun logout() {
+    internal fun logout() {
         viewModelScope.launch(Dispatchers.IO) {
             useCase.logout().subscribe()
         }
     }
 
-    val userLiveData: MutableLiveData<CurrentUser> by lazy {
+    internal val userLiveData: MutableLiveData<CurrentUser> by lazy {
         MutableLiveData<CurrentUser>()
     }
 
@@ -39,7 +39,7 @@ class SettingViewModel @Inject constructor(
         }
     }
 
-    fun getCurrentUserInfo() {
+    internal fun getCurrentUserInfo() {
         viewModelScope.launch(Dispatchers.IO) {
             fullNameDisposable?.let { composite.remove(it) }
             fullNameDisposable = useCase.getCurrentUserInfo().observeOn(AndroidSchedulers.mainThread())

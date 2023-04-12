@@ -18,7 +18,7 @@ import javax.inject.Inject
 class ForgotPasswordViewModel @Inject constructor(
     private val useCase: ForgotPasswordUseCase
 ) : ViewModel() {
-    val forgotPassword: MutableLiveData<Resource<Unit>> by lazy {
+    internal val forgotPassword: MutableLiveData<Resource<Unit>> by lazy {
         MutableLiveData<Resource<Unit>>()
     }
 
@@ -34,7 +34,7 @@ class ForgotPasswordViewModel @Inject constructor(
         }
     }
 
-    fun forgotPassword(email: String) {
+    internal fun forgotPassword(email: String) {
         viewModelScope.launch(Dispatchers.IO) {
             // post value loading
             forgotPassword.postValue(Resource.Loading())

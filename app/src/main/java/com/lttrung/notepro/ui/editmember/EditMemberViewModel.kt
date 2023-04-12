@@ -18,7 +18,7 @@ import javax.inject.Inject
 class EditMemberViewModel @Inject constructor(
     private val useCase: EditMemberUseCase
 ) : ViewModel() {
-    val memberLiveData: MutableLiveData<Resource<Member>> by lazy {
+    internal val memberLiveData: MutableLiveData<Resource<Member>> by lazy {
         MutableLiveData<Resource<Member>>()
     }
 
@@ -34,7 +34,7 @@ class EditMemberViewModel @Inject constructor(
         }
     }
 
-    fun editMember(noteId: String, member: Member) {
+    internal fun editMember(noteId: String, member: Member) {
         viewModelScope.launch(Dispatchers.IO) {
             memberLiveData.postValue(Resource.Loading())
             memberDisposable?.let { composite.remove(it) }
@@ -49,7 +49,7 @@ class EditMemberViewModel @Inject constructor(
         memberLiveData.postValue(Resource.Error(t.message ?: "Unknown error"))
     }
 
-    val deleteMember: MutableLiveData<Resource<Unit>> by lazy {
+    internal val deleteMember: MutableLiveData<Resource<Unit>> by lazy {
         MutableLiveData<Resource<Unit>>()
     }
 
@@ -61,7 +61,7 @@ class EditMemberViewModel @Inject constructor(
         }
     }
 
-    fun deleteMember(noteId: String, memberId: String) {
+    internal fun deleteMember(noteId: String, memberId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             deleteMember.postValue(Resource.Loading())
             deleteMemberDisposable?.let {

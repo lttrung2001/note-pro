@@ -25,15 +25,15 @@ class EditNoteViewModel @Inject constructor(
         MutableLiveData<List<Image>>(emptyList())
     }
 
-    val editNote: MutableLiveData<Resource<Note>> by lazy {
+    internal val editNote: MutableLiveData<Resource<Note>> by lazy {
         MutableLiveData<Resource<Note>>()
     }
 
-    val deleteNote: MutableLiveData<Resource<Unit>> by lazy {
+    internal val deleteNote: MutableLiveData<Resource<Unit>> by lazy {
         MutableLiveData<Resource<Unit>>()
     }
 
-    val noteDetails: MutableLiveData<Resource<Note>> by lazy {
+    internal val noteDetails: MutableLiveData<Resource<Note>> by lazy {
         MutableLiveData<Resource<Note>>()
     }
 
@@ -63,7 +63,7 @@ class EditNoteViewModel @Inject constructor(
         }
     }
 
-    fun editNote(note: Note) {
+    internal fun editNote(note: Note) {
         viewModelScope.launch(Dispatchers.IO) {
             editNote.postValue(Resource.Loading())
             editNoteDisposable?.let {
@@ -91,7 +91,7 @@ class EditNoteViewModel @Inject constructor(
         }
     }
 
-    fun deleteNote(noteId: String) {
+    internal fun deleteNote(noteId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             deleteNote.postValue(Resource.Loading())
             deleteNoteDisposable?.let {
@@ -115,7 +115,7 @@ class EditNoteViewModel @Inject constructor(
         }
     }
 
-    fun getNoteDetails(noteId: String) {
+    internal fun getNoteDetails(noteId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             noteDetails.postValue(Resource.Loading())
             noteDetailsDisposable?.let {

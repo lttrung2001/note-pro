@@ -20,7 +20,7 @@ class NoteDetailsViewModel @Inject constructor(
     private val useCase: NoteDetailsUseCase
 ) : ViewModel() {
 
-    val noteDetails: MutableLiveData<Resource<Note>> by lazy {
+    internal val noteDetails: MutableLiveData<Resource<Note>> by lazy {
         MutableLiveData<Resource<Note>>()
     }
 
@@ -36,7 +36,7 @@ class NoteDetailsViewModel @Inject constructor(
         }
     }
 
-    fun getNoteDetails(note: Note) {
+    internal fun getNoteDetails(note: Note) {
         viewModelScope.launch(Dispatchers.IO) {
             noteDetails.postValue(Resource.Loading())
             noteDetailsDisposable?.let {

@@ -19,7 +19,7 @@ import javax.inject.Inject
 class ChangeProfileViewModel @Inject constructor(
     private val useCase: ChangeProfileUseCase
 ) : ViewModel() {
-    val changeProfile: MutableLiveData<Resource<UserInfo>> by lazy {
+    internal val changeProfile: MutableLiveData<Resource<UserInfo>> by lazy {
         MutableLiveData<Resource<UserInfo>>()
     }
 
@@ -35,7 +35,7 @@ class ChangeProfileViewModel @Inject constructor(
         }
     }
 
-    fun changeProfile(fullName: String, phoneNumber: String) {
+    internal fun changeProfile(fullName: String, phoneNumber: String) {
         viewModelScope.launch(Dispatchers.IO) {
             changeProfile.postValue(Resource.Loading())
             changeProfileDisposable?.let {

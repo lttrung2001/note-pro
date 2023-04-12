@@ -18,7 +18,7 @@ import javax.inject.Inject
 class AddNoteViewModel @Inject constructor(
     private val useCase: AddNoteUseCase
 ) : ViewModel() {
-    val addNote: MutableLiveData<Resource<Note>> by lazy {
+    internal val addNote: MutableLiveData<Resource<Note>> by lazy {
         MutableLiveData<Resource<Note>>()
     }
 
@@ -34,7 +34,7 @@ class AddNoteViewModel @Inject constructor(
         }
     }
 
-    fun addNote(note: Note) {
+    internal fun addNote(note: Note) {
         viewModelScope.launch(Dispatchers.IO) {
             addNote.postValue(Resource.Loading())
             addNoteDisposable?.let {

@@ -19,7 +19,7 @@ class AddMemberViewModel @Inject constructor(
     private val useCase: AddMemberUseCase
 ) : ViewModel() {
 
-    val member: MutableLiveData<Resource<Member>> by lazy {
+    internal val member: MutableLiveData<Resource<Member>> by lazy {
         MutableLiveData<Resource<Member>>()
     }
 
@@ -35,7 +35,7 @@ class AddMemberViewModel @Inject constructor(
         }
     }
 
-    fun addMember(noteId: String, email: String, role: String) {
+    internal fun addMember(noteId: String, email: String, role: String) {
         viewModelScope.launch(Dispatchers.IO) {
             member.postValue(Resource.Loading())
             memberDisposable?.let {

@@ -1,18 +1,23 @@
 package com.lttrung.notepro.database.data.locals.impl
 
+import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import com.auth0.android.jwt.JWT
 import com.lttrung.notepro.database.data.locals.UserLocals
 import com.lttrung.notepro.database.data.locals.entities.CurrentUser
 import com.lttrung.notepro.database.data.locals.room.CurrentUserDao
+import com.lttrung.notepro.ui.chat.ChatSocketService
 import com.lttrung.notepro.utils.AppConstant.Companion.ACCESS_TOKEN
 import com.lttrung.notepro.utils.AppConstant.Companion.REFRESH_TOKEN
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
 class UserLocalsImpl @Inject constructor(
     private val currentUserDao: CurrentUserDao,
-    private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences,
+    @ApplicationContext private val context: Context
 ) : UserLocals {
     override fun login(currentUser: CurrentUser, refreshToken: String) {
         sharedPreferences.edit().putString(REFRESH_TOKEN, refreshToken).apply()
@@ -58,5 +63,6 @@ class UserLocalsImpl @Inject constructor(
     override fun logout() {
         sharedPreferences.edit().remove(ACCESS_TOKEN).remove(REFRESH_TOKEN).apply()
         currentUserDao.deleteCurrentUser()
+        context.stopService(Intent(context, ChatSocketService::class.java))
     }
 }

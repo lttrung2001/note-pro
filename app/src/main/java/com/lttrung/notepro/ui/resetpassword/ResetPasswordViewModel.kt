@@ -18,7 +18,7 @@ import javax.inject.Inject
 class ResetPasswordViewModel @Inject constructor(
     private val useCase: ResetPasswordUseCase
 ) : ViewModel() {
-    val resetPassword: MutableLiveData<Resource<Unit>> by lazy {
+    internal val resetPassword: MutableLiveData<Resource<Unit>> by lazy {
         MutableLiveData<Resource<Unit>>()
     }
 
@@ -34,7 +34,7 @@ class ResetPasswordViewModel @Inject constructor(
         }
     }
 
-    fun resetPassword(code: String, newPassword: String) {
+    internal fun resetPassword(code: String, newPassword: String) {
         viewModelScope.launch(Dispatchers.IO) {
             // post value loading
             resetPassword.postValue(Resource.Loading())

@@ -18,7 +18,7 @@ import javax.inject.Inject
 class RegisterViewModel @Inject constructor(
     private val useCase: RegisterUseCase
 ) : ViewModel() {
-    val register: MutableLiveData<Resource<Unit>> by lazy {
+    internal val register: MutableLiveData<Resource<Unit>> by lazy {
         MutableLiveData<Resource<Unit>>()
     }
 
@@ -34,7 +34,7 @@ class RegisterViewModel @Inject constructor(
         }
     }
 
-    fun register(email: String, password: String, fullName: String, phoneNumber: String) {
+    internal fun register(email: String, password: String, fullName: String, phoneNumber: String) {
         viewModelScope.launch(Dispatchers.IO) {
             register.postValue(Resource.Loading())
             registerDisposable?.let {

@@ -19,7 +19,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val useCase: LoginUseCase
 ) : ViewModel() {
-    val login: MutableLiveData<Resource<String>> by lazy {
+    internal val login: MutableLiveData<Resource<String>> by lazy {
         MutableLiveData<Resource<String>>()
     }
 
@@ -38,7 +38,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun login(email: String, password: String) {
+    internal fun login(email: String, password: String) {
         viewModelScope.launch(Dispatchers.IO) {
             // post value loading
             login.postValue(Resource.Loading())

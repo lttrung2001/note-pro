@@ -20,9 +20,9 @@ import javax.inject.Inject
 class ShowMembersViewModel @Inject constructor(
     private val useCase: ShowMembersUseCase
 ) : ViewModel() {
-    var page = 0
+    internal var page = 0
 
-    val getMembers: MutableLiveData<Resource<Paging<Member>>> by lazy {
+    internal val getMembers: MutableLiveData<Resource<Paging<Member>>> by lazy {
         MutableLiveData<Resource<Paging<Member>>>()
     }
 
@@ -45,7 +45,7 @@ class ShowMembersViewModel @Inject constructor(
         }
     }
 
-    fun getMembers(noteId: String, pageIndex: Int, limit: Int) {
+    internal fun getMembers(noteId: String, pageIndex: Int, limit: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             val value = getMembers.value
             if (value is Resource.Success<Paging<Member>>) {

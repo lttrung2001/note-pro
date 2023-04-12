@@ -19,7 +19,7 @@ import javax.inject.Inject
 class ViewProfileViewModel @Inject constructor(
     private val useCase: ViewProfileUseCase
 ) : ViewModel() {
-    val profile: MutableLiveData<Resource<UserInfo>> by lazy {
+    internal val profile: MutableLiveData<Resource<UserInfo>> by lazy {
         MutableLiveData<Resource<UserInfo>>()
     }
 
@@ -35,7 +35,7 @@ class ViewProfileViewModel @Inject constructor(
         }
     }
 
-    fun getProfile() {
+    internal fun getProfile() {
         viewModelScope.launch(Dispatchers.IO) {
             profile.postValue(Resource.Loading())
             profileDisposable?.let {

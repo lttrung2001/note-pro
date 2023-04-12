@@ -18,7 +18,7 @@ import javax.inject.Inject
 class ChangePasswordViewModel @Inject constructor(
     private val useCase: ChangePasswordUseCase
 ) : ViewModel() {
-    val changePassword: MutableLiveData<Resource<String>> by lazy {
+    internal val changePassword: MutableLiveData<Resource<String>> by lazy {
         MutableLiveData<Resource<String>>()
     }
 
@@ -34,7 +34,7 @@ class ChangePasswordViewModel @Inject constructor(
         }
     }
 
-    fun changePassword(oldPassword: String, newPassword: String) {
+    internal fun changePassword(oldPassword: String, newPassword: String) {
         viewModelScope.launch(Dispatchers.IO) {
             changePassword.postValue(Resource.Loading())
             changePasswordDisposable?.let {

@@ -16,7 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ViewGalleryViewModel : ViewModel() {
-    val images: MutableLiveData<Resource<Paging<Image>>> by lazy {
+    internal val images: MutableLiveData<Resource<Paging<Image>>> by lazy {
         MutableLiveData<Resource<Paging<Image>>>()
     }
 
@@ -32,7 +32,7 @@ class ViewGalleryViewModel : ViewModel() {
         }
     }
 
-    fun getImages(context: Context, page: Int, limit: Int) {
+    internal fun getImages(context: Context, page: Int, limit: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             images.postValue(Resource.Loading())
             disposable?.let { composite.remove(it) }
