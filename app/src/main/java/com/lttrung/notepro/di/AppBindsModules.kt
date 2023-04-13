@@ -10,14 +10,8 @@ import com.lttrung.notepro.database.data.networks.impl.LoginRetrofitServiceImpl
 import com.lttrung.notepro.database.data.networks.impl.MemberRetrofitServiceImpl
 import com.lttrung.notepro.database.data.networks.impl.NoteRetrofitServiceImpl
 import com.lttrung.notepro.database.data.networks.impl.UserRetrofitServiceImpl
-import com.lttrung.notepro.database.repositories.LoginRepositories
-import com.lttrung.notepro.database.repositories.MemberRepositories
-import com.lttrung.notepro.database.repositories.NoteRepositories
-import com.lttrung.notepro.database.repositories.UserRepositories
-import com.lttrung.notepro.database.repositories.impl.LoginRepositoriesImpl
-import com.lttrung.notepro.database.repositories.impl.MemberRepositoriesImpl
-import com.lttrung.notepro.database.repositories.impl.NoteRepositoriesImpl
-import com.lttrung.notepro.database.repositories.impl.UserRepositoriesImpl
+import com.lttrung.notepro.database.repositories.*
+import com.lttrung.notepro.database.repositories.impl.*
 import com.lttrung.notepro.ui.addmember.AddMemberUseCase
 import com.lttrung.notepro.ui.addmember.AddMemberUseCaseImpl
 import com.lttrung.notepro.ui.addnote.AddNoteUseCase
@@ -110,6 +104,9 @@ abstract class AppBindsModules {
 
     @Binds
     abstract fun bindsUserRepositories(impl: UserRepositoriesImpl): UserRepositories
+
+    @Binds
+    abstract fun bindsMessageRepositories(impl: MessageRepositoriesImpl): MessageRepositories
 
     @Binds
     abstract fun bindsLoginNetworks(impl: LoginRetrofitServiceImpl): LoginNetworks

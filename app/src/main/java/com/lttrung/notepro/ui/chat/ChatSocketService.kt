@@ -11,6 +11,9 @@ import com.lttrung.notepro.NoteProApplication
 import com.lttrung.notepro.database.data.locals.UserLocals
 import com.lttrung.notepro.database.data.networks.models.ApiResponse
 import com.lttrung.notepro.database.data.networks.models.Message
+import com.lttrung.notepro.database.data.networks.models.User
+import com.lttrung.notepro.database.repositories.MessageRepositories
+import com.lttrung.notepro.ui.call.IncomingCallActivity
 import com.lttrung.notepro.ui.login.LoginActivity
 import com.lttrung.notepro.utils.AppConstant
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_LISTENER_CHANNEL_ID
@@ -19,6 +22,8 @@ import com.lttrung.notepro.utils.AppConstant.Companion.LOAD_MESSAGES_RECEIVED
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGES_JSON
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE_RECEIVED
+import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
+import com.lttrung.notepro.utils.AppConstant.Companion.USER
 import com.lttrung.notepro.utils.NotificationHelper
 import com.lttrung.notepro.utils.Resource
 import com.lttrung.notepro.utils.RetrofitUtils.BASE_URL
@@ -33,34 +38,76 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class ChatSocketService : Service(), ChatEvents {
+class ChatSocketService : Service() {
+    @Inject
+    lateinit var messageRepositories: MessageRepositories
+
     @Inject
     lateinit var userLocals: UserLocals
 
     @Inject
     lateinit var gson: Gson
 
+
+    private lateinit var socket: Socket
+    internal fun sendMessage(message: Message) {
+        return messageRepositories.sendMessage(socket, message)
+    }
+
+    internal fun sendAddNoteMessage(roomId: String) {
+        return messageRepositories.sendAddNoteMessage(socket, roomId)
+    }
+
+    internal fun sendDeleteNoteMessage(roomId: String) {
+        return messageRepositories.sendDeleteNoteMessage(socket, roomId)
+    }
+
+    internal fun sendAddMemberMessage(roomId: String, email: String) {
+        return messageRepositories.sendAddMemberMessage(socket, roomId, email)
+    }
+
+    internal fun sendRemoveMemberMessage(roomId: String, email: String) {
+        return messageRepositories.sendRemoveMemberMessage(socket, roomId, email)
+    }
+
+    internal fun getMessages(roomId: String, pageIndex: Int, limit: Int) {
+        return messageRepositories.getMessages(socket, roomId, pageIndex, limit)
+    }
+
+    internal fun call(roomId: String) {
+        return messageRepositories.call(socket, roomId)
+    }
+
+
     private val accessTokenLiveData: MutableLiveData<Resource<String>> by lazy {
         MutableLiveData<Resource<String>>()
     }
-
     private val noteProApplication: NoteProApplication by lazy {
         application as NoteProApplication
+    }
+
+
+    inner class LocalBinder : Binder() {
+        // Return this instance of LocalService so clients can call public methods.
+        fun getService(): ChatSocketService = this@ChatSocketService
     }
 
     private val binder: Binder by lazy {
         LocalBinder()
     }
 
-    private lateinit var socket: Socket
+    override fun onBind(intent: Intent): IBinder {
+        return binder
+    }
+
+
+    /*
+        This function use to start login page if faces some errors
+     */
     private fun requireLogin() {
         val loginIntent = Intent(baseContext, LoginActivity::class.java)
         loginIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         baseContext.startActivity(loginIntent)
-    }
-
-    override fun onBind(intent: Intent): IBinder {
-        return binder
     }
 
     override fun onCreate() {
@@ -72,6 +119,11 @@ class ChatSocketService : Service(), ChatEvents {
         } else {
             callGetAccessTokenApi(refreshToken)
         }
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        noteProApplication.chatService = this@ChatSocketService
+        return START_STICKY
     }
 
     private fun initObservers() {
@@ -101,41 +153,6 @@ class ChatSocketService : Service(), ChatEvents {
             }
         }
     }
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        noteProApplication.chatService = this@ChatSocketService
-        return START_STICKY
-    }
-
-    override fun sendMessage(message: Message) {
-        socket.emit("chat", gson.toJson(message))
-    }
-
-    override fun sendAddNoteMessage(roomId: String) {
-        socket.emit("add_note", roomId)
-    }
-
-    override fun sendDeleteNoteMessage(roomId: String) {
-        socket.emit("delete_note", roomId)
-    }
-
-    override fun sendAddMemberMessage(roomId: String, email: String) {
-        socket.emit("add_member", roomId, email)
-    }
-
-    override fun sendRemoveMemberMessage(roomId: String, email: String) {
-        socket.emit("remove_member", roomId, email)
-    }
-
-    override fun getMessages(roomId: String, pageIndex: Int, limit: Int) {
-        socket.emit("load_messages", roomId, pageIndex, limit)
-    }
-
-    inner class LocalBinder : Binder() {
-        // Return this instance of LocalService so clients can call public methods.
-        fun getService(): ChatSocketService = this@ChatSocketService
-    }
-
     private fun callGetAccessTokenApi(refreshToken: String) {
         val fetchAccessTokenThread = Thread {
             accessTokenLiveData.postValue(Resource.Loading())
@@ -162,7 +179,6 @@ class ChatSocketService : Service(), ChatEvents {
         }
         fetchAccessTokenThread.start()
     }
-
     private fun createSocket(accessToken: String): Socket {
         return IO.socket(BASE_URL, IO.Options.builder().setReconnection(true).setAuth(buildMap {
             if (accessToken.isEmpty()) {
@@ -171,7 +187,6 @@ class ChatSocketService : Service(), ChatEvents {
             this["token"] = accessToken
         }).build())
     }
-
     private fun startConnection() {
         socket.connect()
         socket.on(Socket.EVENT_CONNECT_ERROR) {
@@ -202,6 +217,20 @@ class ChatSocketService : Service(), ChatEvents {
             val loadMessagesReceivedIntent = Intent(LOAD_MESSAGES_RECEIVED)
             loadMessagesReceivedIntent.putExtra(MESSAGES_JSON, olderMessagesJson)
             sendBroadcast(loadMessagesReceivedIntent)
+        }
+        socket.on("call") { args ->
+            val roomId = args[0] as String
+            val userJson = args[1]
+            val user = gson.fromJson(userJson.toString(), User::class.java)
+            baseContext.startActivity(
+                Intent(
+                    this@ChatSocketService,
+                    IncomingCallActivity::class.java
+                ).apply {
+                    putExtra(ROOM_ID, roomId)
+                    putExtra(USER, user)
+                }
+            )
         }
     }
 }

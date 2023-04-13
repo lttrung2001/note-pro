@@ -26,14 +26,11 @@ import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE_RECEIVED
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.PAGE_LIMIT
 import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
+import com.lttrung.notepro.utils.JitsiHelper
 import com.lttrung.notepro.utils.NotificationHelper
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
-import org.jitsi.meet.sdk.JitsiMeet
 import org.jitsi.meet.sdk.JitsiMeetActivity
-import org.jitsi.meet.sdk.JitsiMeetConferenceOptions
-import org.jitsi.meet.sdk.JitsiMeetUserInfo
-import java.net.URL
 
 @AndroidEntryPoint
 class ChatActivity : AppCompatActivity() {
@@ -239,24 +236,11 @@ class ChatActivity : AppCompatActivity() {
                 startActivity(viewMembersIntent)
             }
             R.id.action_call -> {
-                val serverUrl = "https://meet.jit.si"
-                val roomName = "com.lttrung.notepro.TEST_JITSI"
-                val password = "asdasdasd"
-                val url = "$serverUrl/$roomName?pwd=$password"
-                // Set default JitsiMeetConferenceOptions
-                val defaultOptions = JitsiMeetConferenceOptions.Builder()
-                    .build()
-                JitsiMeet.setDefaultConferenceOptions(defaultOptions)
+                val note = intent.getSerializableExtra(NOTE) as Note
+                val roomId = note.id
+                socketService.call(roomId)
 
-                // Launch a Jitsi Meet activity
-                val options = JitsiMeetConferenceOptions.Builder()
-                    .setRoom(url)
-                    .setAudioMuted(false)
-                    .setVideoMuted(true)
-                    .setFeatureFlag("meeting-password.enabled", true)
-                    .setFeatureFlag("chat.enabled", false)
-                    .setFeatureFlag("invite.enabled", false)
-                    .build()
+                val options = JitsiHelper.createOptions(roomId)
                 JitsiMeetActivity.launch(this, options)
             }
             else -> {
