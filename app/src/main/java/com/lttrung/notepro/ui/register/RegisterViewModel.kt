@@ -3,7 +3,7 @@ package com.lttrung.notepro.ui.register
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lttrung.notepro.exceptions.ConnectivityException
+import com.lttrung.notepro.domain.usecases.RegisterUseCase
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-    private val useCase: RegisterUseCase
+    private val registerUseCase: RegisterUseCase
 ) : ViewModel() {
     internal val register: MutableLiveData<Resource<Unit>> by lazy {
         MutableLiveData<Resource<Unit>>()
@@ -41,21 +41,12 @@ class RegisterViewModel @Inject constructor(
                 composite.remove(it)
                 it.dispose()
             }
-            registerDisposable = useCase.register(email, password, fullName, phoneNumber)
+            registerDisposable = registerUseCase.execute(email, password, fullName, phoneNumber)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observerRegister, this@RegisterViewModel::registerError)
+                .subscribe(observerRegister) {
+                    register.postValue(Resource.Error(it))
+                }
             registerDisposable?.let { composite.add(it) }
-        }
-    }
-
-    private fun registerError(throwable: Throwable) {
-        when (throwable) {
-            is ConnectivityException -> {
-                register.postValue(Resource.Error(throwable.message))
-            }
-            else -> {
-                register.postValue(Resource.Error(throwable.message?: "Unknown error"))
-            }
         }
     }
 }

@@ -3,7 +3,8 @@ package com.lttrung.notepro.ui.addnote
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lttrung.notepro.database.data.networks.models.Note
+import com.lttrung.notepro.domain.data.networks.models.Note
+import com.lttrung.notepro.domain.usecases.AddNoteUseCase
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -16,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddNoteViewModel @Inject constructor(
-    private val useCase: AddNoteUseCase
+    private val addNoteUseCase: AddNoteUseCase
 ) : ViewModel() {
     internal val addNote: MutableLiveData<Resource<Note>> by lazy {
         MutableLiveData<Resource<Note>>()
@@ -40,13 +41,12 @@ class AddNoteViewModel @Inject constructor(
             addNoteDisposable?.let {
                 composite.remove(it)
             }
-            addNoteDisposable = useCase.addNote(note).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(addNoteObserver, this@AddNoteViewModel::addNoteError)
+            addNoteDisposable =
+                addNoteUseCase.execute(note).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(addNoteObserver) {
+                        addNote.postValue(Resource.Error(it))
+                    }
             addNoteDisposable?.let { composite.add(it) }
         }
-    }
-
-    private fun addNoteError(t: Throwable) {
-        addNote.postValue(Resource.Error(t.message ?: "Unknown error"))
     }
 }

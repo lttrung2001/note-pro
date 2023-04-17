@@ -12,10 +12,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.lttrung.notepro.NoteProApplication
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.networks.models.Message
-import com.lttrung.notepro.database.data.networks.models.Note
-import com.lttrung.notepro.database.data.networks.models.User
 import com.lttrung.notepro.databinding.ActivityChatBinding
+import com.lttrung.notepro.domain.data.networks.models.Message
+import com.lttrung.notepro.domain.data.networks.models.Note
+import com.lttrung.notepro.domain.data.networks.models.User
 import com.lttrung.notepro.ui.base.adapters.message.MessageAdapter
 import com.lttrung.notepro.ui.showmembers.ShowMembersActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_CHANNEL_ID

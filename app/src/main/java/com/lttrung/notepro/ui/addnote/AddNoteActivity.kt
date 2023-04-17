@@ -14,9 +14,9 @@ import androidx.activity.viewModels
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
 import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.networks.models.Image
-import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityAddNoteBinding
+import com.lttrung.notepro.domain.data.networks.models.Image
+import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.ui.base.activities.AddImagesActivity
 import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
 import com.lttrung.notepro.ui.chat.ChatSocketService
@@ -85,7 +85,7 @@ class AddNoteActivity : AddImagesActivity() {
                     finish()
                 }
                 is Resource.Error -> {
-                    Snackbar.make(binding.root, resource.message, LENGTH_LONG).show()
+                    Snackbar.make(binding.root, resource.t.message.toString(), LENGTH_LONG).show()
                 }
             }
         }

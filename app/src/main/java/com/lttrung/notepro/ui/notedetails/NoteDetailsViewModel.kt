@@ -3,8 +3,9 @@ package com.lttrung.notepro.ui.notedetails
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lttrung.notepro.database.data.networks.models.Note
-import com.lttrung.notepro.exceptions.ConnectivityException
+import com.lttrung.notepro.domain.data.networks.models.Note
+import com.lttrung.notepro.domain.usecases.NoteDetailsUseCase
+import com.lttrung.notepro.domain.usecases.UpdatePinStatusUseCase
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -17,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NoteDetailsViewModel @Inject constructor(
-    private val useCase: NoteDetailsUseCase
+    private val noteDetailsUseCase: NoteDetailsUseCase,
+    private val updatePinStatusUseCase: UpdatePinStatusUseCase
 ) : ViewModel() {
 
     internal val noteDetails: MutableLiveData<Resource<Note>> by lazy {
@@ -44,26 +46,18 @@ class NoteDetailsViewModel @Inject constructor(
                 it.dispose()
             }
             noteDetailsDisposable =
-                useCase.getNoteDetails(note).observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(noteDetailsObserver, this@NoteDetailsViewModel::getNoteDetailsError)
+                noteDetailsUseCase.execute(note).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(noteDetailsObserver) {
+                        noteDetails.postValue(Resource.Error(it))
+                    }
             noteDetailsDisposable?.let { composite.add(it) }
         }
     }
 
-    private fun getNoteDetailsError(t: Throwable) {
-        when (t) {
-            is ConnectivityException -> {
-                noteDetails.postValue(Resource.Error(t.message))
-            }
-            else -> {
-                noteDetails.postValue(Resource.Error(t.message ?: "Unknown error"))
-            }
-        }
-    }
 
-    fun updatePin(noteId: String, isPin: Boolean) {
+    internal fun updatePin(noteId: String, isPin: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            useCase.updatePin(noteId, isPin).subscribe()
+            updatePinStatusUseCase.execute(noteId, isPin).subscribe()
         }
     }
 }

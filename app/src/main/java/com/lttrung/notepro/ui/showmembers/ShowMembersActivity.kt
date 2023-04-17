@@ -15,9 +15,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.networks.models.Member
-import com.lttrung.notepro.database.data.networks.models.Note
-import com.lttrung.notepro.database.data.networks.models.Paging
+import com.lttrung.notepro.domain.data.networks.models.Member
+import com.lttrung.notepro.domain.data.networks.models.Note
+import com.lttrung.notepro.domain.data.networks.models.Paging
 import com.lttrung.notepro.databinding.ActivityShowMembersBinding
 import com.lttrung.notepro.ui.addmember.AddMemberFragment
 import com.lttrung.notepro.ui.base.adapters.member.MemberAdapter
@@ -109,8 +109,8 @@ class ShowMembersActivity : AppCompatActivity() {
                 is Resource.Error -> {
                     memberAdapter.hideLoading()
                     Snackbar.make(
-                        binding.root, resource.message,
-                        BaseTransientBottomBar.LENGTH_LONG
+                        binding.root, resource.t.message.toString(),
+                        Snackbar.LENGTH_LONG
                     ).show()
                     binding.rcvMembers.removeOnScrollListener(onScrollListener)
                 }

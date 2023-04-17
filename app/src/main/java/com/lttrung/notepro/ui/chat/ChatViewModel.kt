@@ -3,8 +3,9 @@ package com.lttrung.notepro.ui.chat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lttrung.notepro.database.data.locals.entities.CurrentUser
-import com.lttrung.notepro.database.data.networks.models.Message
+import com.lttrung.notepro.domain.data.locals.entities.CurrentUser
+import com.lttrung.notepro.domain.data.networks.models.Message
+import com.lttrung.notepro.domain.usecases.ChatUseCase
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -47,12 +48,10 @@ class ChatViewModel @Inject constructor(
             currentUserDisposable?.let { composite.remove(it) }
             currentUserDisposable =
                 useCase.getCurrentUser().observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(currentUserObserver, this@ChatViewModel::getCurrentUserError)
+                    .subscribe(currentUserObserver) {
+                        currentUserLiveData.postValue(Resource.Error(it))
+                    }
             currentUserDisposable?.let { composite.add(it) }
         }
-    }
-
-    private fun getCurrentUserError(t: Throwable) {
-        currentUserLiveData.postValue(Resource.Error(t.message ?: "Unknown error"))
     }
 }

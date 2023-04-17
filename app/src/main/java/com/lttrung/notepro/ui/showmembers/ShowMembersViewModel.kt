@@ -3,9 +3,9 @@ package com.lttrung.notepro.ui.showmembers
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lttrung.notepro.database.data.networks.models.Member
-import com.lttrung.notepro.database.data.networks.models.Paging
-import com.lttrung.notepro.exceptions.ConnectivityException
+import com.lttrung.notepro.domain.data.networks.models.Member
+import com.lttrung.notepro.domain.data.networks.models.Paging
+import com.lttrung.notepro.domain.usecases.ShowMembersUseCase
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ShowMembersViewModel @Inject constructor(
-    private val useCase: ShowMembersUseCase
+    private val showMembersUseCase: ShowMembersUseCase
 ) : ViewModel() {
     internal var page = 0
 
@@ -59,16 +59,9 @@ class ShowMembersViewModel @Inject constructor(
                 composite.remove(it)
                 it.dispose()
             }
-            getMembersDisposable = useCase.getMembers(noteId, pageIndex, limit)
-                .observeOn(AndroidSchedulers.mainThread()).subscribe(getMembersObserver) { t ->
-                    when (t) {
-                        is ConnectivityException -> {
-                            getMembers.postValue(Resource.Error(t.message))
-                        }
-                        else -> {
-                            getMembers.postValue(Resource.Error(t.message ?: "Unknown error"))
-                        }
-                    }
+            getMembersDisposable = showMembersUseCase.execute(noteId, pageIndex, limit)
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(getMembersObserver) {
+                    getMembers.postValue(Resource.Error(it))
                 }
             getMembersDisposable?.let { composite.add(it) }
         }

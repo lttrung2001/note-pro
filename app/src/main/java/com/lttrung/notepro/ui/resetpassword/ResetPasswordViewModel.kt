@@ -3,7 +3,7 @@ package com.lttrung.notepro.ui.resetpassword
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lttrung.notepro.exceptions.ConnectivityException
+import com.lttrung.notepro.domain.usecases.ResetPasswordUseCase
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ResetPasswordViewModel @Inject constructor(
-    private val useCase: ResetPasswordUseCase
+    private val resetPasswordUseCase: ResetPasswordUseCase
 ) : ViewModel() {
     internal val resetPassword: MutableLiveData<Resource<Unit>> by lazy {
         MutableLiveData<Resource<Unit>>()
@@ -41,21 +41,12 @@ class ResetPasswordViewModel @Inject constructor(
             resetPasswordDisposable?.let {
                 composite.remove(it)
             }
-            resetPasswordDisposable = useCase.resetPassword(code, newPassword)
+            resetPasswordDisposable = resetPasswordUseCase.execute(code, newPassword)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(resetPasswordObserver, this@ResetPasswordViewModel::resetPasswordError)
+                .subscribe(resetPasswordObserver) {
+                    resetPassword.postValue(Resource.Error(it))
+                }
             resetPasswordDisposable?.let { composite.add(it) }
-        }
-    }
-
-    private fun resetPasswordError(t: Throwable) {
-        when (t) {
-            is ConnectivityException -> {
-                resetPassword.postValue(Resource.Error(t.message))
-            }
-            else -> {
-                resetPassword.postValue(Resource.Error("Unknown error"))
-            }
         }
     }
 }

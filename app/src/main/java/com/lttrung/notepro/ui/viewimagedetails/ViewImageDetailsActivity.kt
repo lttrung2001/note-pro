@@ -5,9 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.google.gson.Gson
-import com.lttrung.notepro.database.data.networks.models.Image
-import com.lttrung.notepro.database.data.networks.models.ImageDetails
-import com.lttrung.notepro.database.data.networks.models.User
+import com.lttrung.notepro.domain.data.networks.models.Image
+import com.lttrung.notepro.domain.data.networks.models.ImageDetails
+import com.lttrung.notepro.domain.data.networks.models.User
 import com.lttrung.notepro.databinding.ActivityViewImageDetailsBinding
 import com.lttrung.notepro.ui.base.adapters.imagedetails.ImageDetailsAdapter
 import com.lttrung.notepro.utils.AppConstant.Companion.IMAGES_JSON

@@ -2,7 +2,6 @@ package com.lttrung.notepro.ui.changeprofile
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
@@ -10,8 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.networks.models.UserInfo
 import com.lttrung.notepro.databinding.ActivityChangeProfileBinding
+import com.lttrung.notepro.domain.data.networks.models.UserInfo
 import com.lttrung.notepro.utils.AppConstant.Companion.USER
 import com.lttrung.notepro.utils.Resource
 import com.lttrung.notepro.utils.ValidationHelper
@@ -44,8 +43,8 @@ class ChangeProfileActivity : AppCompatActivity() {
                     finish()
                 }
                 is Resource.Error -> {
-                    Log.e("ERROR", resource.message)
-                    Snackbar.make(binding.root, resource.message,
+                    Snackbar.make(
+                        binding.root, resource.t.message.toString(),
                         BaseTransientBottomBar.LENGTH_LONG
                     ).show()
                 }

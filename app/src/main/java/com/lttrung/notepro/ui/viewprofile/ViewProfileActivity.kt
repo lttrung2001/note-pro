@@ -2,17 +2,15 @@ package com.lttrung.notepro.ui.viewprofile
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.networks.models.UserInfo
 import com.lttrung.notepro.databinding.ActivityViewProfileBinding
+import com.lttrung.notepro.domain.data.networks.models.UserInfo
 import com.lttrung.notepro.ui.changeprofile.ChangeProfileActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.USER
 import com.lttrung.notepro.utils.Resource
@@ -44,9 +42,9 @@ class ViewProfileActivity : AppCompatActivity() {
                     binding.tvPhoneNumber.text = user.phoneNumber
                 }
                 is Resource.Error -> {
-                    Log.e("ERROR", resource.message)
-                    Snackbar.make(binding.root, resource.message,
-                        BaseTransientBottomBar.LENGTH_LONG
+                    Snackbar.make(
+                        binding.root, resource.t.message.toString(),
+                        Snackbar.LENGTH_LONG
                     ).show()
                 }
             }

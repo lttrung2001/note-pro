@@ -3,8 +3,8 @@ package com.lttrung.notepro.ui.main
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lttrung.notepro.database.data.networks.models.Note
-import com.lttrung.notepro.exceptions.ConnectivityException
+import com.lttrung.notepro.domain.data.networks.models.Note
+import com.lttrung.notepro.domain.usecases.GetNotesUseCase
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val useCase: MainUseCase
+    private val getNotesUseCase: GetNotesUseCase
 ) : ViewModel() {
 
     internal val getNotes: MutableLiveData<Resource<List<Note>>> by lazy {
@@ -42,20 +42,11 @@ class MainViewModel @Inject constructor(
             getNotesDisposable?.let {
                 composite.remove(it)
             }
-            getNotesDisposable = useCase.getNotes().observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observerGetNotes, this@MainViewModel::getNotesError)
+            getNotesDisposable = getNotesUseCase.execute().observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observerGetNotes) {
+                    getNotes.postValue(Resource.Error(it))
+                }
             getNotesDisposable?.let { composite.add(it) }
-        }
-    }
-
-    private fun getNotesError(t: Throwable) {
-        when (t) {
-            is ConnectivityException -> {
-                getNotes.postValue(Resource.Error(t.message))
-            }
-            else -> {
-                getNotes.postValue(Resource.Error(t.message ?: "Unknown error"))
-            }
         }
     }
 }

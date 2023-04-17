@@ -3,8 +3,8 @@ package com.lttrung.notepro.ui.changeprofile
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lttrung.notepro.database.data.networks.models.UserInfo
-import com.lttrung.notepro.exceptions.ConnectivityException
+import com.lttrung.notepro.domain.data.networks.models.UserInfo
+import com.lttrung.notepro.domain.usecases.ChangeProfileUseCase
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChangeProfileViewModel @Inject constructor(
-    private val useCase: ChangeProfileUseCase
+    private val changeProfileUseCase: ChangeProfileUseCase
 ) : ViewModel() {
     internal val changeProfile: MutableLiveData<Resource<UserInfo>> by lazy {
         MutableLiveData<Resource<UserInfo>>()
@@ -41,21 +41,12 @@ class ChangeProfileViewModel @Inject constructor(
             changeProfileDisposable?.let {
                 composite.remove(it)
             }
-            changeProfileDisposable = useCase.changeProfile(fullName, phoneNumber)
+            changeProfileDisposable = changeProfileUseCase.execute(fullName, phoneNumber)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(changeProfileObserver, this@ChangeProfileViewModel::changeProfileError)
+                .subscribe(changeProfileObserver) {
+                    changeProfile.postValue(Resource.Error(it))
+                }
             changeProfileDisposable?.let { composite.add(it) }
-        }
-    }
-
-    private fun changeProfileError(t: Throwable) {
-        when (t) {
-            is ConnectivityException -> {
-                changeProfile.postValue(Resource.Error(t.message))
-            }
-            else -> {
-                changeProfile.postValue(Resource.Error(t.message ?: "Unknown error"))
-            }
         }
     }
 }

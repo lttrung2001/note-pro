@@ -3,7 +3,8 @@ package com.lttrung.notepro.ui.addmember
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lttrung.notepro.database.data.networks.models.Member
+import com.lttrung.notepro.domain.data.networks.models.Member
+import com.lttrung.notepro.domain.usecases.AddMemberUseCase
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -16,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddMemberViewModel @Inject constructor(
-    private val useCase: AddMemberUseCase
+    private val addMemberUseCase: AddMemberUseCase
 ) : ViewModel() {
 
     internal val member: MutableLiveData<Resource<Member>> by lazy {
@@ -42,13 +43,12 @@ class AddMemberViewModel @Inject constructor(
                 composite.remove(it)
             }
             memberDisposable =
-                useCase.addMember(noteId, email, role).observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(memberObserver, this@AddMemberViewModel::addMemberError)
+                addMemberUseCase.execute(noteId, email, role)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(memberObserver) {
+                        member.postValue(Resource.Error(it))
+                    }
             memberDisposable?.let { composite.add(it) }
         }
-    }
-
-    private fun addMemberError(t: Throwable) {
-        member.postValue(Resource.Error(t.message ?: "Unknown error"))
     }
 }

@@ -87,7 +87,7 @@ class LoginActivity : AppCompatActivity() {
                     Snackbar.make(
                         this@LoginActivity,
                         binding.linearLayout,
-                        resource.message,
+                        resource.t.message.toString(),
                         Snackbar.LENGTH_LONG
                     ).show()
                     binding.btnLogin.hideProgress(R.string.login)

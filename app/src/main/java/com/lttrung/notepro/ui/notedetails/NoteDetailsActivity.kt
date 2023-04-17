@@ -2,25 +2,22 @@ package com.lttrung.notepro.ui.notedetails
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.networks.models.Image
-import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityNoteDetailsBinding
+import com.lttrung.notepro.domain.data.networks.models.Image
+import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
 import com.lttrung.notepro.ui.chat.ChatActivity
 import com.lttrung.notepro.ui.viewimagedetails.ViewImageDetailsActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.EDITED_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.IMAGES_JSON
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
-import com.lttrung.notepro.utils.AppConstant.Companion.POSITION
 import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
 import com.lttrung.notepro.utils.Converter
 import com.lttrung.notepro.utils.Resource
@@ -72,10 +69,9 @@ class NoteDetailsActivity : AppCompatActivity() {
                     imagesAdapter.submitList(note.images)
                 }
                 is Resource.Error -> {
-                    Log.e("ERROR", resource.message)
                     Snackbar.make(
-                        binding.root, resource.message,
-                        BaseTransientBottomBar.LENGTH_LONG
+                        binding.root, resource.t.message.toString(),
+                        Snackbar.LENGTH_LONG
                     ).show()
                 }
             }

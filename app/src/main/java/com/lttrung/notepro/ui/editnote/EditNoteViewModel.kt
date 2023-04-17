@@ -4,9 +4,11 @@ import android.webkit.URLUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lttrung.notepro.database.data.networks.models.Image
-import com.lttrung.notepro.database.data.networks.models.Note
-import com.lttrung.notepro.exceptions.ConnectivityException
+import com.lttrung.notepro.domain.data.networks.models.Image
+import com.lttrung.notepro.domain.data.networks.models.Note
+import com.lttrung.notepro.domain.usecases.DeleteNoteUseCase
+import com.lttrung.notepro.domain.usecases.EditNoteUseCase
+import com.lttrung.notepro.domain.usecases.GetNoteDetailsUseCase
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -19,7 +21,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditNoteViewModel @Inject constructor(
-    private val useCase: EditNoteUseCase
+    private val editNoteUseCase: EditNoteUseCase,
+    private val deleteNoteUseCase: DeleteNoteUseCase,
+    private val getNoteDetailsUseCase: GetNoteDetailsUseCase
 ) : ViewModel() {
     private val deleteImages: MutableLiveData<List<Image>> by lazy {
         MutableLiveData<List<Image>>(emptyList())
@@ -73,21 +77,12 @@ class EditNoteViewModel @Inject constructor(
             val deletingImageIds = deleteImages.value!!.map {
                 it.id
             }
-            editNoteDisposable =
-                useCase.editNote(note, deletingImageIds).observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(editNoteObserver, this@EditNoteViewModel::editNoteError)
+            editNoteDisposable = editNoteUseCase.execute(note, deletingImageIds)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(editNoteObserver) {
+                    editNote.postValue(Resource.Error(it))
+                }
             editNoteDisposable?.let { composite.add(it) }
-        }
-    }
-
-    private fun editNoteError(t: Throwable) {
-        when (t) {
-            is ConnectivityException -> {
-                editNote.postValue(Resource.Error(t.message))
-            }
-            else -> {
-                editNote.postValue(Resource.Error(t.message ?: "Unknown error"))
-            }
         }
     }
 
@@ -98,20 +93,11 @@ class EditNoteViewModel @Inject constructor(
                 composite.remove(it)
             }
             deleteNoteDisposable =
-                useCase.deleteNote(noteId).observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(deleteNoteObserver, this@EditNoteViewModel::deleteNoteError)
+                deleteNoteUseCase.execute(noteId).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(deleteNoteObserver) {
+                        deleteNote.postValue(Resource.Error(it))
+                    }
             deleteNoteDisposable?.let { composite.add(it) }
-        }
-    }
-
-    private fun deleteNoteError(t: Throwable) {
-        when (t) {
-            is ConnectivityException -> {
-                deleteNote.postValue(Resource.Error(t.message))
-            }
-            else -> {
-                deleteNote.postValue(Resource.Error(t.message ?: "Unknown error"))
-            }
         }
     }
 
@@ -122,21 +108,12 @@ class EditNoteViewModel @Inject constructor(
                 composite.remove(it)
                 it.dispose()
             }
-            noteDetailsDisposable =
-                useCase.getNoteDetails(noteId).observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(noteDetailsObserver, this@EditNoteViewModel::getNoteDetailsError)
             noteDetailsDisposable?.let { composite.add(it) }
-        }
-    }
-
-    private fun getNoteDetailsError(t: Throwable) {
-        when (t) {
-            is ConnectivityException -> {
-                noteDetails.postValue(Resource.Error(t.message))
-            }
-            else -> {
-                noteDetails.postValue(Resource.Error(t.message ?: "Unknown error"))
-            }
+            noteDetailsDisposable =
+                getNoteDetailsUseCase.execute(noteId).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(noteDetailsObserver) {
+                        noteDetails.postValue(Resource.Error(it))
+                    }
         }
     }
 

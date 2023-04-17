@@ -15,7 +15,7 @@ import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.NoteProApplication
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.networks.models.Note
+import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityMainBinding
 import com.lttrung.notepro.ui.chat.ChatSocketService
 import com.lttrung.notepro.ui.addnote.AddNoteActivity
@@ -153,8 +153,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 is Resource.Error -> {
                     binding.refreshLayout.isRefreshing = false
-                    Log.e("ERROR", resource.message)
-                    Snackbar.make(binding.root, resource.message,
+                    Snackbar.make(binding.root, resource.t.message.toString(),
                         BaseTransientBottomBar.LENGTH_LONG
                     ).show()
                 }

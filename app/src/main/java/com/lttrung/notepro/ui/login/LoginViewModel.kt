@@ -3,8 +3,7 @@ package com.lttrung.notepro.ui.login
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lttrung.notepro.exceptions.ConnectivityException
-import com.lttrung.notepro.exceptions.VerifiedEmailException
+import com.lttrung.notepro.domain.usecases.LoginUseCase
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -17,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val useCase: LoginUseCase
+    private val loginUseCase: LoginUseCase
 ) : ViewModel() {
     internal val login: MutableLiveData<Resource<String>> by lazy {
         MutableLiveData<Resource<String>>()
@@ -46,18 +45,12 @@ class LoginViewModel @Inject constructor(
                 composite.remove(it)
                 it.dispose()
             }
-            loginDisposable = useCase.login(email, password)
+            loginDisposable = loginUseCase.execute(email, password)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observerLogin, this@LoginViewModel::loginError)
+                .subscribe(observerLogin) {
+                    login.postValue(Resource.Error(it))
+                }
             loginDisposable?.let { composite.add(it) }
-        }
-    }
-
-    private fun loginError(t: Throwable) {
-        when (t) {
-            is ConnectivityException -> login.postValue(Resource.Error(t.message))
-            is VerifiedEmailException -> login.postValue(Resource.Error(t.message))
-            else -> login.postValue(Resource.Error(t.message ?: "Unknown error"))
         }
     }
 }

@@ -2,21 +2,15 @@ package com.lttrung.notepro.ui.setting
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import com.lttrung.notepro.database.data.locals.UserLocals
 import com.lttrung.notepro.databinding.ActivitySettingBinding
 import com.lttrung.notepro.ui.changepassword.ChangePasswordActivity
 import com.lttrung.notepro.ui.login.LoginActivity
 import com.lttrung.notepro.ui.viewprofile.ViewProfileActivity
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class SettingActivity : AppCompatActivity() {

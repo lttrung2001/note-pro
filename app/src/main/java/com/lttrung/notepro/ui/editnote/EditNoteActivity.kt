@@ -6,24 +6,22 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.networks.models.Image
-import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityEditNoteBinding
-import com.lttrung.notepro.ui.chat.ChatSocketService
+import com.lttrung.notepro.domain.data.networks.models.Image
+import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.ui.base.activities.AddImagesActivity
 import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
 import com.lttrung.notepro.ui.chat.ChatActivity
+import com.lttrung.notepro.ui.chat.ChatSocketService
 import com.lttrung.notepro.ui.viewimagedetails.ViewImageDetailsActivity
 import com.lttrung.notepro.utils.AppConstant
 import com.lttrung.notepro.utils.AppConstant.Companion.DELETED_NOTE
@@ -117,10 +115,9 @@ class EditNoteActivity : AddImagesActivity() {
                     finish()
                 }
                 is Resource.Error -> {
-                    Log.e("ERROR", resource.message)
                     Snackbar.make(
-                        binding.root, resource.message,
-                        BaseTransientBottomBar.LENGTH_LONG
+                        binding.root, resource.t.message.toString(),
+                        Snackbar.LENGTH_LONG
                     ).show()
                 }
             }
@@ -143,10 +140,9 @@ class EditNoteActivity : AddImagesActivity() {
                     finish()
                 }
                 is Resource.Error -> {
-                    Log.e("ERROR", resource.message)
                     Snackbar.make(
-                        binding.root, resource.message,
-                        BaseTransientBottomBar.LENGTH_LONG
+                        binding.root, resource.t.message.toString(),
+                        Snackbar.LENGTH_LONG
                     ).show()
                 }
             }
@@ -166,10 +162,9 @@ class EditNoteActivity : AddImagesActivity() {
                     imagesAdapter.submitList(note.images)
                 }
                 is Resource.Error -> {
-                    Log.e("ERROR", resource.message)
                     Snackbar.make(
-                        binding.root, resource.message,
-                        BaseTransientBottomBar.LENGTH_LONG
+                        binding.root, resource.t.message.toString(),
+                        Snackbar.LENGTH_LONG
                     ).show()
                 }
             }

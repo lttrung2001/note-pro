@@ -1,6 +1,5 @@
 package com.lttrung.notepro.ui.addmember
 
-import android.app.Dialog
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -10,18 +9,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import com.github.razir.progressbutton.attachTextChangeAnimator
 import com.github.razir.progressbutton.bindProgressButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.networks.models.Note
+import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.databinding.FragmentAddMemberBinding
 import com.lttrung.notepro.ui.showmembers.ShowMembersActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
@@ -79,9 +75,8 @@ class AddMemberFragment : BottomSheetDialogFragment() {
                 is Resource.Error -> {
                     binding!!.addButton.isClickable = true
                     binding!!.addButton.hideProgress(R.string.add)
-                    Log.e("ERROR", resource.message)
                     Snackbar.make(
-                        binding!!.root, resource.message,
+                        binding!!.root, resource.t.message.toString(),
                         BaseTransientBottomBar.LENGTH_LONG
                     ).show()
                 }

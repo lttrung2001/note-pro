@@ -4,7 +4,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Patterns
-import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -62,7 +61,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
                 is Resource.Error -> {
                     binding.btnSendInstructions.hideProgress(R.string.send_instructions)
                     binding.btnSendInstructions.isClickable = true
-                    binding.emailLayout.error = resource.message
+                    binding.emailLayout.error = resource.t.message.toString()
                 }
             }
         }

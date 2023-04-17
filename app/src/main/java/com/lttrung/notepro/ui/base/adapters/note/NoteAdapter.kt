@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.networks.models.Note
+import com.lttrung.notepro.domain.data.networks.models.Note
 
 class NoteAdapter(private val onClickListener: NoteListener) :
     ListAdapter<Note, NoteViewHolder>(object : DiffUtil.ItemCallback<Note>() {

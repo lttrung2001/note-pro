@@ -8,7 +8,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.Person
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.networks.models.Message
+import com.lttrung.notepro.domain.data.networks.models.Message
 import com.lttrung.notepro.ui.chat.ChatActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_LISTENER_NOTIFICATION_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE

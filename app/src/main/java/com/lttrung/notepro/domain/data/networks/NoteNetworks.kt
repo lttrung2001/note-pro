@@ -1,0 +1,14 @@
+package com.lttrung.notepro.domain.data.networks
+
+import com.lttrung.notepro.domain.data.networks.models.Note
+import io.reactivex.rxjava3.core.Single
+import javax.inject.Singleton
+
+@Singleton
+interface NoteNetworks {
+    fun addNote(note: Note): Single<Note>
+    fun editNote(note: Note, deleteImageIds: List<String>): Single<Note>
+    fun deleteNote(noteId: String): Single<Unit>
+    fun getNoteDetails(noteId: String): Single<Note>
+    fun getNotes(): Single<List<Note>>
+}

@@ -2,7 +2,7 @@ package com.lttrung.notepro.ui.base.adapters.message
 
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.networks.models.Message
+import com.lttrung.notepro.domain.data.networks.models.Message
 import com.lttrung.notepro.databinding.LayoutOtherMessageBinding
 
 data class OtherMessageViewHolder(

@@ -2,23 +2,21 @@ package com.lttrung.notepro.ui.editmember
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.github.razir.progressbutton.attachTextChangeAnimator
 import com.github.razir.progressbutton.bindProgressButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
-import com.google.android.material.snackbar.BaseTransientBottomBar
-import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
-import com.lttrung.notepro.database.data.networks.models.Member
-import com.lttrung.notepro.database.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityEditMemberBinding
+import com.lttrung.notepro.domain.data.networks.models.Member
+import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.utils.AppConstant.Companion.DELETED_MEMBER
 import com.lttrung.notepro.utils.AppConstant.Companion.EDITED_MEMBER
 import com.lttrung.notepro.utils.AppConstant.Companion.MEMBER
@@ -57,7 +55,7 @@ class EditMemberActivity : AppCompatActivity() {
                     finish()
                 }
                 is Resource.Error -> {
-                    Log.e("ERROR", resource.message)
+                    Toast.makeText(this, resource.t.message.toString(), Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -82,10 +80,7 @@ class EditMemberActivity : AppCompatActivity() {
                 is Resource.Error -> {
                     binding.deleteButton.isClickable = true
                     binding.deleteButton.hideProgress(R.string.remove)
-                    Log.e("ERROR", resource.message)
-                    Snackbar.make(binding.root, resource.message,
-                        BaseTransientBottomBar.LENGTH_LONG
-                    ).show()
+                    Toast.makeText(this, resource.t.message.toString(), Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -93,10 +88,10 @@ class EditMemberActivity : AppCompatActivity() {
         editMemberViewModel.memberDetails.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-//                    binding.deleteButton.isClickable = false
+                    binding.deleteButton.isClickable = false
                 }
                 is Resource.Success -> {
-//                    binding.deleteButton.isClickable = true
+                    binding.deleteButton.isClickable = true
                     val member = resource.data
                     binding.tvId.text = member.id
                     binding.tvEmail.text = member.email
@@ -105,8 +100,8 @@ class EditMemberActivity : AppCompatActivity() {
                     binding.roleSpinner.setSelection(roleAdapter.getPosition(member.role))
                 }
                 is Resource.Error -> {
-//                    binding.deleteButton.isClickable = false
-                    Log.e("ERROR", resource.message)
+                    binding.deleteButton.isClickable = true
+                    Toast.makeText(this, resource.t.message.toString(), Toast.LENGTH_LONG).show()
                 }
             }
         }

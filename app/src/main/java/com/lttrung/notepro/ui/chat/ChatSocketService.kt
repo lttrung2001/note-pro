@@ -8,11 +8,12 @@ import android.os.IBinder
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.lttrung.notepro.NoteProApplication
-import com.lttrung.notepro.database.data.locals.UserLocals
-import com.lttrung.notepro.database.data.networks.models.ApiResponse
-import com.lttrung.notepro.database.data.networks.models.Message
-import com.lttrung.notepro.database.data.networks.models.User
-import com.lttrung.notepro.database.repositories.MessageRepositories
+import com.lttrung.notepro.domain.data.locals.UserLocals
+import com.lttrung.notepro.domain.data.networks.models.ApiResponse
+import com.lttrung.notepro.domain.data.networks.models.Message
+import com.lttrung.notepro.domain.data.networks.models.User
+import com.lttrung.notepro.domain.repositories.MessageRepositories
+import com.lttrung.notepro.exceptions.InvalidTokenException
 import com.lttrung.notepro.ui.call.IncomingCallActivity
 import com.lttrung.notepro.ui.login.LoginActivity
 import com.lttrung.notepro.utils.AppConstant
@@ -115,7 +116,7 @@ class ChatSocketService : Service() {
         initObservers()
         val refreshToken = userLocals.getRefreshToken()
         if (refreshToken.isEmpty()) {
-            accessTokenLiveData.postValue(Resource.Error("Invalid refresh token"))
+            accessTokenLiveData.postValue(Resource.Error(InvalidTokenException()))
         } else {
             callGetAccessTokenApi(refreshToken)
         }
@@ -145,7 +146,7 @@ class ChatSocketService : Service() {
                         this,
                         CHAT_LISTENER_CHANNEL_ID,
                         "Error while connecting chat server",
-                        resource.message
+                        resource.t.message.toString()
                     )
                     requireLogin()
                     stopSelf()
@@ -174,7 +175,7 @@ class ChatSocketService : Service() {
                     ).data as String
                 accessTokenLiveData.postValue(Resource.Success(accessToken))
             } catch (e: Exception) {
-                accessTokenLiveData.postValue(Resource.Error(e.message ?: "Unknown error"))
+                accessTokenLiveData.postValue(Resource.Error(e))
             }
         }
         fetchAccessTokenThread.start()

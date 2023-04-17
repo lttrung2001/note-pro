@@ -3,7 +3,7 @@ package com.lttrung.notepro.ui.forgotpassword
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lttrung.notepro.exceptions.ConnectivityException
+import com.lttrung.notepro.domain.usecases.ForgotPasswordUseCase
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ForgotPasswordViewModel @Inject constructor(
-    private val useCase: ForgotPasswordUseCase
+    private val forgotPasswordUseCase: ForgotPasswordUseCase
 ) : ViewModel() {
     internal val forgotPassword: MutableLiveData<Resource<Unit>> by lazy {
         MutableLiveData<Resource<Unit>>()
@@ -41,21 +41,12 @@ class ForgotPasswordViewModel @Inject constructor(
             forgotPasswordDisposable?.let {
                 composite.remove(it)
             }
-            forgotPasswordDisposable = useCase.forgotPassword(email)
+            forgotPasswordDisposable = forgotPasswordUseCase.execute(email)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(forgotPasswordObserver, this@ForgotPasswordViewModel::forgotPasswordError)
+                .subscribe(forgotPasswordObserver) {
+                    forgotPassword.postValue(Resource.Error(it))
+                }
             forgotPasswordDisposable?.let { composite.add(it) }
-        }
-    }
-
-    private fun forgotPasswordError(t: Throwable) {
-        when (t) {
-            is ConnectivityException -> {
-                forgotPassword.postValue(Resource.Error(t.message))
-            }
-            else -> {
-                forgotPassword.postValue(Resource.Error("Unknown error"))
-            }
         }
     }
 }

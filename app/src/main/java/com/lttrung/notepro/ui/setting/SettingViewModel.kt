@@ -3,7 +3,9 @@ package com.lttrung.notepro.ui.setting
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lttrung.notepro.database.data.locals.entities.CurrentUser
+import com.lttrung.notepro.domain.data.locals.entities.CurrentUser
+import com.lttrung.notepro.domain.usecases.GetCurrentUserUseCase
+import com.lttrung.notepro.domain.usecases.LogoutUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -15,11 +17,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingViewModel @Inject constructor(
-    private val useCase: SettingUseCase
+    private val getCurrentUserUseCase: GetCurrentUserUseCase,
+    private val logoutUseCase: LogoutUseCase
 ) : ViewModel() {
     internal fun logout() {
         viewModelScope.launch(Dispatchers.IO) {
-            useCase.logout().subscribe()
+            logoutUseCase.execute()
         }
     }
 
@@ -42,8 +45,9 @@ class SettingViewModel @Inject constructor(
     internal fun getCurrentUserInfo() {
         viewModelScope.launch(Dispatchers.IO) {
             fullNameDisposable?.let { composite.remove(it) }
-            fullNameDisposable = useCase.getCurrentUserInfo().observeOn(AndroidSchedulers.mainThread())
-                .subscribe(fullNameObserver)
+            fullNameDisposable =
+                getCurrentUserUseCase.execute().observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(fullNameObserver)
             fullNameDisposable?.let { composite.add(it) }
         }
     }

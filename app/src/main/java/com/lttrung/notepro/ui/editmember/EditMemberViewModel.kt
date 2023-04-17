@@ -3,7 +3,10 @@ package com.lttrung.notepro.ui.editmember
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lttrung.notepro.database.data.networks.models.Member
+import com.lttrung.notepro.domain.data.networks.models.Member
+import com.lttrung.notepro.domain.usecases.DeleteMemberUseCase
+import com.lttrung.notepro.domain.usecases.EditMemberUseCase
+import com.lttrung.notepro.domain.usecases.GetMemberDetailsUseCase
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -16,7 +19,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditMemberViewModel @Inject constructor(
-    private val useCase: EditMemberUseCase
+    private val editMemberUseCase: EditMemberUseCase,
+    private val deleteMemberUseCase: DeleteMemberUseCase,
+    private val getMemberDetailsUseCase: GetMemberDetailsUseCase
 ) : ViewModel() {
     internal val memberLiveData: MutableLiveData<Resource<Member>> by lazy {
         MutableLiveData<Resource<Member>>()
@@ -39,14 +44,12 @@ class EditMemberViewModel @Inject constructor(
             memberLiveData.postValue(Resource.Loading())
             memberDisposable?.let { composite.remove(it) }
             memberDisposable =
-                useCase.editMember(noteId, member).observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(memberObserver, this@EditMemberViewModel::editMemberError)
+                editMemberUseCase.execute(noteId, member).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(memberObserver) {
+                        memberLiveData.postValue(Resource.Error(it))
+                    }
             memberDisposable?.let { composite.add(it) }
         }
-    }
-
-    private fun editMemberError(t: Throwable) {
-        memberLiveData.postValue(Resource.Error(t.message ?: "Unknown error"))
     }
 
     internal val deleteMember: MutableLiveData<Resource<Unit>> by lazy {
@@ -68,15 +71,16 @@ class EditMemberViewModel @Inject constructor(
                 composite.remove(it)
             }
             deleteMemberDisposable =
-                useCase.deleteMember(noteId, memberId).observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(deleteMemberObserver, this@EditMemberViewModel::deleteMemberError)
+                deleteMemberUseCase.execute(noteId, memberId)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(deleteMemberObserver) {
+                        deleteMember.postValue(Resource.Error(it))
+                    }
             deleteMemberDisposable?.let { composite.add(it) }
         }
     }
 
-    private fun deleteMemberError(t: Throwable) {
-        deleteMember.postValue(Resource.Error(t.message ?: "Unknown error"))
-    }
+
 
     val memberDetails: MutableLiveData<Resource<Member>> by lazy {
         MutableLiveData<Resource<Member>>()
@@ -97,17 +101,12 @@ class EditMemberViewModel @Inject constructor(
                 composite.remove(it)
             }
             memberDetailsDisposable =
-                useCase.getMemberDetails(noteId, memberId).observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                        memberDetailsObserver,
-                        this@EditMemberViewModel::getMemberDetailsError
-                    )
+                getMemberDetailsUseCase.execute(noteId, memberId)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(memberDetailsObserver) {
+                        memberDetails.postValue(Resource.Error(it))
+                    }
             memberDetailsDisposable?.let { composite.add(it) }
         }
-    }
-
-    private fun getMemberDetailsError(t: Throwable) {
-        t.printStackTrace()
-        memberDetails.postValue(Resource.Error(t.message ?: "Unknown error"))
     }
 }

@@ -3,8 +3,8 @@ package com.lttrung.notepro.ui.viewprofile
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lttrung.notepro.database.data.networks.models.UserInfo
-import com.lttrung.notepro.exceptions.ConnectivityException
+import com.lttrung.notepro.domain.data.networks.models.UserInfo
+import com.lttrung.notepro.domain.usecases.ViewProfileUseCase
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ViewProfileViewModel @Inject constructor(
-    private val useCase: ViewProfileUseCase
+    private val viewProfileUseCase: ViewProfileUseCase
 ) : ViewModel() {
     internal val profile: MutableLiveData<Resource<UserInfo>> by lazy {
         MutableLiveData<Resource<UserInfo>>()
@@ -41,20 +41,12 @@ class ViewProfileViewModel @Inject constructor(
             profileDisposable?.let {
                 composite.remove(it)
             }
-            profileDisposable = useCase.getProfile().observeOn(AndroidSchedulers.mainThread())
-                .subscribe(profileObserver, this@ViewProfileViewModel::getProfileError)
+            profileDisposable =
+                viewProfileUseCase.execute().observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(profileObserver) {
+                        profile.postValue(Resource.Error(it))
+                    }
             profileDisposable?.let { composite.add(it) }
-        }
-    }
-
-    private fun getProfileError(t: Throwable) {
-        when (t) {
-            is ConnectivityException -> {
-                profile.postValue(Resource.Error(t.message))
-            }
-            else -> {
-                profile.postValue(Resource.Error(t.message ?: "Unknown error"))
-            }
         }
     }
 }

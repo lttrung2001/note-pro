@@ -3,6 +3,7 @@ package com.lttrung.notepro.ui.changepassword
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lttrung.notepro.domain.usecases.ChangePasswordUseCase
 import com.lttrung.notepro.exceptions.ConnectivityException
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChangePasswordViewModel @Inject constructor(
-    private val useCase: ChangePasswordUseCase
+    private val changePasswordUseCase: ChangePasswordUseCase
 ) : ViewModel() {
     internal val changePassword: MutableLiveData<Resource<String>> by lazy {
         MutableLiveData<Resource<String>>()
@@ -40,22 +41,12 @@ class ChangePasswordViewModel @Inject constructor(
             changePasswordDisposable?.let {
                 composite.remove(it)
             }
-            changePasswordDisposable = useCase.changePassword(oldPassword, newPassword)
+            changePasswordDisposable = changePasswordUseCase.execute(oldPassword, newPassword)
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(
-                    changePasswordObserver, this@ChangePasswordViewModel::changePasswordError
-                )
+                    changePasswordObserver) {
+                    changePassword.postValue(Resource.Error(it))
+                }
             changePasswordDisposable?.let { composite.add(it) }
-        }
-    }
-
-    private fun changePasswordError(t: Throwable) {
-        when (t) {
-            is ConnectivityException -> {
-                changePassword.postValue(Resource.Error(t.message))
-            }
-            else -> {
-                changePassword.postValue(Resource.Error(t.message ?: "Unknown error"))
-            }
         }
     }
 }

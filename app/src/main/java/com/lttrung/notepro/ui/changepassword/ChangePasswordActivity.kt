@@ -2,7 +2,6 @@ package com.lttrung.notepro.ui.changepassword
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -10,7 +9,6 @@ import com.github.razir.progressbutton.attachTextChangeAnimator
 import com.github.razir.progressbutton.bindProgressButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
-import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityChangePasswordBinding
@@ -47,9 +45,8 @@ class ChangePasswordActivity : AppCompatActivity() {
                 is Resource.Error -> {
                     binding.btnChangePassword.isClickable = true
                     binding.btnChangePassword.hideProgress(R.string.change_password)
-                    Log.e("ERROR", resource.message)
-                    Snackbar.make(binding.root, resource.message,
-                        BaseTransientBottomBar.LENGTH_LONG
+                    Snackbar.make(
+                        binding.root, resource.t.message.toString(), Snackbar.LENGTH_LONG
                     ).show()
                 }
             }
