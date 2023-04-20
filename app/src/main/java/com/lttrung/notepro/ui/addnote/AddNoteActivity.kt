@@ -137,8 +137,10 @@ class AddNoteActivity : AddImagesActivity() {
                     binding.edtNoteDesc.text?.trim().toString(),
                     0L,
                     menu.getItem(0).isChecked,
-                    String(),
-                    imagesAdapter.currentList
+                    isArchived = false,
+                    isRemoved = false,
+                    role = String(),
+                    images = imagesAdapter.currentList,
                 )
                 addNoteViewModel.addNote(note)
             }

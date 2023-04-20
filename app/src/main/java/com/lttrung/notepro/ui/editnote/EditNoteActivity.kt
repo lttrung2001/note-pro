@@ -226,8 +226,10 @@ class EditNoteActivity : AddImagesActivity() {
                     binding.edtNoteDesc.text!!.trim().toString(),
                     noteDetails.lastModified,
                     menu.getItem(0).isChecked,
-                    noteDetails.role,
-                    imagesAdapter.currentList
+                    isArchived = false,
+                    isRemoved = false,
+                    role = noteDetails.role,
+                    images = imagesAdapter.currentList
                 )
                 editNoteViewModel.editNote(note)
             }

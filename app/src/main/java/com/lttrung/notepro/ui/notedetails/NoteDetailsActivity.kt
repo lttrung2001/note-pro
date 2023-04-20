@@ -133,8 +133,9 @@ class NoteDetailsActivity : AppCompatActivity() {
                         note.content,
                         note.lastModified,
                         isPin,
-                        note.role,
-                        note.images
+                        isArchived = false, isRemoved = false,
+                        role = note.role,
+                        images = note.images
                     )
                 )
                 setResult(RESULT_OK, resultIntent)

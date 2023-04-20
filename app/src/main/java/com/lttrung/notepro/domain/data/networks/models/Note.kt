@@ -8,6 +8,8 @@ data class Note(
     val content: String,
     val lastModified: Long,
     val isPin: Boolean,
+    val isArchived: Boolean,
+    val isRemoved: Boolean,
     val role: String,
     val images: List<Image> = emptyList()
 ) : Serializable {
@@ -20,6 +22,14 @@ data class Note(
     }
 
     constructor(note: Note, images: List<Image>) : this(
-        note.id, note.title, note.content, note.lastModified, note.isPin, note.role, images
+        note.id,
+        note.title,
+        note.content,
+        note.lastModified,
+        note.isPin,
+        note.isArchived,
+        note.isRemoved,
+        note.role,
+        images
     )
 }

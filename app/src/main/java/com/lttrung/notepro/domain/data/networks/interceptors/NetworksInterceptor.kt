@@ -2,7 +2,7 @@ package com.lttrung.notepro.domain.data.networks.interceptors
 
 import android.content.Context
 import android.net.ConnectivityManager
-import com.lttrung.notepro.exceptions.ConnectivityException
+import com.lttrung.notepro.exceptions.NoInternetException
 import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -14,7 +14,7 @@ class NetworksInterceptor @Inject constructor(@ApplicationContext private val co
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         if (!isConnected) {
-            throw ConnectivityException()
+            throw NoInternetException()
         } else {
             val request = chain.request()
             return chain.proceed(request)

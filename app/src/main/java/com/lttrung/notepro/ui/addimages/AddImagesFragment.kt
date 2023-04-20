@@ -16,32 +16,22 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class AddImagesFragment : BottomSheetDialogFragment() {
-    private var binding: FragmentAddImagesBinding? = null
+    private val binding: FragmentAddImagesBinding by lazy {
+        FragmentAddImagesBinding.inflate(layoutInflater)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        initViews()
         initListeners()
-        return binding!!.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        binding = null
+        return binding.root
     }
 
     private fun initListeners() {
-        binding?.apply {
-            btnTakePhoto.setOnClickListener(takePhotoListener)
-            btnOpenGallery.setOnClickListener(openGalleryListener)
-        }
-    }
-
-    private fun initViews() {
-        binding = FragmentAddImagesBinding.inflate(layoutInflater)
+        binding.btnTakePhoto.setOnClickListener(takePhotoListener)
+        binding.btnOpenGallery.setOnClickListener(openGalleryListener)
     }
 
     private val takePhotoListener: View.OnClickListener by lazy {
