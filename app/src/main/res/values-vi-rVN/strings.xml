@@ -69,4 +69,5 @@
     <string name="conservation">Cuộc hội thoại</string>
     <string name="message">Tin nhắn</string>
     <string name="call">Gọi điện</string>
+    <string name="dashboard">Dashboard</string>
 </resources>

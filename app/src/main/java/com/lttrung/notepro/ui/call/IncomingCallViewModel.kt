@@ -1,4 +1,4 @@
-package com.lttrung.notepro.ui.chat
+package com.lttrung.notepro.ui.call
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,18 +17,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ChatViewModel @Inject constructor(
+class IncomingCallViewModel @Inject constructor(
     private val getCurrentUserUseCase: GetCurrentUserUseCase
 ) : ViewModel() {
     internal val currentUserLiveData: MutableLiveData<Resource<CurrentUser>> by lazy {
         MutableLiveData<Resource<CurrentUser>>()
     }
-
-    internal val messagesLiveData: MutableLiveData<Resource<List<Message>>> by lazy {
-        MutableLiveData<Resource<List<Message>>>()
-    }
-
-    internal var page = 0
 
     private val composite: CompositeDisposable by lazy {
         CompositeDisposable()

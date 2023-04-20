@@ -13,6 +13,7 @@ import com.google.gson.Gson
 import com.lttrung.notepro.NoteProApplication
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityChatBinding
+import com.lttrung.notepro.domain.data.locals.entities.CurrentUser
 import com.lttrung.notepro.domain.data.networks.models.Message
 import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.domain.data.networks.models.User
@@ -26,10 +27,12 @@ import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE_RECEIVED
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.PAGE_LIMIT
 import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
+import com.lttrung.notepro.utils.AppConstant.Companion.USER
 import com.lttrung.notepro.utils.JitsiHelper
 import com.lttrung.notepro.utils.NotificationHelper
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
+import org.jitsi.meet.sdk.JitsiMeet
 import org.jitsi.meet.sdk.JitsiMeetActivity
 
 @AndroidEntryPoint
@@ -140,6 +143,7 @@ class ChatActivity : AppCompatActivity() {
                 is Resource.Success -> {
                     binding.sendMessageButton.isClickable = true
                     val user = resource.data
+                    intent.putExtra(USER, user)
                     user.id?.let { messageAdapter.userId = it }
                 }
                 is Resource.Error -> {
@@ -236,12 +240,14 @@ class ChatActivity : AppCompatActivity() {
                 startActivity(viewMembersIntent)
             }
             R.id.action_call -> {
-                val note = intent.getSerializableExtra(NOTE) as Note
-                val roomId = note.id
-                socketService.call(roomId)
-
-                val options = JitsiHelper.createOptions(roomId)
-                JitsiMeetActivity.launch(this, options)
+                val note = intent.getSerializableExtra(NOTE) as Note?
+                val currentUser = intent.getSerializableExtra(USER) as CurrentUser?
+                if (note != null && currentUser != null) {
+                    val roomId = note.id
+                    socketService.call(roomId)
+                    val options = JitsiHelper.createOptions(roomId, currentUser)
+                    JitsiMeetActivity.launch(this, options)
+                }
             }
             else -> {
                 finish()

@@ -10,4 +10,4 @@ data class CurrentUser(
     var fullName: String? = null,
     var phoneNumber: String? = null,
     var id: String? = null
-)
+) : java.io.Serializable

@@ -8,7 +8,6 @@ import javax.inject.Singleton
 
 @Singleton
 interface ChatUseCase {
-    fun getCurrentUser(): Single<CurrentUser>
     fun sendMessage(socket: Socket, message: Message)
     fun sendAddNoteMessage(socket: Socket, roomId: String)
     fun sendDeleteNoteMessage(socket: Socket, roomId: String)

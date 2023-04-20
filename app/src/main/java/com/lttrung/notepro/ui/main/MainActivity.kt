@@ -2,7 +2,6 @@ package com.lttrung.notepro.ui.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -15,12 +14,12 @@ import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.NoteProApplication
 import com.lttrung.notepro.R
-import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.databinding.ActivityMainBinding
-import com.lttrung.notepro.ui.chat.ChatSocketService
+import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.ui.addnote.AddNoteActivity
 import com.lttrung.notepro.ui.base.adapters.note.NoteAdapter
 import com.lttrung.notepro.ui.base.adapters.note.NoteListener
+import com.lttrung.notepro.ui.chat.ChatSocketService
 import com.lttrung.notepro.ui.editnote.EditNoteActivity
 import com.lttrung.notepro.ui.notedetails.NoteDetailsActivity
 import com.lttrung.notepro.ui.setting.SettingActivity
@@ -176,10 +175,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun initViews() {
         binding = ActivityMainBinding.inflate(layoutInflater)
-        supportActionBar?.setLogo(R.drawable.ic_baseline_sticky_note_2_24)
-        supportActionBar?.setDisplayUseLogoEnabled(true)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
         setContentView(binding.root)
+        supportActionBar?.title = getString(R.string.dashboard)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
