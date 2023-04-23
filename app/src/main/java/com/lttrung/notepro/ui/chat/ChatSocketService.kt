@@ -14,7 +14,7 @@ import com.lttrung.notepro.domain.data.networks.models.Message
 import com.lttrung.notepro.domain.data.networks.models.User
 import com.lttrung.notepro.domain.repositories.MessageRepositories
 import com.lttrung.notepro.exceptions.InvalidTokenException
-import com.lttrung.notepro.ui.call.IncomingCallActivity
+import com.lttrung.notepro.ui.incomingcall.IncomingCallActivity
 import com.lttrung.notepro.ui.login.LoginActivity
 import com.lttrung.notepro.utils.AppConstant
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_LISTENER_CHANNEL_ID
@@ -24,6 +24,7 @@ import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGES_JSON
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE_RECEIVED
 import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
+import com.lttrung.notepro.utils.AppConstant.Companion.USER
 import com.lttrung.notepro.utils.NotificationHelper
 import com.lttrung.notepro.utils.Resource
 import com.lttrung.notepro.utils.RetrofitUtils.BASE_URL
@@ -229,6 +230,7 @@ class ChatSocketService : Service() {
                 ).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     putExtra(ROOM_ID, roomId)
+                    putExtra(USER, user)
                 }
             )
         }

@@ -120,4 +120,5 @@
     <string name="message">Message</string>
     <string name="call">Call</string>
     <string name="dashboard">Dashboard</string>
+    <string name="incoming_call">Incoming call</string>
 </resources>
