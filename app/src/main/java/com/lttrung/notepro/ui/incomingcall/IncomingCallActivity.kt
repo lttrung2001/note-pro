@@ -1,14 +1,20 @@
-package com.lttrung.notepro.ui.call
+package com.lttrung.notepro.ui.incomingcall
 
+import android.media.Ringtone
+import android.media.RingtoneManager
 import android.os.Bundle
+import android.os.CountDownTimer
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.lttrung.notepro.databinding.ActivityIncomingCallBinding
+import com.lttrung.notepro.domain.data.networks.models.User
 import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
+import com.lttrung.notepro.utils.AppConstant.Companion.USER
 import com.lttrung.notepro.utils.JitsiHelper
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import org.jitsi.meet.sdk.JitsiMeetActivity
+import java.lang.Long
 
 @AndroidEntryPoint
 class IncomingCallActivity : AppCompatActivity() {
@@ -16,11 +22,40 @@ class IncomingCallActivity : AppCompatActivity() {
         ActivityIncomingCallBinding.inflate(layoutInflater)
     }
     private val incomingCallViewModel: IncomingCallViewModel by viewModels()
+    private val countDownTimer: CountDownTimer by lazy {
+        object: CountDownTimer(5 * 1000, 1000) {
+            override fun onTick(p0: kotlin.Long) {
+            }
+
+            override fun onFinish() {
+                ringtone.stop()
+                finish()
+                // Push notification for missing call
+            }
+
+        }
+    }
+    private val ringtone: Ringtone by lazy {
+        val defaultRingtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
+        RingtoneManager.getRingtone(this@IncomingCallActivity, defaultRingtoneUri)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        setupView()
         setListener()
         setObserver()
+    }
+
+    private fun setupView() {
+        val incomingUser = intent.getSerializableExtra(USER) as User?
+        incomingUser?.let { user ->
+            binding.fullName.text = user.fullName
+            // Play ringtone
+            countDownTimer.start()
+            ringtone.play()
+        }
     }
 
     private fun setObserver() {
@@ -34,6 +69,7 @@ class IncomingCallActivity : AppCompatActivity() {
                     if (roomId != null) {
                         val options = JitsiHelper.createOptions(roomId, currentUser)
                         JitsiMeetActivity.launch(this@IncomingCallActivity, options)
+                        finish()
                     }
                 }
                 is Resource.Error -> {
@@ -43,10 +79,12 @@ class IncomingCallActivity : AppCompatActivity() {
     }
 
     private fun setListener() {
-        binding.buttonReject.setOnClickListener {
+        binding.buttonCallEnd.setOnClickListener {
+            ringtone.stop()
             finish()
         }
-        binding.buttonAccept.setOnClickListener {
+        binding.buttonAcceptCall.setOnClickListener {
+            ringtone.stop()
             incomingCallViewModel.getCurrentUser()
         }
     }

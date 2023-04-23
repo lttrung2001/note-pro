@@ -5,4 +5,6 @@
     <color name="primary">#FBBC04</color>
     <color name="secondary">#FEEFC3</color>
     <color name="gray">#e0e0e0</color>
+    <color name="accept_call_color">#45ce6d</color>
+    <color name="call_end_color">#ff4037</color>
 </resources>

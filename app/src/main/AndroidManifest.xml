@@ -41,7 +41,8 @@
         </activity>
 
         <activity
-            android:name=".ui.call.IncomingCallActivity"
+            android:name=".ui.incomingcall.IncomingCallActivity"
+            android:theme="@style/Theme.NotePro.NoActionBar"
             android:exported="false" />
         <activity
             android:name=".ui.viewimagedetails.ViewImageDetailsActivity"
