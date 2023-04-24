@@ -10,7 +10,6 @@ import androidx.core.app.Person
 import com.lttrung.notepro.R
 import com.lttrung.notepro.domain.data.networks.models.Message
 import com.lttrung.notepro.ui.chat.ChatActivity
-import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_LISTENER_NOTIFICATION_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE
 import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
 
@@ -58,10 +57,11 @@ object NotificationHelper {
             .setChannelId(channelId)
             .setContentTitle(title)
             .setContentText(content)
+            .setAutoCancel(true)
             .setSmallIcon(R.drawable.app).setAutoCancel(true)
             .build()
         with(NotificationManagerCompat.from(context)) {
-            notify(CHAT_LISTENER_NOTIFICATION_ID, notification)
+            notify(System.currentTimeMillis().toInt(), notification)
         }
     }
 }

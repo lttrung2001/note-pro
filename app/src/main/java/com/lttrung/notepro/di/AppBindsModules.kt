@@ -1,6 +1,8 @@
 package com.lttrung.notepro.di
 
+import com.lttrung.notepro.domain.data.locals.NoteLocals
 import com.lttrung.notepro.domain.data.locals.UserLocals
+import com.lttrung.notepro.domain.data.locals.impl.NoteLocalsImpl
 import com.lttrung.notepro.domain.data.locals.impl.UserLocalsImpl
 import com.lttrung.notepro.domain.data.networks.LoginNetworks
 import com.lttrung.notepro.domain.data.networks.MemberNetworks
@@ -110,4 +112,6 @@ abstract class AppBindsModules {
 
     @Binds
     abstract fun bindsUserLocals(impl: UserLocalsImpl): UserLocals
+    @Binds
+    abstract fun bindsNoteLocals(impl: NoteLocalsImpl): NoteLocals
 }

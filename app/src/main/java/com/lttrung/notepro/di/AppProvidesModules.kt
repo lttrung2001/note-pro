@@ -6,6 +6,7 @@ import androidx.room.Room
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.lttrung.notepro.domain.data.locals.room.CurrentUserDao
+import com.lttrung.notepro.domain.data.locals.room.NoteDao
 import com.lttrung.notepro.domain.data.locals.room.UserDatabase
 import com.lttrung.notepro.domain.data.locals.room.UserDatabase.Companion.MIGRATION_1_2
 import com.lttrung.notepro.domain.data.locals.room.UserDatabase.Companion.MIGRATION_2_3
@@ -53,6 +54,12 @@ class AppProvidesModules {
 
     @Provides
     @Singleton
+    fun providesNoteDao(database: UserDatabase): NoteDao {
+        return database.noteDao()
+    }
+
+    @Provides
+    @Singleton
     fun providesLoggingInterceptor(): HttpLoggingInterceptor {
         return HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
     }
@@ -66,7 +73,7 @@ class AppProvidesModules {
         loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(networksInterceptor)
+//            .addInterceptor(networksInterceptor)
             .addInterceptor(authorizationInterceptor)
             .addInterceptor(loggingInterceptor)
             .readTimeout(30, TimeUnit.SECONDS)
@@ -82,7 +89,7 @@ class AppProvidesModules {
         loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(networksInterceptor)
+//            .addInterceptor(networksInterceptor)
             .addInterceptor(loggingInterceptor)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)

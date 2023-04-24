@@ -22,6 +22,7 @@ class AppConstant {
         const val CHAT_LISTENER_NOTIFICATION_ID = 1
         const val CHAT_CHANNEL_ID = "com.lttrung.notepro.CHAT_CHANNEL_ID"
         const val CHAT_LISTENER_CHANNEL_ID = "com.lttrung.notepro.CHAT_LISTENER_CHANNEL_ID"
+        const val MISSED_CALL_CHANNEL_ID = "com.lttrung.notepro.MISSED_CALL_CHANNEL_ID"
 
 
         const val USER_DATABASE_VERSION = 3

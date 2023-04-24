@@ -126,11 +126,11 @@ class EditNoteViewModel @Inject constructor(
 
         val value = noteDetails.value
         if (value is Resource.Success) {
-            val oldNote = value.data
-            val images = oldNote.images.toMutableList()
+            val note = value.data
+            val images = note.images.toMutableList()
             images.remove(image)
-            val newNote = Note(oldNote, images)
-            noteDetails.value = Resource.Success(newNote)
+            note.images = images
+            noteDetails.value = Resource.Success(note)
         }
     }
 }

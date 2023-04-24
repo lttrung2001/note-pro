@@ -1,5 +1,6 @@
 package com.lttrung.notepro.domain.data.networks.models
 
+import com.lttrung.notepro.domain.data.locals.entities.NoteLocalsModel
 import java.io.Serializable
 
 data class Note(
@@ -11,7 +12,7 @@ data class Note(
     val isArchived: Boolean,
     val isRemoved: Boolean,
     val role: String,
-    val images: List<Image> = emptyList()
+    var images: List<Image> = emptyList()
 ) : Serializable {
     fun hasEditPermission(): Boolean {
         return role == "owner" || role == "editor"
@@ -21,15 +22,16 @@ data class Note(
         return role == "owner"
     }
 
-    constructor(note: Note, images: List<Image>) : this(
-        note.id,
-        note.title,
-        note.content,
-        note.lastModified,
-        note.isPin,
-        note.isArchived,
-        note.isRemoved,
-        note.role,
-        images
-    )
+    fun toNoteLocalsModel(): NoteLocalsModel {
+        return NoteLocalsModel(
+            id,
+            title,
+            content,
+            lastModified,
+            isPin,
+            isArchived,
+            isRemoved,
+            role
+        )
+    }
 }

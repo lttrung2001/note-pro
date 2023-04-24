@@ -8,13 +8,14 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.lttrung.notepro.databinding.ActivityIncomingCallBinding
 import com.lttrung.notepro.domain.data.networks.models.User
+import com.lttrung.notepro.utils.AppConstant.Companion.MISSED_CALL_CHANNEL_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.USER
 import com.lttrung.notepro.utils.JitsiHelper
+import com.lttrung.notepro.utils.NotificationHelper
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import org.jitsi.meet.sdk.JitsiMeetActivity
-import java.lang.Long
 
 @AndroidEntryPoint
 class IncomingCallActivity : AppCompatActivity() {
@@ -23,14 +24,21 @@ class IncomingCallActivity : AppCompatActivity() {
     }
     private val incomingCallViewModel: IncomingCallViewModel by viewModels()
     private val countDownTimer: CountDownTimer by lazy {
-        object: CountDownTimer(5 * 1000, 1000) {
-            override fun onTick(p0: kotlin.Long) {
+        object: CountDownTimer(30 * 1000, 1000) {
+            override fun onTick(p0: Long) {
             }
 
             override fun onFinish() {
                 ringtone.stop()
                 finish()
                 // Push notification for missing call
+                val incomingUser = intent.getSerializableExtra(USER) as User?
+                val notificationHelper = NotificationHelper.pushNotification(
+                    this@IncomingCallActivity,
+                    MISSED_CALL_CHANNEL_ID,
+                    "Missed call",
+                    "You missed call from ${incomingUser?.fullName}"
+                )
             }
 
         }
