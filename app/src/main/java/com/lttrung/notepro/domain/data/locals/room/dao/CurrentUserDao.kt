@@ -1,8 +1,8 @@
-package com.lttrung.notepro.domain.data.locals.room
+package com.lttrung.notepro.domain.data.locals.room.dao
 
 import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
-import com.lttrung.notepro.domain.data.locals.entities.CurrentUser
+import com.lttrung.notepro.domain.data.locals.room.entities.CurrentUser
 import io.reactivex.rxjava3.core.Single
 
 @Dao

@@ -25,7 +25,7 @@ class AppConstant {
         const val MISSED_CALL_CHANNEL_ID = "com.lttrung.notepro.MISSED_CALL_CHANNEL_ID"
 
 
-        const val USER_DATABASE_VERSION = 3
+        const val USER_DATABASE_VERSION = 4
         const val USER_DATABASE_NAME = "com.lttrung.notepro.USER_DATABASE"
 
 

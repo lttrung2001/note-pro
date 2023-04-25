@@ -1,4 +1,4 @@
-package com.lttrung.notepro.domain.data.locals.entities
+package com.lttrung.notepro.domain.data.locals.room.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

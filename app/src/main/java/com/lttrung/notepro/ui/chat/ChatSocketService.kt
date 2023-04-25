@@ -106,6 +106,7 @@ class ChatSocketService : Service() {
         This function use to start login page if faces some errors
      */
     private fun requireLogin() {
+        userLocals.logout()
         val loginIntent = Intent(baseContext, LoginActivity::class.java)
         loginIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         baseContext.startActivity(loginIntent)
@@ -148,7 +149,7 @@ class ChatSocketService : Service() {
                         "Error while connecting chat server",
                         resource.t.message.toString()
                     )
-                    requireLogin()
+//                    requireLogin()
                     stopSelf()
                 }
             }

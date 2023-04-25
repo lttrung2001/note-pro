@@ -1,8 +1,8 @@
-package com.lttrung.notepro.domain.data.locals.room
+package com.lttrung.notepro.domain.data.locals.room.dao
 
 import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
-import com.lttrung.notepro.domain.data.locals.entities.NoteLocalsModel
+import com.lttrung.notepro.domain.data.locals.room.entities.NoteLocalsModel
 import io.reactivex.rxjava3.core.Single
 
 @Dao
@@ -18,6 +18,9 @@ interface NoteDao {
 
     @Delete
     fun deleteNote(note: NoteLocalsModel)
+
+    @Query("DELETE FROM Note")
+    fun deleteAllNotes()
 
     @Query("SELECT * FROM Note WHERE id = :noteId LIMIT 1")
     fun getNoteDetails(noteId: String): Single<NoteLocalsModel>

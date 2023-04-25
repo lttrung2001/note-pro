@@ -1,7 +1,7 @@
 package com.lttrung.notepro.domain.repositories.impl
 
 import com.lttrung.notepro.domain.data.locals.UserLocals
-import com.lttrung.notepro.domain.data.locals.entities.CurrentUser
+import com.lttrung.notepro.domain.data.locals.room.entities.CurrentUser
 import com.lttrung.notepro.domain.data.networks.UserNetworks
 import com.lttrung.notepro.domain.data.networks.models.UserInfo
 import com.lttrung.notepro.domain.repositories.UserRepositories
@@ -27,6 +27,10 @@ class UserRepositoriesImpl @Inject constructor(
     override fun getProfile(): Single<UserInfo> {
         return networks.getProfile().doAfterSuccess { user ->
             locals.changeProfile(user.fullName, user.phoneNumber)
+        }.onErrorReturn {
+            locals.getCurrentUser().map {
+                UserInfo(it.id!!, it.email, it.fullName!!, it.phoneNumber!!)
+            }.blockingGet()
         }
     }
 

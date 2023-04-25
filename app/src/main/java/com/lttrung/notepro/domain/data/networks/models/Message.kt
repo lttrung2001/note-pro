@@ -8,8 +8,4 @@ data class Message(
     val room: String,
     val time: Long,
     val user: User
-) : Serializable {
-    companion object {
-
-    }
-}
+) : Serializable

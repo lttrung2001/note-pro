@@ -5,11 +5,12 @@ import android.content.SharedPreferences
 import androidx.room.Room
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.lttrung.notepro.domain.data.locals.room.CurrentUserDao
-import com.lttrung.notepro.domain.data.locals.room.NoteDao
+import com.lttrung.notepro.domain.data.locals.room.dao.CurrentUserDao
+import com.lttrung.notepro.domain.data.locals.room.dao.NoteDao
 import com.lttrung.notepro.domain.data.locals.room.UserDatabase
 import com.lttrung.notepro.domain.data.locals.room.UserDatabase.Companion.MIGRATION_1_2
 import com.lttrung.notepro.domain.data.locals.room.UserDatabase.Companion.MIGRATION_2_3
+import com.lttrung.notepro.domain.data.locals.room.UserDatabase.Companion.MIGRATION_3_4
 import com.lttrung.notepro.domain.data.networks.impl.LoginRetrofitServiceImpl
 import com.lttrung.notepro.domain.data.networks.impl.MemberRetrofitServiceImpl
 import com.lttrung.notepro.domain.data.networks.impl.NoteRetrofitServiceImpl
@@ -43,6 +44,7 @@ class AppProvidesModules {
         return Room.databaseBuilder(context, UserDatabase::class.java, USER_DATABASE_NAME)
             .addMigrations(MIGRATION_1_2)
             .addMigrations(MIGRATION_2_3)
+            .addMigrations(MIGRATION_3_4)
             .build()
     }
 
@@ -73,7 +75,7 @@ class AppProvidesModules {
         loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
-//            .addInterceptor(networksInterceptor)
+            .addInterceptor(networksInterceptor)
             .addInterceptor(authorizationInterceptor)
             .addInterceptor(loggingInterceptor)
             .readTimeout(30, TimeUnit.SECONDS)
@@ -89,7 +91,7 @@ class AppProvidesModules {
         loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
-//            .addInterceptor(networksInterceptor)
+            .addInterceptor(networksInterceptor)
             .addInterceptor(loggingInterceptor)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)

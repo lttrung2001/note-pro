@@ -1,6 +1,5 @@
 package com.lttrung.notepro.domain.repositories.impl
 
-import android.util.Log
 import com.lttrung.notepro.domain.data.locals.NoteLocals
 import com.lttrung.notepro.domain.data.networks.NoteNetworks
 import com.lttrung.notepro.domain.data.networks.models.Note
@@ -34,33 +33,22 @@ class NoteRepositoriesImpl @Inject constructor(
     }
 
     override fun getNoteDetails(noteId: String): Single<Note> {
-        return try {
-            networks.getNoteDetails(noteId).map {
-                locals.addNote(it.toNoteLocalsModel())
-                it
-            }
-        } catch (ex: Exception) {
-            return locals.getNoteDetails(noteId).map {
-                it.toNoteNetworksModel()
-            }
+        return networks.getNoteDetails(noteId).map {
+            locals.addNote(it.toNoteLocalsModel())
+            it
         }
     }
 
     override fun getNotes(): Single<List<Note>> {
-        return try {
-            networks.getNotes().map { ls ->
-                val localsNotes = ls.map {
-                    it.toNoteLocalsModel()
-                }
-                locals.addNotes(localsNotes)
-                ls
+        return networks.getNotes().map { ls ->
+            val localsNotes = ls.map {
+                it.toNoteLocalsModel()
             }
-        } catch (ex: Exception) {
-            locals.getNotes().map { ls ->
-                ls.map {
-                    Log.i("INFO", it.toString())
-                    it.toNoteNetworksModel()
-                }
+            locals.addNotes(localsNotes)
+            ls
+        }.onErrorReturn {
+            locals.getNotes().blockingGet().map {
+                it.toNoteNetworksModel()
             }
         }
     }

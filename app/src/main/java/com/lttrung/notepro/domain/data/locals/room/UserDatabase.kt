@@ -5,8 +5,10 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.lttrung.notepro.domain.data.locals.entities.CurrentUser
-import com.lttrung.notepro.domain.data.locals.entities.NoteLocalsModel
+import com.lttrung.notepro.domain.data.locals.room.dao.CurrentUserDao
+import com.lttrung.notepro.domain.data.locals.room.dao.NoteDao
+import com.lttrung.notepro.domain.data.locals.room.entities.CurrentUser
+import com.lttrung.notepro.domain.data.locals.room.entities.NoteLocalsModel
 import com.lttrung.notepro.utils.AppConstant.Companion.USER_DATABASE_VERSION
 
 @Database(
@@ -32,6 +34,22 @@ abstract class UserDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.beginTransaction()
                 database.execSQL("ALTER TABLE CurrentUser ADD COLUMN id TEXT DEFAULT ''")
+                database.setTransactionSuccessful()
+                database.endTransaction()
+            }
+        }
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.beginTransaction()
+                database.execSQL("CREATE TABLE Note (" +
+                        "id TEXT PRIMARY KEY NOT NULL, " +
+                        "title TEXT NOT NULL, " +
+                        "content TEXT NOT NULL, " +
+                        "lastModified INTEGER NOT NULL, " +
+                        "isPin INTEGER NOT NULL, " +
+                        "isArchived INTEGER NOT NULL, " +
+                        "isRemoved INTEGER NOT NULL, " +
+                        "role TEXT NOT NULL)")
                 database.setTransactionSuccessful()
                 database.endTransaction()
             }

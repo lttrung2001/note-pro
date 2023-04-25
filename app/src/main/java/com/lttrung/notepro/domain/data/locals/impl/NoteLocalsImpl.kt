@@ -1,8 +1,8 @@
 package com.lttrung.notepro.domain.data.locals.impl
 
 import com.lttrung.notepro.domain.data.locals.NoteLocals
-import com.lttrung.notepro.domain.data.locals.entities.NoteLocalsModel
-import com.lttrung.notepro.domain.data.locals.room.NoteDao
+import com.lttrung.notepro.domain.data.locals.room.entities.NoteLocalsModel
+import com.lttrung.notepro.domain.data.locals.room.dao.NoteDao
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 

@@ -3,7 +3,7 @@ package com.lttrung.notepro.ui.setting
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lttrung.notepro.domain.data.locals.entities.CurrentUser
+import com.lttrung.notepro.domain.data.locals.room.entities.CurrentUser
 import com.lttrung.notepro.domain.usecases.GetCurrentUserUseCase
 import com.lttrung.notepro.domain.usecases.LogoutUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
