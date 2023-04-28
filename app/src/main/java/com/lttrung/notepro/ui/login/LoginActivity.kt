@@ -23,7 +23,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityLoginBinding
+    private val binding: ActivityLoginBinding by lazy {
+        ActivityLoginBinding.inflate(layoutInflater)
+    }
     private val viewModel: LoginViewModel by viewModels()
 
     private val btnToForgotPasswordListener: View.OnClickListener by lazy {
@@ -60,12 +62,9 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityLoginBinding.inflate(layoutInflater)
-
+        setContentView(binding.root)
         setupListener()
         setupObserver()
-
-        setContentView(binding.root)
     }
 
     private fun setupObserver() {

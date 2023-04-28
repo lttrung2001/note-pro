@@ -18,7 +18,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ViewProfileActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityViewProfileBinding
+    private val binding: ActivityViewProfileBinding by lazy {
+        ActivityViewProfileBinding.inflate(layoutInflater)
+    }
     private val viewProfileViewModel: ViewProfileViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +54,6 @@ class ViewProfileActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        binding = ActivityViewProfileBinding.inflate(layoutInflater)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setContentView(binding.root)
     }

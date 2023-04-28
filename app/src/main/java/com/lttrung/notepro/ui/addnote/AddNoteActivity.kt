@@ -29,8 +29,18 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class AddNoteActivity : AddImagesActivity() {
-    private lateinit var binding: ActivityAddNoteBinding
-    private lateinit var imagesAdapter: ImagesAdapter
+    private val binding: ActivityAddNoteBinding by lazy {
+        ActivityAddNoteBinding.inflate(layoutInflater)
+    }
+    private val imagesAdapter: ImagesAdapter by lazy {
+        val adapter = ImagesAdapter(imageListener)
+        binding.rcvImages.let {
+            it.adapter = adapter
+            it.layoutManager = CardSliderLayoutManager(this@AddNoteActivity)
+            CardSnapHelper().attachToRecyclerView(it)
+        }
+        adapter
+    }
     private lateinit var menu: Menu
     private val addNoteViewModel: AddNoteViewModel by viewModels()
     private lateinit var socketService: ChatSocketService
@@ -52,7 +62,6 @@ class AddNoteActivity : AddImagesActivity() {
         super.onCreate(savedInstanceState)
         initViews()
         initListeners()
-        initAdapter()
         initObservers()
     }
 
@@ -91,23 +100,13 @@ class AddNoteActivity : AddImagesActivity() {
         }
     }
 
-    private fun initAdapter() {
-        imagesAdapter = ImagesAdapter(imageListener)
-        binding.rcvImages.apply {
-            adapter = imagesAdapter
-            layoutManager = CardSliderLayoutManager(this@AddNoteActivity)
-            CardSnapHelper().attachToRecyclerView(this)
-        }
-    }
-
     private fun initListeners() {
         binding.btnOpenBottomSheet.setOnClickListener(openBottomSheetDialogListener)
     }
 
     private fun initViews() {
-        binding = ActivityAddNoteBinding.inflate(layoutInflater)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setContentView(binding.root)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

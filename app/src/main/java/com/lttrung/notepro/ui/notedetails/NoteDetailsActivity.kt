@@ -27,31 +27,30 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class NoteDetailsActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityNoteDetailsBinding
-    private lateinit var imagesAdapter: ImagesAdapter
-    private lateinit var menu: Menu
+    private val binding: ActivityNoteDetailsBinding by lazy {
+        ActivityNoteDetailsBinding.inflate(layoutInflater)
+    }
+    private val imagesAdapter: ImagesAdapter by lazy {
+        val adapter = ImagesAdapter(imageListener)
+        binding.rcvImages.adapter = adapter
+        binding.rcvImages.layoutManager = CardSliderLayoutManager(this@NoteDetailsActivity)
+        CardSnapHelper().attachToRecyclerView(binding.rcvImages)
+        adapter
+    }
     private val noteDetailsViewModel: NoteDetailsViewModel by viewModels()
+    private lateinit var menu: Menu
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         initViews()
-        initAdapters()
         initData()
         initObservers()
     }
 
     private fun initViews() {
-        binding = ActivityNoteDetailsBinding.inflate(layoutInflater)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setContentView(binding.root)
-    }
-
-    private fun initAdapters() {
-        imagesAdapter = ImagesAdapter(imageListener)
-        binding.rcvImages.adapter = imagesAdapter
-        binding.rcvImages.layoutManager = CardSliderLayoutManager(this)
-        CardSnapHelper().attachToRecyclerView(binding.rcvImages)
     }
 
     private fun initObservers() {
@@ -120,24 +119,11 @@ class NoteDetailsActivity : AppCompatActivity() {
                 startActivity(showConservationIntent)
             }
             else -> {
-                // Update pin here...
                 val note = intent.getSerializableExtra(NOTE) as Note
-                val isPin = menu.getItem(0).isChecked
-                noteDetailsViewModel.updatePin(note.id, isPin)
+                note.isPin = menu.getItem(0).isChecked
+                noteDetailsViewModel.editNote(note)
                 val resultIntent = Intent()
-                resultIntent.putExtra(
-                    EDITED_NOTE,
-                    Note(
-                        note.id,
-                        note.title,
-                        note.content,
-                        note.lastModified,
-                        isPin,
-                        isArchived = false, isRemoved = false,
-                        role = note.role,
-                        images = note.images
-                    )
-                )
+                resultIntent.putExtra(EDITED_NOTE, note)
                 setResult(RESULT_OK, resultIntent)
                 finish()
             }

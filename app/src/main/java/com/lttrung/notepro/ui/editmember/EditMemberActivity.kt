@@ -26,8 +26,16 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class EditMemberActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityEditMemberBinding
-    private lateinit var roleAdapter: ArrayAdapter<String>
+    private val binding: ActivityEditMemberBinding by lazy {
+        ActivityEditMemberBinding.inflate(layoutInflater)
+    }
+    private val roleAdapter: ArrayAdapter<String> by lazy {
+        val roles = arrayListOf("editor", "viewer")
+        val adapter =
+            ArrayAdapter(this@EditMemberActivity, android.R.layout.simple_list_item_1, roles)
+        binding.roleSpinner.adapter = adapter
+        adapter
+    }
     private val editMemberViewModel: EditMemberViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -112,19 +120,13 @@ class EditMemberActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        binding = ActivityEditMemberBinding.inflate(layoutInflater)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setContentView(binding.root)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         bindProgressButton(binding.deleteButton)
         binding.deleteButton.attachTextChangeAnimator()
 
         val member = intent.getSerializableExtra(MEMBER) as Member
-
-        val roles = arrayListOf("editor", "viewer")
-        roleAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, roles)
-        binding.roleSpinner.adapter = roleAdapter
-
         binding.roleSpinner.setSelection(roleAdapter.getPosition(member.role))
         binding.tvId.text = member.id
         binding.tvEmail.text = member.email

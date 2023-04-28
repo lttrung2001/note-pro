@@ -18,7 +18,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ChangeProfileActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityChangeProfileBinding
+    private val binding: ActivityChangeProfileBinding by lazy {
+        ActivityChangeProfileBinding.inflate(layoutInflater)
+    }
     private val changeProfileViewModel: ChangeProfileViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,9 +63,8 @@ class ChangeProfileActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        binding = ActivityChangeProfileBinding.inflate(layoutInflater)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setContentView(binding.root)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

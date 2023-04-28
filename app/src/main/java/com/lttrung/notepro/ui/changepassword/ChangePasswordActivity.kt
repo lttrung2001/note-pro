@@ -18,7 +18,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ChangePasswordActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityChangePasswordBinding
+    private val binding: ActivityChangePasswordBinding by lazy {
+        ActivityChangePasswordBinding.inflate(layoutInflater)
+    }
     private val changePasswordViewModel: ChangePasswordViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,9 +62,8 @@ class ChangePasswordActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        binding = ActivityChangePasswordBinding.inflate(layoutInflater)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setContentView(binding.root)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     private val changePasswordListener: View.OnClickListener by lazy {

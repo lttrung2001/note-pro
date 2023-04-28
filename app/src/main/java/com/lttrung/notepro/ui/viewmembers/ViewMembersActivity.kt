@@ -14,10 +14,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
+import com.lttrung.notepro.databinding.ActivityShowMembersBinding
 import com.lttrung.notepro.domain.data.networks.models.Member
 import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.domain.data.networks.models.Paging
-import com.lttrung.notepro.databinding.ActivityShowMembersBinding
 import com.lttrung.notepro.ui.addmember.AddMemberFragment
 import com.lttrung.notepro.ui.base.adapters.member.MemberAdapter
 import com.lttrung.notepro.ui.base.adapters.member.MemberListener
@@ -33,19 +33,25 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ViewMembersActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityShowMembersBinding
+    private val binding: ActivityShowMembersBinding by lazy {
+        ActivityShowMembersBinding.inflate(layoutInflater)
+    }
     private val getMembersViewModel: ViewMembersViewModel by viewModels()
-    private lateinit var memberAdapter: MemberAdapter
-    private lateinit var toAddMemberButton: MenuItem
-    private lateinit var socketService: ChatSocketService
+    private val memberAdapter: MemberAdapter by lazy {
+        val adapter = MemberAdapter(memberListener)
+        binding.rcvMembers.adapter = adapter
+        adapter
+    }
     private val addMemberFragment: AddMemberFragment by lazy {
         AddMemberFragment()
     }
+    private lateinit var toAddMemberButton: MenuItem
+    private lateinit var socketService: ChatSocketService
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initViews()
         initListeners()
-        initAdapters()
         initObservers()
         if (getMembersViewModel.getMembers.value == null) {
             initData()
@@ -81,11 +87,6 @@ class ViewMembersActivity : AppCompatActivity() {
     }
 
     private fun initListeners() {
-    }
-
-    private fun initAdapters() {
-        memberAdapter = MemberAdapter(memberListener)
-        binding.rcvMembers.adapter = memberAdapter
     }
 
     private fun initObservers() {
@@ -125,9 +126,8 @@ class ViewMembersActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        binding = ActivityShowMembersBinding.inflate(layoutInflater)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setContentView(binding.root)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

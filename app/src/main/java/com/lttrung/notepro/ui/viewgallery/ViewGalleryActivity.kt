@@ -18,14 +18,20 @@ import java.io.Serializable
 
 @AndroidEntryPoint
 class ViewGalleryActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityViewGalleryBinding
-    private lateinit var adapter: ImageSelectionAdapter
+    private val binding: ActivityViewGalleryBinding by lazy {
+        ActivityViewGalleryBinding.inflate(layoutInflater)
+    }
+    private val imageSelectionAdapter: ImageSelectionAdapter by lazy {
+        val adapter = ImageSelectionAdapter()
+        binding.rcvImages.adapter = adapter
+        adapter
+    }
     private val viewModel: ViewGalleryViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initViews()
         initObservers()
-        viewModel.getImages(this, adapter.itemCount / PAGE_LIMIT, PAGE_LIMIT)
+        viewModel.getImages(this, imageSelectionAdapter.itemCount / PAGE_LIMIT, PAGE_LIMIT)
     }
 
     private fun initObservers() {
@@ -37,7 +43,7 @@ class ViewGalleryActivity : AppCompatActivity() {
 
                 is Resource.Success -> {
                     val images = resource.data.data
-                    adapter.submitList(images)
+                    imageSelectionAdapter.submitList(images)
                 }
 
                 is Resource.Error -> {
@@ -53,12 +59,8 @@ class ViewGalleryActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        binding = ActivityViewGalleryBinding.inflate(layoutInflater)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setContentView(binding.root)
-
-        adapter = ImageSelectionAdapter()
-        binding.rcvImages.adapter = adapter
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -69,7 +71,7 @@ class ViewGalleryActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_select_images -> {
-                val selectedImages = adapter.currentList.filter { image ->
+                val selectedImages = imageSelectionAdapter.currentList.filter { image ->
                     image.isSelected
                 }
                 val resultIntent = Intent()

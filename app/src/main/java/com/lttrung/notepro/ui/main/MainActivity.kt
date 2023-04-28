@@ -32,9 +32,11 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+    private lateinit var searchView: SearchView
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
+    private val mainViewModel: MainViewModel by viewModels()
     private val pinNotesAdapter: NoteAdapter by lazy {
         val adapter = NoteAdapter(noteListener)
         binding.rcvPinnedNotes.adapter = adapter
@@ -45,7 +47,6 @@ class MainActivity : AppCompatActivity() {
         binding.rcvOtherNotes.adapter = adapter
         adapter
     }
-    private lateinit var searchView: SearchView
     private val categoryAdapter: ArrayAdapter<String> by lazy {
         val data = ArrayList<String>()
         data.add("Current notes")
@@ -57,23 +58,15 @@ class MainActivity : AppCompatActivity() {
         adapter.notifyDataSetChanged()
         adapter
     }
-    private val mainViewModel: MainViewModel by viewModels()
 
     private val noteListener: NoteListener by lazy {
         object : NoteListener {
             override fun onClick(note: Note) {
 
                 if (note.hasEditPermission()) {
-                    if (note.isRemoved) {
-                        val noteDetailsIntent =
-                            Intent(this@MainActivity, NoteDetailsActivity::class.java)
-                        noteDetailsIntent.putExtra(NOTE, note)
-                        launcher.launch(noteDetailsIntent)
-                    } else {
-                        val editNoteIntent = Intent(this@MainActivity, EditNoteActivity::class.java)
-                        editNoteIntent.putExtra(NOTE, note)
-                        launcher.launch(editNoteIntent)
-                    }
+                    val editNoteIntent = Intent(this@MainActivity, EditNoteActivity::class.java)
+                    editNoteIntent.putExtra(NOTE, note)
+                    launcher.launch(editNoteIntent)
                 } else {
                     val noteDetailsIntent =
                         Intent(this@MainActivity, NoteDetailsActivity::class.java)
@@ -127,12 +120,8 @@ class MainActivity : AppCompatActivity() {
                 if (newText == null || newText.isBlank()) {
                     val resource = mainViewModel.getNotes.value
                     if (resource is Resource.Success) {
-                        val pinNotes = resource.data.filter {
-                            it.isPin
-                        }
-                        val normalNotes = resource.data.filter {
-                            !it.isPin
-                        }
+                        val pinNotes = filterNotes(resource.data, isPin = true)
+                        val normalNotes = filterNotes(resource.data, isPin = false)
                         pinNotesAdapter.submitList(pinNotes)
                         normalNotesAdapter.submitList(normalNotes)
                     }
@@ -160,24 +149,15 @@ class MainActivity : AppCompatActivity() {
                 }
                 is Resource.Success -> {
                     binding.refreshLayout.isRefreshing = false
+                    binding.spinnerCategories.setSelection(0)
                     val allNotes = resource.data.sortedByDescending {
                         it.lastModified
                     }
-                    val currentNotes = allNotes.filter {
-                        !it.isArchived && !it.isRemoved
-                    }
-                    val archivedNotes = allNotes.filter {
-                        it.isArchived && !it.isRemoved
-                    }
-                    val removedNotes = allNotes.filter {
-                        it.isRemoved
-                    }
-                    val pinNotes = currentNotes.filter {
-                        it.isPin
-                    }
-                    val normalNotes = currentNotes.filter {
-                        !it.isPin
-                    }
+                    val currentNotes = filterCurrentNotes(allNotes)
+                    val archivedNotes = filterArchivedNotes(allNotes)
+                    val removedNotes = filterRemovedNotes(allNotes)
+                    val pinNotes = filterNotes(currentNotes, isPin = true)
+                    val normalNotes = filterNotes(currentNotes, isPin = false)
                     pinNotesAdapter.submitList(pinNotes)
                     normalNotesAdapter.submitList(normalNotes)
                     mainViewModel.archivedNotes.postValue(archivedNotes)
@@ -217,36 +197,24 @@ class MainActivity : AppCompatActivity() {
                         0 -> {
                             val resource = mainViewModel.getNotes.value
                             if (resource is Resource.Success) {
-                                val allNotes = resource.data
-                                val pinNotes = allNotes.filter {
-                                    it.isPin && !it.isArchived && !it.isRemoved
-                                }
-                                val normalNotes = allNotes.filter {
-                                    !it.isPin && !it.isArchived && !it.isRemoved
-                                }
+                                val currentNotes = filterCurrentNotes(resource.data)
+                                val pinNotes = filterNotes(currentNotes, isPin = true)
+                                val normalNotes = filterNotes(currentNotes, isPin = false)
                                 pinNotesAdapter.submitList(pinNotes)
                                 normalNotesAdapter.submitList(normalNotes)
                             }
                         }
                         1 -> {
                             val archivedNotes = mainViewModel.archivedNotes.value.orEmpty()
-                            val pinNotes = archivedNotes.filter {
-                                it.isPin
-                            }
-                            val normalNotes = archivedNotes.filter {
-                                !it.isPin
-                            }
+                            val pinNotes = filterNotes(archivedNotes, isPin = true)
+                            val normalNotes = filterNotes(archivedNotes, isPin = false)
                             pinNotesAdapter.submitList(pinNotes)
                             normalNotesAdapter.submitList(normalNotes)
                         }
                         2 -> {
                             val removedNotes = mainViewModel.removedNotes.value.orEmpty()
-                            val pinNotes = removedNotes.filter {
-                                it.isPin
-                            }
-                            val normalNotes = removedNotes.filter {
-                                !it.isPin
-                            }
+                            val pinNotes = filterNotes(removedNotes, isPin = true)
+                            val normalNotes = filterNotes(removedNotes, isPin = false)
                             pinNotesAdapter.submitList(pinNotes)
                             normalNotesAdapter.submitList(normalNotes)
                         }
@@ -307,7 +275,8 @@ class MainActivity : AppCompatActivity() {
                         mainViewModel.getNotes.postValue(Resource.Success(notes))
                     }
                     deletedNote?.let { note ->
-                        val previousResource = mainViewModel.getNotes.value as Resource.Success<List<Note>>
+                        val previousResource =
+                            mainViewModel.getNotes.value as Resource.Success<List<Note>>
                         val notes = previousResource.data.toMutableList().filter {
                             it.id != note.id
                         }
@@ -316,4 +285,28 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+    private fun filterNotes(list: List<Note>, isPin: Boolean): List<Note> {
+        return list.filter {
+            it.isPin == isPin
+        }
+    }
+
+    private fun filterCurrentNotes(list: List<Note>): List<Note> {
+        return list.filter {
+            !it.isArchived && !it.isRemoved
+        }
+    }
+
+    private fun filterArchivedNotes(list: List<Note>): List<Note> {
+        return list.filter {
+            it.isArchived && !it.isRemoved
+        }
+    }
+
+    private fun filterRemovedNotes(list: List<Note>): List<Note> {
+        return list.filter {
+            it.isRemoved
+        }
+    }
 }

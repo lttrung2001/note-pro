@@ -37,12 +37,19 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class EditNoteActivity : AddImagesActivity() {
-    private lateinit var binding: ActivityEditNoteBinding
-    private lateinit var imagesAdapter: ImagesAdapter
     private lateinit var menu: Menu
-    private val editNoteViewModel: EditNoteViewModel by viewModels()
     private lateinit var socketService: ChatSocketService
-
+    private val binding: ActivityEditNoteBinding by lazy {
+        ActivityEditNoteBinding.inflate(layoutInflater)
+    }
+    private val imagesAdapter: ImagesAdapter by lazy {
+        val adapter = ImagesAdapter(imageListener)
+        binding.rcvImages.adapter = adapter
+        binding.rcvImages.layoutManager = CardSliderLayoutManager(this@EditNoteActivity)
+        CardSnapHelper().attachToRecyclerView(binding.rcvImages)
+        adapter
+    }
+    private val editNoteViewModel: EditNoteViewModel by viewModels()
     private val connection: ServiceConnection by lazy {
         object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -61,7 +68,6 @@ class EditNoteActivity : AddImagesActivity() {
 
         initViews()
         initListeners()
-        initAdapter()
         initData()
         initObservers()
         if (editNoteViewModel.noteDetails.value == null) {
@@ -90,11 +96,6 @@ class EditNoteActivity : AddImagesActivity() {
             tvLastModified.text = Converter.longToDate(note.lastModified)
         }
         imagesAdapter.submitList(note.images)
-    }
-
-    private fun initAdapter() {
-        imagesAdapter = ImagesAdapter(imageListener)
-        binding.rcvImages.adapter = imagesAdapter
     }
 
     private fun initListeners() {
@@ -172,12 +173,8 @@ class EditNoteActivity : AddImagesActivity() {
     }
 
     private fun initViews() {
-        binding = ActivityEditNoteBinding.inflate(layoutInflater)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setContentView(binding.root)
-
-        binding.rcvImages.layoutManager = CardSliderLayoutManager(this)
-        CardSnapHelper().attachToRecyclerView(binding.rcvImages)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val note = intent.getSerializableExtra(NOTE) as Note
         if (note.isOwner()) {
@@ -226,8 +223,8 @@ class EditNoteActivity : AddImagesActivity() {
                     binding.edtNoteDesc.text!!.trim().toString(),
                     noteDetails.lastModified,
                     menu.getItem(0).isChecked,
-                    isArchived = false,
-                    isRemoved = false,
+                    isArchived = noteDetails.isArchived,
+                    isRemoved = noteDetails.isRemoved,
                     role = noteDetails.role,
                     images = imagesAdapter.currentList
                 )
@@ -257,9 +254,12 @@ class EditNoteActivity : AddImagesActivity() {
     private val deleteNoteListener: View.OnClickListener by lazy {
         View.OnClickListener {
             val note = intent.getSerializableExtra(NOTE) as Note
-            note.isRemoved = true
-            editNoteViewModel.editNote(note)
-//            editNoteViewModel.deleteNote(note)
+            if (note.isRemoved) {
+                editNoteViewModel.deleteNote(note)
+            } else {
+                note.isRemoved = true
+                editNoteViewModel.editNote(note)
+            }
         }
     }
 

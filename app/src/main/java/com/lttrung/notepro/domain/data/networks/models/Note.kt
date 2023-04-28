@@ -8,7 +8,7 @@ data class Note(
     val title: String,
     val content: String,
     val lastModified: Long,
-    val isPin: Boolean,
+    var isPin: Boolean,
     var isArchived: Boolean,
     var isRemoved: Boolean,
     val role: String,

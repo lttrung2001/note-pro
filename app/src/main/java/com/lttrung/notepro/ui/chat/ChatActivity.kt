@@ -36,10 +36,22 @@ import org.jitsi.meet.sdk.JitsiMeetActivity
 
 @AndroidEntryPoint
 class ChatActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityChatBinding
-    private val chatViewModel: ChatViewModel by viewModels()
-    private lateinit var messageAdapter: MessageAdapter
     private lateinit var socketService: ChatSocketService
+    private val binding: ActivityChatBinding by lazy {
+        ActivityChatBinding.inflate(layoutInflater)
+    }
+    private val chatViewModel: ChatViewModel by viewModels()
+    private val messageAdapter: MessageAdapter by lazy {
+        val adapter = MessageAdapter()
+        val linearLayoutManager = LinearLayoutManager(this@ChatActivity).apply {
+            stackFromEnd = true
+        }
+        binding.messages.let {
+            it.adapter = messageAdapter
+            it.layoutManager = linearLayoutManager
+        }
+        adapter
+    }
     private val messageReceiver: BroadcastReceiver by lazy {
         object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -128,7 +140,6 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         initViews()
         initListeners()
-        initAdapters()
         initObservers()
         chatViewModel.getCurrentUser()
     }
@@ -205,21 +216,8 @@ class ChatActivity : AppCompatActivity() {
 
     }
 
-    private fun initAdapters() {
-        messageAdapter = MessageAdapter()
-        val linearLayoutManager = LinearLayoutManager(this@ChatActivity).apply {
-            stackFromEnd = true
-        }
-        binding.messages.apply {
-            adapter = messageAdapter
-            layoutManager = linearLayoutManager
-        }
-    }
-
     private fun initViews() {
-        binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 

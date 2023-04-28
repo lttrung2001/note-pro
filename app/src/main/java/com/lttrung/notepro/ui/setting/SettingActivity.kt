@@ -14,7 +14,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class SettingActivity : AppCompatActivity() {
-    private lateinit var binding: ActivitySettingBinding
+    private val binding: ActivitySettingBinding by lazy {
+        ActivitySettingBinding.inflate(layoutInflater)
+    }
     private val settingViewModel: SettingViewModel by viewModels()
 
     private val viewProfileListener: View.OnClickListener by lazy {
@@ -66,9 +68,8 @@ class SettingActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        binding = ActivitySettingBinding.inflate(layoutInflater)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setContentView(binding.root)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

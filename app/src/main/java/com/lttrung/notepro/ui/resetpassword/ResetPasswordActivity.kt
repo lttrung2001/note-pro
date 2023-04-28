@@ -18,7 +18,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ResetPasswordActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityResetPasswordBinding
+    private val binding: ActivityResetPasswordBinding by lazy {
+        ActivityResetPasswordBinding.inflate(layoutInflater)
+    }
     private val viewModel: ResetPasswordViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +67,6 @@ class ResetPasswordActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        binding = ActivityResetPasswordBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }

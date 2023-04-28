@@ -29,24 +29,21 @@ class AddMemberFragment : BottomSheetDialogFragment() {
         FragmentAddMemberBinding.inflate(layoutInflater)
     }
     private val addMemberViewModel: AddMemberViewModel by activityViewModels()
-    private lateinit var roleAdapter: ArrayAdapter<String>
+    private val roleAdapter: ArrayAdapter<String> by lazy {
+        val roles = arrayListOf("editor", "viewer")
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, roles)
+        binding.roleSpinner.adapter = adapter
+        adapter
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         initViews()
-        initAdapters()
         initListeners()
         initObservers()
-
         return binding.root
-    }
-
-    private fun initAdapters() {
-        val roles = arrayListOf("editor", "viewer")
-        roleAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, roles)
-        binding.roleSpinner.adapter = roleAdapter
     }
 
     private fun initViews() {
@@ -85,9 +82,7 @@ class AddMemberFragment : BottomSheetDialogFragment() {
     }
 
     private fun initListeners() {
-        binding?.apply {
-            addButton.setOnClickListener(addListener)
-        }
+        binding.addButton.setOnClickListener(addListener)
     }
 
     private val addListener: View.OnClickListener by lazy {

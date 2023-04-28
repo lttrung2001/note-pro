@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lttrung.notepro.domain.data.networks.models.Note
+import com.lttrung.notepro.domain.usecases.EditNoteUseCase
 import com.lttrung.notepro.domain.usecases.NoteDetailsUseCase
 import com.lttrung.notepro.domain.usecases.UpdatePinStatusUseCase
 import com.lttrung.notepro.utils.Resource
@@ -19,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class NoteDetailsViewModel @Inject constructor(
     private val noteDetailsUseCase: NoteDetailsUseCase,
-    private val updatePinStatusUseCase: UpdatePinStatusUseCase
+    private val editNoteUseCase: EditNoteUseCase
 ) : ViewModel() {
 
     internal val noteDetails: MutableLiveData<Resource<Note>> by lazy {
@@ -55,9 +56,9 @@ class NoteDetailsViewModel @Inject constructor(
     }
 
 
-    internal fun updatePin(noteId: String, isPin: Boolean) {
+    internal fun editNote(note: Note) {
         viewModelScope.launch(Dispatchers.IO) {
-            updatePinStatusUseCase.execute(noteId, isPin).subscribe()
+            editNoteUseCase.execute(note, emptyList()).subscribe()
         }
     }
 }

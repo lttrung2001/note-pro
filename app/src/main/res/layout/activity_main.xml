@@ -37,12 +37,12 @@
 
                 <androidx.appcompat.widget.AppCompatSpinner
                     android:id="@+id/spinner_categories"
+                    android:layout_marginEnd="16dp"
                     android:layout_width="wrap_content"
                     android:layout_height="48dp"
                     android:layout_gravity="end"
                     android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    tools:ignore="HardcodedText" />
+                    android:spinnerMode="dialog" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/tv_pinned"

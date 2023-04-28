@@ -19,7 +19,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class RegisterActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityRegisterBinding
+    private val binding: ActivityRegisterBinding by lazy {
+        ActivityRegisterBinding.inflate(layoutInflater)
+    }
     private val viewModel: RegisterViewModel by viewModels()
 
     private val btnToLoginOnClickListener: View.OnClickListener by lazy {
@@ -71,7 +73,6 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
     }
 
