@@ -5,12 +5,13 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.NoteProApplication
 import com.lttrung.notepro.R
@@ -31,10 +32,31 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
-    private lateinit var pinNotesAdapter: NoteAdapter
-    private lateinit var normalNotesAdapter: NoteAdapter
+    private val binding: ActivityMainBinding by lazy {
+        ActivityMainBinding.inflate(layoutInflater)
+    }
+    private val pinNotesAdapter: NoteAdapter by lazy {
+        val adapter = NoteAdapter(noteListener)
+        binding.rcvPinnedNotes.adapter = adapter
+        adapter
+    }
+    private val normalNotesAdapter: NoteAdapter by lazy {
+        val adapter = NoteAdapter(noteListener)
+        binding.rcvOtherNotes.adapter = adapter
+        adapter
+    }
     private lateinit var searchView: SearchView
+    private val categoryAdapter: ArrayAdapter<String> by lazy {
+        val data = ArrayList<String>()
+        data.add("Current notes")
+        data.add("Archived notes")
+        data.add("Removed notes")
+
+        val adapter = ArrayAdapter<String>(this@MainActivity, android.R.layout.simple_list_item_1)
+        adapter.addAll(data)
+        adapter.notifyDataSetChanged()
+        adapter
+    }
     private val mainViewModel: MainViewModel by viewModels()
 
     private val noteListener: NoteListener by lazy {
@@ -42,9 +64,16 @@ class MainActivity : AppCompatActivity() {
             override fun onClick(note: Note) {
 
                 if (note.hasEditPermission()) {
-                    val editNoteIntent = Intent(this@MainActivity, EditNoteActivity::class.java)
-                    editNoteIntent.putExtra(NOTE, note)
-                    launcher.launch(editNoteIntent)
+                    if (note.isRemoved) {
+                        val noteDetailsIntent =
+                            Intent(this@MainActivity, NoteDetailsActivity::class.java)
+                        noteDetailsIntent.putExtra(NOTE, note)
+                        launcher.launch(noteDetailsIntent)
+                    } else {
+                        val editNoteIntent = Intent(this@MainActivity, EditNoteActivity::class.java)
+                        editNoteIntent.putExtra(NOTE, note)
+                        launcher.launch(editNoteIntent)
+                    }
                 } else {
                     val noteDetailsIntent =
                         Intent(this@MainActivity, NoteDetailsActivity::class.java)
@@ -117,7 +146,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         initViews()
         initListeners()
-        initAdapters()
         initObservers()
         if (mainViewModel.getNotes.value == null) {
             mainViewModel.getNotes()
@@ -132,18 +160,28 @@ class MainActivity : AppCompatActivity() {
                 }
                 is Resource.Success -> {
                     binding.refreshLayout.isRefreshing = false
-                    val pinNotes = resource.data.filter {
-                        it.isPin
-                    }.sortedByDescending {
+                    val allNotes = resource.data.sortedByDescending {
                         it.lastModified
                     }
-                    val normalNotes = resource.data.filter {
+                    val currentNotes = allNotes.filter {
+                        !it.isArchived && !it.isRemoved
+                    }
+                    val archivedNotes = allNotes.filter {
+                        it.isArchived && !it.isRemoved
+                    }
+                    val removedNotes = allNotes.filter {
+                        it.isRemoved
+                    }
+                    val pinNotes = currentNotes.filter {
+                        it.isPin
+                    }
+                    val normalNotes = currentNotes.filter {
                         !it.isPin
-                    }.sortedByDescending {
-                        it.lastModified
                     }
                     pinNotesAdapter.submitList(pinNotes)
                     normalNotesAdapter.submitList(normalNotes)
+                    mainViewModel.archivedNotes.postValue(archivedNotes)
+                    mainViewModel.removedNotes.postValue(removedNotes)
 
                     val service = (application as NoteProApplication).chatService
                     if (service == null) {
@@ -153,18 +191,11 @@ class MainActivity : AppCompatActivity() {
                 is Resource.Error -> {
                     binding.refreshLayout.isRefreshing = false
                     Snackbar.make(binding.root, resource.t.message.toString(),
-                        BaseTransientBottomBar.LENGTH_LONG
+                        Snackbar.LENGTH_LONG
                     ).show()
                 }
             }
         }
-    }
-
-    private fun initAdapters() {
-        pinNotesAdapter = NoteAdapter(noteListener)
-        normalNotesAdapter = NoteAdapter(noteListener)
-        binding.rcvPinnedNotes.adapter = pinNotesAdapter
-        binding.rcvOtherNotes.adapter = normalNotesAdapter
     }
 
     private fun initListeners() {
@@ -174,9 +205,59 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar?.title = getString(R.string.dashboard)
+
+        binding.spinnerCategories.adapter = categoryAdapter
+        binding.spinnerCategories.setSelection(0, true)
+        binding.spinnerCategories.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                    when (p2) {
+                        0 -> {
+                            val resource = mainViewModel.getNotes.value
+                            if (resource is Resource.Success) {
+                                val allNotes = resource.data
+                                val pinNotes = allNotes.filter {
+                                    it.isPin && !it.isArchived && !it.isRemoved
+                                }
+                                val normalNotes = allNotes.filter {
+                                    !it.isPin && !it.isArchived && !it.isRemoved
+                                }
+                                pinNotesAdapter.submitList(pinNotes)
+                                normalNotesAdapter.submitList(normalNotes)
+                            }
+                        }
+                        1 -> {
+                            val archivedNotes = mainViewModel.archivedNotes.value.orEmpty()
+                            val pinNotes = archivedNotes.filter {
+                                it.isPin
+                            }
+                            val normalNotes = archivedNotes.filter {
+                                !it.isPin
+                            }
+                            pinNotesAdapter.submitList(pinNotes)
+                            normalNotesAdapter.submitList(normalNotes)
+                        }
+                        2 -> {
+                            val removedNotes = mainViewModel.removedNotes.value.orEmpty()
+                            val pinNotes = removedNotes.filter {
+                                it.isPin
+                            }
+                            val normalNotes = removedNotes.filter {
+                                !it.isPin
+                            }
+                            pinNotesAdapter.submitList(pinNotes)
+                            normalNotesAdapter.submitList(normalNotes)
+                        }
+                    }
+                }
+
+                override fun onNothingSelected(p0: AdapterView<*>?) {
+                    TODO("Not yet implemented")
+                }
+
+            }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -235,5 +316,4 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
 }

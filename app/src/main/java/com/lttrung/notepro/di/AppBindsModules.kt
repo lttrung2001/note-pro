@@ -34,8 +34,10 @@ abstract class AppBindsModules {
     abstract fun bindsNoteDetailsUseCase(impl: NoteDetailsUseCaseImpl): NoteDetailsUseCase
     @Binds
     abstract fun bindsEditNoteUseCase(impl: EditNoteUseCaseImpl): EditNoteUseCase
+
     @Binds
-    abstract fun bindsShowMembersUseCase(impl: ShowMembersUseCaseImpl): ShowMembersUseCase
+    abstract fun bindsViewMembersUseCase(impl: ViewMembersUseCaseImpl): ViewMembersUseCase
+
     @Binds
     abstract fun bindsAddNoteUseCase(impl: AddNoteUseCaseImpl): AddNoteUseCase
     @Binds

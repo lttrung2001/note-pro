@@ -29,7 +29,7 @@ class UserRepositoriesImpl @Inject constructor(
             locals.changeProfile(user.fullName, user.phoneNumber)
         }.onErrorReturn {
             locals.getCurrentUser().map {
-                UserInfo(it.id!!, it.email, it.fullName!!, it.phoneNumber!!)
+                UserInfo(it.id!!, it.email, it.fullName!!, it.phoneNumber!!.replace("+84", "0"))
             }.blockingGet()
         }
     }

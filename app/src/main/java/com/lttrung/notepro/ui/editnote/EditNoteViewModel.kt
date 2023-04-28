@@ -86,14 +86,14 @@ class EditNoteViewModel @Inject constructor(
         }
     }
 
-    internal fun deleteNote(noteId: String) {
+    internal fun deleteNote(note: Note) {
         viewModelScope.launch(Dispatchers.IO) {
             deleteNote.postValue(Resource.Loading())
             deleteNoteDisposable?.let {
                 composite.remove(it)
             }
             deleteNoteDisposable =
-                deleteNoteUseCase.execute(noteId).observeOn(AndroidSchedulers.mainThread())
+                deleteNoteUseCase.execute(note.id).observeOn(AndroidSchedulers.mainThread())
                     .subscribe(deleteNoteObserver) {
                         deleteNote.postValue(Resource.Error(it))
                     }

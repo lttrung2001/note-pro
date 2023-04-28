@@ -6,6 +6,6 @@ import io.reactivex.rxjava3.core.Single
 import javax.inject.Singleton
 
 @Singleton
-interface ShowMembersUseCase {
+interface ViewMembersUseCase {
     fun execute(noteId: String, pageIndex: Int, limit: Int): Single<Paging<Member>>
 }

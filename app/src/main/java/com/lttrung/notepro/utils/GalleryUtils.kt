@@ -5,14 +5,18 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import com.lttrung.notepro.domain.data.networks.models.Image
+import com.lttrung.notepro.domain.data.locals.room.entities.ImageSelectionLocalsModel
 import com.lttrung.notepro.domain.data.networks.models.Paging
 import io.reactivex.rxjava3.core.Single
 
 class GalleryUtils {
     companion object {
-        fun findImages(context: Context, page: Int, limit: Int): Single<Paging<Image>> {
-            val imageList: ArrayList<Image> = ArrayList()
+        fun findImages(
+            context: Context,
+            page: Int,
+            limit: Int
+        ): Single<Paging<ImageSelectionLocalsModel>> {
+            val imageList: ArrayList<ImageSelectionLocalsModel> = ArrayList()
             val columns = arrayOf(
                 MediaStore.Images.Media.DISPLAY_NAME,
                 MediaStore.Images.Media.DATA,
@@ -53,7 +57,7 @@ class GalleryUtils {
                     val dataColumnIndex =
                         cs.getColumnIndex(MediaStore.Images.Media.DATA)
                     imageList.add(
-                        Image(
+                        ImageSelectionLocalsModel(
                             cs.getInt(idColumnIndex).toString(),
                             cs.getString(nameColumnIndex),
                             cs.getString(dataColumnIndex),

@@ -4,12 +4,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import com.lttrung.notepro.domain.data.networks.models.Image
 import com.lttrung.notepro.databinding.LayoutImageSelectionBinding
+import com.lttrung.notepro.domain.data.locals.room.entities.ImageSelectionLocalsModel
 
-class ImageSelectionAdapter : ListAdapter<Image, ImageSelectionViewHolder>(itemCallback) {
+class ImageSelectionAdapter :
+    ListAdapter<ImageSelectionLocalsModel, ImageSelectionViewHolder>(itemCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageSelectionViewHolder {
-        val binding = LayoutImageSelectionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            LayoutImageSelectionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ImageSelectionViewHolder(binding)
     }
 
@@ -18,12 +20,16 @@ class ImageSelectionAdapter : ListAdapter<Image, ImageSelectionViewHolder>(itemC
     }
 
     companion object {
-        private val itemCallback = object : DiffUtil.ItemCallback<Image>() {
-            override fun areItemsTheSame(oldItem: Image, newItem: Image): Boolean {
+        private val itemCallback = object : DiffUtil.ItemCallback<ImageSelectionLocalsModel>() {
+            override fun areItemsTheSame(
+                oldItem: ImageSelectionLocalsModel, newItem: ImageSelectionLocalsModel
+            ): Boolean {
                 return oldItem.id == newItem.id
             }
 
-            override fun areContentsTheSame(oldItem: Image, newItem: Image): Boolean {
+            override fun areContentsTheSame(
+                oldItem: ImageSelectionLocalsModel, newItem: ImageSelectionLocalsModel
+            ): Boolean {
                 return oldItem == newItem
             }
 

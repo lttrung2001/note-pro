@@ -113,7 +113,7 @@
             android:exported="true"
             android:theme="@style/Theme.NotePro.NoActionBar" />
         <activity
-            android:name=".ui.showmembers.ShowMembersActivity"
+            android:name=".ui.viewmembers.ViewMembersActivity"
             android:configChanges="orientation"
             android:exported="false"
             android:label="@string/members"

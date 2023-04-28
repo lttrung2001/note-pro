@@ -257,7 +257,9 @@ class EditNoteActivity : AddImagesActivity() {
     private val deleteNoteListener: View.OnClickListener by lazy {
         View.OnClickListener {
             val note = intent.getSerializableExtra(NOTE) as Note
-            editNoteViewModel.deleteNote(note.id)
+            note.isRemoved = true
+            editNoteViewModel.editNote(note)
+//            editNoteViewModel.deleteNote(note)
         }
     }
 

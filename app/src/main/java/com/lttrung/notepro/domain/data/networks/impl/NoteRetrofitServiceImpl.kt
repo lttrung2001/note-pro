@@ -1,6 +1,5 @@
 package com.lttrung.notepro.domain.data.networks.impl
 
-import android.util.Log
 import android.webkit.URLUtil
 import com.google.gson.Gson
 import com.lttrung.notepro.domain.data.networks.NoteNetworks
@@ -43,6 +42,8 @@ class NoteRetrofitServiceImpl @Inject constructor(
             @Part("title") title: RequestBody,
             @Part("content") content: RequestBody,
             @Part("isPin") isPin: Boolean,
+            @Part("isArchived") isArchived: Boolean,
+            @Part("isRemoved") isRemoved: Boolean,
             @Part("deleteImageIds") ids: RequestBody,
             @Part images: List<MultipartBody.Part>?
         ): Single<Response<ApiResponse<Note>>>
@@ -60,7 +61,7 @@ class NoteRetrofitServiceImpl @Inject constructor(
     override fun addNote(note: Note): Single<Note> {
         val title = note.title.toRequestBody(MultipartBody.FORM)
         val content = note.content.toRequestBody(MultipartBody.FORM)
-        val parts = note.images?.map { image ->
+        val parts = note.images.map { image ->
             val file = File(image.url)
             val requestBody = file.asRequestBody(MultipartBody.FORM)
             MultipartBody.Part.createFormData("images", file.name, requestBody)
@@ -82,12 +83,11 @@ class NoteRetrofitServiceImpl @Inject constructor(
             val requestBody = file.asRequestBody(MultipartBody.FORM)
             MultipartBody.Part.createFormData("images", file.name, requestBody)
         }
-        Log.i("INFO", gson.toJson(deleteImageIds))
         return service.editNote(
             note.id,
             note.title.toRequestBody(MultipartBody.FORM),
             note.content.toRequestBody(MultipartBody.FORM),
-            note.isPin,
+            note.isPin, note.isArchived, note.isRemoved,
             gson.toJson(deleteImageIds).toRequestBody(MultipartBody.FORM),
             newImages
         ).map { response ->

@@ -48,7 +48,7 @@
             android:layout_width="60dp"
             android:layout_height="0dp"
             android:background="@color/white"
-            android:src="@drawable/ic_send_24"
+            android:src="@drawable/ic_baseline_send_24"
             android:tint="@color/primary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"

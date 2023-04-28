@@ -41,6 +41,7 @@ abstract class UserDatabase : RoomDatabase() {
         val MIGRATION_3_4 = object : Migration(3, 4) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.beginTransaction()
+                database.execSQL("DROP TABLE Note")
                 database.execSQL("CREATE TABLE Note (" +
                         "id TEXT PRIMARY KEY NOT NULL, " +
                         "title TEXT NOT NULL, " +

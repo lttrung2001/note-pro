@@ -9,7 +9,7 @@
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_show_conservation"
-        android:icon="@drawable/ic_message_24"
+        android:icon="@drawable/ic_baseline_message_24"
         android:orderInCategory="1"
         android:title="@string/conservation"
         app:showAsAction="ifRoom" />

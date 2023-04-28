@@ -14,6 +14,7 @@ import io.reactivex.rxjava3.functions.Consumer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.annotations.jvm.Mutable
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -48,5 +49,12 @@ class MainViewModel @Inject constructor(
                 }
             getNotesDisposable?.let { composite.add(it) }
         }
+    }
+
+    internal val archivedNotes: MutableLiveData<List<Note>> by lazy {
+        MutableLiveData<List<Note>>()
+    }
+    internal val removedNotes: MutableLiveData<List<Note>> by lazy {
+        MutableLiveData<List<Note>>()
     }
 }

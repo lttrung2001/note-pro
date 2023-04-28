@@ -1,4 +1,4 @@
-package com.lttrung.notepro.ui.showmembers
+package com.lttrung.notepro.ui.viewmembers
 
 import android.content.ComponentName
 import android.content.Context
@@ -12,7 +12,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
 import com.lttrung.notepro.domain.data.networks.models.Member
@@ -33,9 +32,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class ShowMembersActivity : AppCompatActivity() {
+class ViewMembersActivity : AppCompatActivity() {
     private lateinit var binding: ActivityShowMembersBinding
-    private val getMembersViewModel: ShowMembersViewModel by viewModels()
+    private val getMembersViewModel: ViewMembersViewModel by viewModels()
     private lateinit var memberAdapter: MemberAdapter
     private lateinit var toAddMemberButton: MenuItem
     private lateinit var socketService: ChatSocketService
@@ -55,7 +54,7 @@ class ShowMembersActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        Intent(this@ShowMembersActivity, ChatSocketService::class.java).also { intent ->
+        Intent(this@ViewMembersActivity, ChatSocketService::class.java).also { intent ->
             bindService(intent, connection, Context.BIND_AUTO_CREATE)
         }
     }
@@ -205,7 +204,7 @@ class ShowMembersActivity : AppCompatActivity() {
                 val note = intent.getSerializableExtra(NOTE) as Note
                 if (note.isOwner()) {
                     val editMemberIntent =
-                        Intent(this@ShowMembersActivity, EditMemberActivity::class.java)
+                        Intent(this@ViewMembersActivity, EditMemberActivity::class.java)
                     editMemberIntent.putExtra(NOTE, note)
                     editMemberIntent.putExtra(MEMBER, member)
                     launcher.launch(editMemberIntent)

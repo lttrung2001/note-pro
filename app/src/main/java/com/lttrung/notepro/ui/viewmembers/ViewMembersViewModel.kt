@@ -1,11 +1,11 @@
-package com.lttrung.notepro.ui.showmembers
+package com.lttrung.notepro.ui.viewmembers
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lttrung.notepro.domain.data.networks.models.Member
 import com.lttrung.notepro.domain.data.networks.models.Paging
-import com.lttrung.notepro.domain.usecases.ShowMembersUseCase
+import com.lttrung.notepro.domain.usecases.ViewMembersUseCase
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -17,8 +17,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ShowMembersViewModel @Inject constructor(
-    private val showMembersUseCase: ShowMembersUseCase
+class ViewMembersViewModel @Inject constructor(
+    private val viewMembersUseCase: ViewMembersUseCase
 ) : ViewModel() {
     internal var page = 0
 
@@ -59,7 +59,7 @@ class ShowMembersViewModel @Inject constructor(
                 composite.remove(it)
                 it.dispose()
             }
-            getMembersDisposable = showMembersUseCase.execute(noteId, pageIndex, limit)
+            getMembersDisposable = viewMembersUseCase.execute(noteId, pageIndex, limit)
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(getMembersObserver) {
                     getMembers.postValue(Resource.Error(it))
                 }

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lttrung.notepro.domain.data.locals.room.entities.ImageSelectionLocalsModel
 import com.lttrung.notepro.domain.data.networks.models.Image
 import com.lttrung.notepro.domain.data.networks.models.Paging
 import com.lttrung.notepro.utils.GalleryUtils
@@ -16,8 +17,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ViewGalleryViewModel : ViewModel() {
-    internal val images: MutableLiveData<Resource<Paging<Image>>> by lazy {
-        MutableLiveData<Resource<Paging<Image>>>()
+    internal val images: MutableLiveData<Resource<Paging<ImageSelectionLocalsModel>>> by lazy {
+        MutableLiveData<Resource<Paging<ImageSelectionLocalsModel>>>()
     }
 
     private val composite: CompositeDisposable by lazy {
@@ -26,7 +27,7 @@ class ViewGalleryViewModel : ViewModel() {
 
     private var disposable: Disposable? = null
 
-    private val observer: Consumer<Paging<Image>> by lazy {
+    private val observer: Consumer<Paging<ImageSelectionLocalsModel>> by lazy {
         Consumer {
             images.postValue(Resource.Success(it))
         }

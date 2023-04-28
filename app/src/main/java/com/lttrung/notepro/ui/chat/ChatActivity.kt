@@ -18,7 +18,7 @@ import com.lttrung.notepro.domain.data.networks.models.Message
 import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.domain.data.networks.models.User
 import com.lttrung.notepro.ui.base.adapters.message.MessageAdapter
-import com.lttrung.notepro.ui.showmembers.ShowMembersActivity
+import com.lttrung.notepro.ui.viewmembers.ViewMembersActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_CHANNEL_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.LOAD_MESSAGES_RECEIVED
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE
@@ -32,7 +32,6 @@ import com.lttrung.notepro.utils.JitsiHelper
 import com.lttrung.notepro.utils.NotificationHelper
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
-import org.jitsi.meet.sdk.JitsiMeet
 import org.jitsi.meet.sdk.JitsiMeetActivity
 
 @AndroidEntryPoint
@@ -234,7 +233,7 @@ class ChatActivity : AppCompatActivity() {
             R.id.action_show_members -> {
                 val note = intent.getSerializableExtra(NOTE) as Note
                 val viewMembersIntent =
-                    Intent(this@ChatActivity, ShowMembersActivity::class.java).apply {
+                    Intent(this@ChatActivity, ViewMembersActivity::class.java).apply {
                         putExtra(NOTE, note)
                     }
                 startActivity(viewMembersIntent)

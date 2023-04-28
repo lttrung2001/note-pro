@@ -9,8 +9,8 @@ data class Note(
     val content: String,
     val lastModified: Long,
     val isPin: Boolean,
-    val isArchived: Boolean,
-    val isRemoved: Boolean,
+    var isArchived: Boolean,
+    var isRemoved: Boolean,
     val role: String,
     var images: List<Image> = emptyList()
 ) : Serializable {

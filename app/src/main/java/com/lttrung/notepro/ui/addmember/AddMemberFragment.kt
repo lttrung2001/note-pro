@@ -18,7 +18,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.FragmentAddMemberBinding
 import com.lttrung.notepro.domain.data.networks.models.Note
-import com.lttrung.notepro.ui.showmembers.ShowMembersActivity
+import com.lttrung.notepro.ui.viewmembers.ViewMembersActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
@@ -68,7 +68,7 @@ class AddMemberFragment : BottomSheetDialogFragment() {
                 is Resource.Success -> {
                     binding.addButton.isClickable = true
                     binding.addButton.hideProgress(R.string.add)
-                    val parentActivity = (requireActivity() as ShowMembersActivity)
+                    val parentActivity = (requireActivity() as ViewMembersActivity)
                     parentActivity.addMemberResult(resource.data)
                 }
 
@@ -105,7 +105,7 @@ class AddMemberFragment : BottomSheetDialogFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        val parentActivity = (requireActivity() as ShowMembersActivity)
+        val parentActivity = (requireActivity() as ViewMembersActivity)
         parentActivity.onAddMemberFragmentDestroyView()
     }
 }
