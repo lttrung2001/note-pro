@@ -27,7 +27,6 @@ import com.lttrung.notepro.utils.AppConstant
 import com.lttrung.notepro.utils.AppConstant.Companion.DELETED_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.EDITED_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
-import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.SELECTED_IMAGES
 import com.lttrung.notepro.utils.Converter
 import com.lttrung.notepro.utils.Resource
@@ -70,9 +69,9 @@ class EditNoteActivity : AddImagesActivity() {
         initListeners()
         initData()
         initObservers()
-        if (editNoteViewModel.noteDetails.value == null) {
-            val note = intent.getSerializableExtra(NOTE) as Note
-            editNoteViewModel.getNoteDetails(note.id)
+        val note = intent.getSerializableExtra(NOTE) as Note?
+        note?.let {
+            editNoteViewModel.getNoteDetails(it.id)
         }
     }
 
@@ -177,7 +176,14 @@ class EditNoteActivity : AddImagesActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val note = intent.getSerializableExtra(NOTE) as Note
-        if (note.isOwner()) {
+        if (note.isRemoved) {
+            binding.edtNoteTitle.isEnabled = false
+            binding.edtNoteDesc.isEnabled = false
+            binding.btnOpenBottomSheet.visibility = View.INVISIBLE
+            if (note.isOwner()) {
+                binding.btnDeleteNote.visibility = View.VISIBLE
+            }
+        } else if (note.isOwner()) {
             binding.btnDeleteNote.visibility = View.VISIBLE
         }
     }
@@ -185,56 +191,92 @@ class EditNoteActivity : AddImagesActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_edit_note, menu)
         this.menu = menu!!
+
         val noteDetails = intent.getSerializableExtra(NOTE) as Note
+
         val pinButton = menu.getItem(0)
+        val archiveButton = menu.getItem(1)
+
         pinButton.isChecked = noteDetails.isPin
-        if (noteDetails.isPin) {
-            pinButton.icon.setTint(resources.getColor(R.color.primary, theme))
-        } else {
-            pinButton.icon.setTint(resources.getColor(R.color.black, theme))
-        }
+        val pinIcon = if (noteDetails.isPin) resources.getColor(
+            R.color.primary,
+            theme
+        ) else resources.getColor(R.color.black, theme)
+        pinButton.icon.setTint(pinIcon)
+
+        val archiveIconResource =
+            if (noteDetails.isArchived) {
+                archiveButton.isChecked = true
+                R.drawable.ic_baseline_unarchive_24
+            } else {
+                archiveButton.isChecked = false
+                R.drawable.ic_baseline_archive_24
+            }
+        archiveButton.setIcon(archiveIconResource)
+
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val noteDetails = intent.getSerializableExtra(NOTE) as Note
         when (item.itemId) {
             R.id.action_pin -> {
-                if (item.isChecked) {
-                    item.icon.setTint(resources.getColor(R.color.black, theme))
+                if (noteDetails.isRemoved) {
+                    Snackbar.make(this, binding.root, "No permission!", Snackbar.LENGTH_LONG).show()
                 } else {
-                    item.icon.setTint(resources.getColor(R.color.primary, theme))
+                    if (item.isChecked) {
+                        item.icon.setTint(resources.getColor(R.color.black, theme))
+                    } else {
+                        item.icon.setTint(resources.getColor(R.color.primary, theme))
+                    }
+                    item.isChecked = !item.isChecked
                 }
-                item.isChecked = !item.isChecked
+            }
+            R.id.action_archive -> {
+                if (noteDetails.isRemoved) {
+                    Snackbar.make(this, binding.root, "No permission!", Snackbar.LENGTH_LONG).show()
+                } else {
+                    val note = getNoteFromUi()
+                    note.isArchived = !note.isArchived
+                    editNoteViewModel.editNote(note)
+                }
             }
             R.id.action_show_conservation -> {
                 val note = intent.getSerializableExtra(NOTE) as Note
                 val showConservationIntent =
                     Intent(this@EditNoteActivity, ChatActivity::class.java)
+                showConservationIntent.putExtra(AppConstant.ROOM_ID, note.id)
                 showConservationIntent.putExtra(NOTE, note)
-                showConservationIntent.putExtra(ROOM_ID, note.id)
                 startActivity(showConservationIntent)
             }
             R.id.action_save -> {
-                // Save note
-                val noteDetails = intent.getSerializableExtra(NOTE) as Note
-                val note = Note(
-                    noteDetails.id,
-                    binding.edtNoteTitle.text!!.trim().toString(),
-                    binding.edtNoteDesc.text!!.trim().toString(),
-                    noteDetails.lastModified,
-                    menu.getItem(0).isChecked,
-                    isArchived = noteDetails.isArchived,
-                    isRemoved = noteDetails.isRemoved,
-                    role = noteDetails.role,
-                    images = imagesAdapter.currentList
-                )
-                editNoteViewModel.editNote(note)
+                if (noteDetails.isRemoved) {
+                    Snackbar.make(this, binding.root, "No permission!", Snackbar.LENGTH_LONG).show()
+                } else {
+                    // Save note
+                    editNoteViewModel.editNote(getNoteFromUi())
+                }
             }
             else -> {
                 finish()
             }
         }
         return true
+    }
+
+    private fun getNoteFromUi(): Note {
+        val noteDetails = intent.getSerializableExtra(NOTE) as Note
+        return Note(
+            noteDetails.id,
+            binding.edtNoteTitle.text!!.trim().toString(),
+            binding.edtNoteDesc.text!!.trim().toString(),
+            noteDetails.lastModified,
+            menu.getItem(0).isChecked,
+            isArchived = menu.getItem(1).isChecked,
+            isRemoved = noteDetails.isRemoved,
+            role = noteDetails.role,
+            images = imagesAdapter.currentList
+        )
     }
 
     override val launcher: ActivityResultLauncher<Intent> =

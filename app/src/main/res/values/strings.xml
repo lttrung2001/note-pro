@@ -122,4 +122,5 @@
     <string name="dashboard">Dashboard</string>
     <string name="incoming_call">Incoming call</string>
     <string name="archived_notes">Archived notes</string>
+    <string name="archive">Archive</string>
 </resources>

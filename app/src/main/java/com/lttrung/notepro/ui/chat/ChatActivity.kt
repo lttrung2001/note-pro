@@ -47,7 +47,7 @@ class ChatActivity : AppCompatActivity() {
             stackFromEnd = true
         }
         binding.messages.let {
-            it.adapter = messageAdapter
+            it.adapter = adapter
             it.layoutManager = linearLayoutManager
         }
         adapter

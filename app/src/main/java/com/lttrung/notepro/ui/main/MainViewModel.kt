@@ -24,6 +24,12 @@ class MainViewModel @Inject constructor(
     internal val getNotes: MutableLiveData<Resource<List<Note>>> by lazy {
         MutableLiveData<Resource<List<Note>>>()
     }
+    internal val archivedNotesLiveData: MutableLiveData<Resource<List<Note>>> by lazy {
+        MutableLiveData<Resource<List<Note>>>()
+    }
+    internal val removedNotesLiveData: MutableLiveData<Resource<List<Note>>> by lazy {
+        MutableLiveData<Resource<List<Note>>>()
+    }
 
     private var getNotesDisposable: Disposable? = null
 
@@ -33,7 +39,13 @@ class MainViewModel @Inject constructor(
 
     private val observerGetNotes: Consumer<List<Note>> by lazy {
         Consumer { data ->
-            getNotes.postValue(Resource.Success(data))
+            val allNotes = data.sortedByDescending { it.lastModified }
+            val currentNotes = allNotes.filter { !it.isArchived && !it.isRemoved }
+            val archivedNotes = allNotes.filter { it.isArchived && !it.isRemoved }
+            val removedNotes = allNotes.filter { it.isRemoved }
+            getNotes.postValue(Resource.Success(currentNotes))
+            archivedNotesLiveData.postValue(Resource.Success(archivedNotes))
+            removedNotesLiveData.postValue(Resource.Success(removedNotes))
         }
     }
 
@@ -49,12 +61,5 @@ class MainViewModel @Inject constructor(
                 }
             getNotesDisposable?.let { composite.add(it) }
         }
-    }
-
-    internal val archivedNotes: MutableLiveData<List<Note>> by lazy {
-        MutableLiveData<List<Note>>()
-    }
-    internal val removedNotes: MutableLiveData<List<Note>> by lazy {
-        MutableLiveData<List<Note>>()
     }
 }

@@ -42,7 +42,7 @@
                     android:layout_height="48dp"
                     android:layout_gravity="end"
                     android:layout_marginTop="16dp"
-                    android:spinnerMode="dialog" />
+                    android:spinnerMode="dropdown" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/tv_pinned"

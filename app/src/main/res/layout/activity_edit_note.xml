@@ -78,8 +78,10 @@
             android:layout_height="wrap_content"
             android:text="@string/today"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintLeft_toRightOf="@id/btn_open_bottom_sheet"
             app:layout_constraintRight_toLeftOf="@id/btn_delete_note"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageButton
