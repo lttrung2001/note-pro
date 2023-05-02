@@ -100,6 +100,13 @@ class EditNoteActivity : AddImagesActivity() {
     private fun initListeners() {
         binding.btnOpenBottomSheet.setOnClickListener(openBottomSheetDialogListener)
         binding.btnDeleteNote.setOnClickListener(deleteNoteListener)
+        binding.btnRestore.setOnClickListener {
+            val note = intent.getSerializableExtra(NOTE) as Note?
+            note?.let {
+                it.isRemoved = false
+                editNoteViewModel.editNote(it)
+            }
+        }
     }
 
     private fun initObservers() {
@@ -181,6 +188,7 @@ class EditNoteActivity : AddImagesActivity() {
             binding.edtNoteDesc.isEnabled = false
             binding.btnOpenBottomSheet.visibility = View.INVISIBLE
             if (note.isOwner()) {
+                binding.btnRestore.visibility = View.VISIBLE
                 binding.btnDeleteNote.visibility = View.VISIBLE
             }
         } else if (note.isOwner()) {
