@@ -71,4 +71,8 @@ class AddImagesFragment : BottomSheetDialogFragment() {
             }
         }
     }
+
+    companion object {
+        const val TAG = "com.lttrung.notepro.addimagesfragment"
+    }
 }

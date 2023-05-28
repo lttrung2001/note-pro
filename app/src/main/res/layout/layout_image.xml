@@ -14,6 +14,7 @@
         android:id="@+id/button_delete_img"
         android:layout_width="60dp"
         android:layout_height="60dp"
+        android:background="@android:color/transparent"
         android:layout_gravity="bottom|end"
         android:src="@drawable/ic_baseline_delete_outline_24" />
 </androidx.cardview.widget.CardView>

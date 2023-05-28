@@ -70,4 +70,7 @@
     <string name="message">Tin nhắn</string>
     <string name="call">Gọi điện</string>
     <string name="dashboard">Dashboard</string>
+    <string name="incoming_call">Cuộc gọi đến</string>
+    <string name="archived_notes">Ghi chú đã lưu trữ</string>
+    <string name="archive">Lưu trữ</string>
 </resources>

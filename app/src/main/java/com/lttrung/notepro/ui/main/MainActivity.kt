@@ -28,6 +28,7 @@ import com.lttrung.notepro.utils.AppConstant.Companion.DELETED_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.EDITED_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.Resource
+import com.lttrung.notepro.utils.ServiceUtils
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -202,8 +203,7 @@ class MainActivity : AppCompatActivity() {
                         pinNotesAdapter.submitList(pinNotes)
                         normalNotesAdapter.submitList(normalNotes)
 
-                        val service = (application as NoteProApplication).chatService
-                        if (service == null) {
+                        if (!ServiceUtils.isServiceRunning(this, ChatSocketService::class.java)) {
                             startService(Intent(this, ChatSocketService::class.java))
                         }
                     }
@@ -288,7 +288,7 @@ class MainActivity : AppCompatActivity() {
                         val previousResource = mainViewModel.getNotes.value
                         if (previousResource is Resource.Success) {
                             val notes = previousResource.data.toMutableList()
-                            notes.add(note)
+                            notes.add(0, note)
                             mainViewModel.getNotes.postValue(Resource.Success(notes))
                         }
                     }

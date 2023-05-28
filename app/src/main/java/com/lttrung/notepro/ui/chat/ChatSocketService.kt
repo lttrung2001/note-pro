@@ -124,7 +124,6 @@ class ChatSocketService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        noteProApplication.chatService = this@ChatSocketService
         return START_STICKY
     }
 

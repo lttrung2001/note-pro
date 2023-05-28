@@ -14,6 +14,14 @@ import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE
 import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
 
 object NotificationHelper {
+    fun buildChatListenerNotification(context: Context): Notification {
+        return NotificationCompat.Builder(context, AppConstant.CHAT_LISTENER_CHANNEL_ID)
+            .setContentTitle("Chat listener service")
+            .setContentText("Service is running")
+            .setSmallIcon(R.drawable.ic_app)
+            .build()
+    }
+
     fun pushNotification(
         context: Context, channelId: String, message: Message
     ) {
@@ -34,19 +42,11 @@ object NotificationHelper {
                         message.time,
                         Person.Builder().setName(message.user.fullName).build()
                     )
-            ).setSmallIcon(R.drawable.app).setContentIntent(pendingIntent).setAutoCancel(true)
+            ).setSmallIcon(R.drawable.ic_app).setContentIntent(pendingIntent).setAutoCancel(true)
             .build()
         with(NotificationManagerCompat.from(context)) {
             notify(message.room.hashCode(), notification)
         }
-    }
-
-    fun buildChatListenerNotification(context: Context): Notification {
-        return NotificationCompat.Builder(context, AppConstant.CHAT_LISTENER_CHANNEL_ID)
-            .setContentTitle("Chat listener service")
-            .setContentText("Service is running")
-            .setSmallIcon(R.drawable.app)
-            .build()
     }
 
     fun pushNotification(
@@ -58,7 +58,7 @@ object NotificationHelper {
             .setContentTitle(title)
             .setContentText(content)
             .setAutoCancel(true)
-            .setSmallIcon(R.drawable.app).setAutoCancel(true)
+            .setSmallIcon(R.drawable.ic_app).setAutoCancel(true)
             .build()
         with(NotificationManagerCompat.from(context)) {
             notify(System.currentTimeMillis().toInt(), notification)

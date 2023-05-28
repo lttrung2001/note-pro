@@ -14,7 +14,6 @@ import io.reactivex.rxjava3.functions.Consumer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.annotations.jvm.Mutable
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
