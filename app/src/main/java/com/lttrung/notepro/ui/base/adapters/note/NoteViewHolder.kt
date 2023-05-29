@@ -15,12 +15,13 @@ class NoteViewHolder(itemView: View) :
     private val tvIsPin: TextView = itemView.findViewById(R.id.tv_is_pin)
     private val tvRole: TextView = itemView.findViewById(R.id.tv_role)
 
-    fun bind(note: Note) {
+    fun bind(note: Note, noteListener: NoteListener) {
         tvId.text = note.id
         tvTitle.text = note.title
         tvContent.text = note.content
         tvLastModified.text = note.lastModified.toString()
         tvIsPin.text = note.isPin.toString()
         tvRole.text = note.role
+        itemView.setOnClickListener { noteListener.onClick(note) }
     }
 }

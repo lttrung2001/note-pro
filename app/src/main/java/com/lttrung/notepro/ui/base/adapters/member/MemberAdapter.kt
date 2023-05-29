@@ -55,10 +55,7 @@ class MemberAdapter(
         val member = getItem(position)
         if (getItemViewType(position) == MEMBER) {
             holder as MemberViewHolder
-            holder.bind(member)
-            holder.binding.root.setOnClickListener {
-                listener.onClick(member)
-            }
+            holder.bind(member, listener)
         }
     }
 

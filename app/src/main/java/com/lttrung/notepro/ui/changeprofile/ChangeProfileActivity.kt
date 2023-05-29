@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -22,6 +23,12 @@ class ChangeProfileActivity : AppCompatActivity() {
         ActivityChangeProfileBinding.inflate(layoutInflater)
     }
     private val changeProfileViewModel: ChangeProfileViewModel by viewModels()
+    private val alertDialog: AlertDialog by lazy {
+        val builder = AlertDialog.Builder(this)
+        builder.setView(layoutInflater.inflate(R.layout.dialog_loading, null))
+        builder.setCancelable(false)
+        builder.create()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,9 +42,10 @@ class ChangeProfileActivity : AppCompatActivity() {
         changeProfileViewModel.changeProfile.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-
+                    alertDialog.show()
                 }
                 is Resource.Success -> {
+                    alertDialog.dismiss()
                     val resultIntent = Intent()
                     val user = resource.data
                     resultIntent.putExtra(USER, user)
@@ -45,6 +53,7 @@ class ChangeProfileActivity : AppCompatActivity() {
                     finish()
                 }
                 is Resource.Error -> {
+                    alertDialog.dismiss()
                     Snackbar.make(
                         binding.root, resource.t.message.toString(),
                         BaseTransientBottomBar.LENGTH_LONG

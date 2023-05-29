@@ -94,8 +94,8 @@
             android:id="@+id/img"
             android:layout_marginTop="16dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scaleType="centerCrop"
-            android:src="@drawable/app" />
+            android:layout_height="500dp"
+            android:scaleType="fitStart"
+            android:src="@drawable/me" />
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

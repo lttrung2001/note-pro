@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
@@ -22,6 +23,13 @@ class ViewProfileActivity : AppCompatActivity() {
         ActivityViewProfileBinding.inflate(layoutInflater)
     }
     private val viewProfileViewModel: ViewProfileViewModel by viewModels()
+    private val alertDialog: AlertDialog by lazy {
+        val builder = AlertDialog.Builder(this)
+        builder.setView(layoutInflater.inflate(R.layout.dialog_loading, null))
+        builder.setCancelable(false)
+        builder.create()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -34,9 +42,10 @@ class ViewProfileActivity : AppCompatActivity() {
         viewProfileViewModel.profile.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-
+                    alertDialog.show()
                 }
                 is Resource.Success -> {
+                    alertDialog.dismiss()
                     val user = resource.data
                     binding.tvId.text = user.id
                     binding.tvFullName.text = user.fullName
@@ -44,6 +53,7 @@ class ViewProfileActivity : AppCompatActivity() {
                     binding.tvPhoneNumber.text = user.phoneNumber
                 }
                 is Resource.Error -> {
+                    alertDialog.dismiss()
                     Snackbar.make(
                         binding.root, resource.t.message.toString(),
                         Snackbar.LENGTH_LONG

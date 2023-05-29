@@ -32,7 +32,6 @@ class AddMemberFragment : BottomSheetDialogFragment() {
     private val roleAdapter: ArrayAdapter<String> by lazy {
         val roles = arrayListOf("editor", "viewer")
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, roles)
-        binding.roleSpinner.adapter = adapter
         adapter
     }
 
@@ -47,6 +46,7 @@ class AddMemberFragment : BottomSheetDialogFragment() {
     }
 
     private fun initViews() {
+        binding.roleSpinner.adapter = roleAdapter
         bindProgressButton(binding.addButton)
         binding.addButton.attachTextChangeAnimator()
     }
