@@ -57,7 +57,7 @@ class AddImagesFragment : BottomSheetDialogFragment() {
         View.OnClickListener {
             if (ActivityCompat.checkSelfPermission(
                     requireContext(),
-                    Manifest.permission.CAMERA
+                    Manifest.permission.READ_EXTERNAL_STORAGE
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
                 ActivityCompat.requestPermissions(

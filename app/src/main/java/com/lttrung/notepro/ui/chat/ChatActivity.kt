@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
-import com.lttrung.notepro.NoteProApplication
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityChatBinding
 import com.lttrung.notepro.domain.data.locals.room.entities.CurrentUser
@@ -189,7 +188,6 @@ class ChatActivity : AppCompatActivity() {
         val loadMessagesIntentFilter = IntentFilter(LOAD_MESSAGES_RECEIVED)
         registerReceiver(loadMessagesReceiver, loadMessagesIntentFilter)
 
-        (application as NoteProApplication).chatActivity = this
         Intent(this, ChatSocketService::class.java).also { intent ->
             bindService(intent, connection, Context.BIND_AUTO_CREATE)
         }
@@ -205,7 +203,6 @@ class ChatActivity : AppCompatActivity() {
         unregisterReceiver(messageReceiver)
         unregisterReceiver(loadMessagesReceiver)
 
-        (application as NoteProApplication).chatActivity = null
         unbindService(connection)
     }
 

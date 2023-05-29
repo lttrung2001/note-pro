@@ -7,7 +7,6 @@ import android.os.Binder
 import android.os.IBinder
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
-import com.lttrung.notepro.NoteProApplication
 import com.lttrung.notepro.domain.data.locals.UserLocals
 import com.lttrung.notepro.domain.data.networks.models.ApiResponse
 import com.lttrung.notepro.domain.data.networks.models.Message
@@ -25,6 +24,7 @@ import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGES_JSON
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE_RECEIVED
 import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.USER
+import com.lttrung.notepro.utils.CurrentActivityHolder
 import com.lttrung.notepro.utils.NotificationHelper
 import com.lttrung.notepro.utils.Resource
 import com.lttrung.notepro.utils.RetrofitUtils.BASE_URL
@@ -82,9 +82,6 @@ class ChatSocketService : Service() {
 
     private val accessTokenLiveData: MutableLiveData<Resource<String>> by lazy {
         MutableLiveData<Resource<String>>()
-    }
-    private val noteProApplication: NoteProApplication by lazy {
-        application as NoteProApplication
     }
 
 
@@ -198,7 +195,7 @@ class ChatSocketService : Service() {
             val message = gson.fromJson(args[0].toString(), Message::class.java)
             val process = ActivityManager.RunningAppProcessInfo()
             ActivityManager.getMyMemoryState(process)
-            val isChatActivity = noteProApplication.chatActivity != null
+            val isChatActivity = CurrentActivityHolder.currentActivity is ChatActivity
             if (process.importance != ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND || !isChatActivity) {
                 NotificationHelper.pushNotification(
                     baseContext,

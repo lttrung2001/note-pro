@@ -26,8 +26,6 @@ import com.lttrung.notepro.ui.main.MainViewModel.Companion.GET_CURRENT_NOTES
 import com.lttrung.notepro.ui.main.MainViewModel.Companion.GET_REMOVED_NOTES
 import com.lttrung.notepro.ui.notedetails.NoteDetailsActivity
 import com.lttrung.notepro.ui.setting.SettingActivity
-import com.lttrung.notepro.utils.AppConstant.Companion.DELETED_NOTE
-import com.lttrung.notepro.utils.AppConstant.Companion.EDITED_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.Resource
 import com.lttrung.notepro.utils.ServiceUtils
@@ -185,6 +183,7 @@ class MainActivity : AppCompatActivity() {
                 override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                     when (p2) {
                         0 -> {
+
                             mainViewModel.getNotes(GET_CURRENT_NOTES)
                         }
                         1 -> {

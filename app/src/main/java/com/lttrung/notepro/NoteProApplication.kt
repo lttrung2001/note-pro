@@ -2,20 +2,20 @@ package com.lttrung.notepro
 
 import android.app.Application
 import android.app.NotificationManager
-import android.content.Intent
-import com.lttrung.notepro.ui.chat.ChatActivity
-import com.lttrung.notepro.ui.chat.ChatSocketService
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_CHANNEL_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_LISTENER_CHANNEL_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.MISSED_CALL_CHANNEL_ID
+import com.lttrung.notepro.utils.CurrentActivityHolder
 import com.lttrung.notepro.utils.NotificationChannelManager
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class NoteProApplication : Application() {
-    var chatActivity: ChatActivity? = null
     override fun onCreate() {
         super.onCreate()
+
+        // Register activity lifecycle callbacks
+        registerActivityLifecycleCallbacks(CurrentActivityHolder())
 
         registerChatListenerChannel()
         registerChatChannel()

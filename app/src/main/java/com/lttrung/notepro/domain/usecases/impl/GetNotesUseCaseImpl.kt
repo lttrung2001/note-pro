@@ -10,6 +10,8 @@ class GetNotesUseCaseImpl @Inject constructor(
     private val repositories: NoteRepositories
 ) : GetNotesUseCase {
     override fun execute(): Single<List<Note>> {
-        return repositories.getNotes()
+        return repositories.getNotes().map { allNotes ->
+            allNotes.filter { !it.isArchived && !it.isRemoved }
+        }
     }
 }

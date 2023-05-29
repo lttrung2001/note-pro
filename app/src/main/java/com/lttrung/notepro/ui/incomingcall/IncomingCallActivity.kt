@@ -26,6 +26,7 @@ class IncomingCallActivity : AppCompatActivity() {
     private val countDownTimer: CountDownTimer by lazy {
         object: CountDownTimer(30 * 1000, 1000) {
             override fun onTick(p0: Long) {
+                
             }
 
             override fun onFinish() {
