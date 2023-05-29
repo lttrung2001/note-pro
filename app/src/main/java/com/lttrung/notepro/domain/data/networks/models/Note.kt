@@ -1,6 +1,6 @@
 package com.lttrung.notepro.domain.data.networks.models
 
-import com.lttrung.notepro.domain.data.locals.room.entities.NoteLocalsModel
+import com.lttrung.notepro.domain.data.locals.database.entities.NoteLocalsModel
 import java.io.Serializable
 
 data class Note(

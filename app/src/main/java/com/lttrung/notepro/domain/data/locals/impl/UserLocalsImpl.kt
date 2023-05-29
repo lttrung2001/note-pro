@@ -5,9 +5,9 @@ import android.content.Intent
 import android.content.SharedPreferences
 import com.auth0.android.jwt.JWT
 import com.lttrung.notepro.domain.data.locals.UserLocals
-import com.lttrung.notepro.domain.data.locals.room.entities.CurrentUser
-import com.lttrung.notepro.domain.data.locals.room.dao.CurrentUserDao
-import com.lttrung.notepro.domain.data.locals.room.dao.NoteDao
+import com.lttrung.notepro.domain.data.locals.database.entities.CurrentUser
+import com.lttrung.notepro.domain.data.locals.database.dao.CurrentUserDao
+import com.lttrung.notepro.domain.data.locals.database.dao.NoteDao
 import com.lttrung.notepro.ui.chat.ChatSocketService
 import com.lttrung.notepro.utils.AppConstant.Companion.ACCESS_TOKEN
 import com.lttrung.notepro.utils.AppConstant.Companion.REFRESH_TOKEN

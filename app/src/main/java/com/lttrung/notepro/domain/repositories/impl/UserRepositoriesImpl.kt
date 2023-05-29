@@ -1,7 +1,7 @@
 package com.lttrung.notepro.domain.repositories.impl
 
 import com.lttrung.notepro.domain.data.locals.UserLocals
-import com.lttrung.notepro.domain.data.locals.room.entities.CurrentUser
+import com.lttrung.notepro.domain.data.locals.database.entities.CurrentUser
 import com.lttrung.notepro.domain.data.networks.UserNetworks
 import com.lttrung.notepro.domain.data.networks.models.UserInfo
 import com.lttrung.notepro.domain.repositories.UserRepositories

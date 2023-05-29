@@ -53,7 +53,7 @@ abstract class AddImagesActivity : AppCompatActivity() {
     }
 
     private fun openBottomSheetMenu() {
-        bottomSheet.show(supportFragmentManager, AddImagesFragment.TAG)
+        bottomSheet.show(supportFragmentManager, bottomSheet.tag)
     }
 
     protected abstract val launcher: ActivityResultLauncher<Intent>

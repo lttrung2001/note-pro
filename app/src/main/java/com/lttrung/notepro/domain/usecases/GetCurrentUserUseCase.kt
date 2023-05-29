@@ -1,6 +1,6 @@
 package com.lttrung.notepro.domain.usecases
 
-import com.lttrung.notepro.domain.data.locals.room.entities.CurrentUser
+import com.lttrung.notepro.domain.data.locals.database.entities.CurrentUser
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Singleton
 

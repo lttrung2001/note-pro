@@ -73,4 +73,8 @@
     <string name="incoming_call">Cuộc gọi đến</string>
     <string name="archived_notes">Ghi chú đã lưu trữ</string>
     <string name="archive">Lưu trữ</string>
+    <string name="upload_by">Tải lên bởi</string>
+    <string name="h_m_nay">Hôm nay</string>
+    <string name="details">Chi tiết</string>
+    <string name="image_name">Tên ảnh</string>
 </resources>

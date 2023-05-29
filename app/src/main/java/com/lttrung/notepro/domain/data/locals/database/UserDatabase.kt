@@ -1,14 +1,14 @@
-package com.lttrung.notepro.domain.data.locals.room
+package com.lttrung.notepro.domain.data.locals.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.lttrung.notepro.domain.data.locals.room.dao.CurrentUserDao
-import com.lttrung.notepro.domain.data.locals.room.dao.NoteDao
-import com.lttrung.notepro.domain.data.locals.room.entities.CurrentUser
-import com.lttrung.notepro.domain.data.locals.room.entities.NoteLocalsModel
+import com.lttrung.notepro.domain.data.locals.database.dao.CurrentUserDao
+import com.lttrung.notepro.domain.data.locals.database.dao.NoteDao
+import com.lttrung.notepro.domain.data.locals.database.entities.CurrentUser
+import com.lttrung.notepro.domain.data.locals.database.entities.NoteLocalsModel
 import com.lttrung.notepro.utils.AppConstant.Companion.USER_DATABASE_VERSION
 
 @Database(

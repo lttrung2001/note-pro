@@ -1,8 +1,6 @@
 package com.lttrung.notepro.domain.usecases
 
-import com.lttrung.notepro.domain.data.locals.room.entities.CurrentUser
 import com.lttrung.notepro.domain.data.networks.models.Message
-import io.reactivex.rxjava3.core.Single
 import io.socket.client.Socket
 import javax.inject.Singleton
 

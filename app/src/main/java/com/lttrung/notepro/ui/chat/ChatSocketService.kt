@@ -31,6 +31,7 @@ import com.lttrung.notepro.utils.RetrofitUtils.BASE_URL
 import dagger.hilt.android.AndroidEntryPoint
 import io.socket.client.IO
 import io.socket.client.Socket
+import kotlinx.coroutines.*
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -40,6 +41,9 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ChatSocketService : Service() {
+    private val job = SupervisorJob()
+    private val scope = CoroutineScope(Dispatchers.IO + job)
+
     @Inject
     lateinit var messageRepositories: MessageRepositories
 
@@ -103,7 +107,9 @@ class ChatSocketService : Service() {
         This function use to start login page if faces some errors
      */
     private fun requireLogin() {
-        userLocals.logout()
+        scope.launch(Dispatchers.IO) {
+            userLocals.logout()
+        }
         val loginIntent = Intent(baseContext, LoginActivity::class.java)
         loginIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         baseContext.startActivity(loginIntent)
@@ -145,14 +151,14 @@ class ChatSocketService : Service() {
                         "Error while connecting chat server",
                         resource.t.message.toString()
                     )
-//                    requireLogin()
+                    requireLogin()
                     stopSelf()
                 }
             }
         }
     }
     private fun callGetAccessTokenApi(refreshToken: String) {
-        val fetchAccessTokenThread = Thread {
+        scope.launch(Dispatchers.IO) {
             accessTokenLiveData.postValue(Resource.Loading())
             val client = OkHttpClient.Builder()
                 .build()
@@ -175,7 +181,6 @@ class ChatSocketService : Service() {
                 accessTokenLiveData.postValue(Resource.Error(e))
             }
         }
-        fetchAccessTokenThread.start()
     }
     private fun createSocket(accessToken: String): Socket {
         return IO.socket(BASE_URL, IO.Options.builder().setReconnection(true).setAuth(buildMap {

@@ -123,4 +123,8 @@
     <string name="incoming_call">Incoming call</string>
     <string name="archived_notes">Archived notes</string>
     <string name="archive">Archive</string>
+    <string name="upload_by">Upload by</string>
+    <string name="h_m_nay">Today</string>
+    <string name="details">Details</string>
+    <string name="image_name">Image name</string>
 </resources>

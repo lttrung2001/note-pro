@@ -5,7 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import com.lttrung.notepro.domain.data.locals.room.entities.ImageSelectionLocalsModel
+import com.lttrung.notepro.domain.data.locals.models.ImageSelectionLocalsModel
 import com.lttrung.notepro.domain.data.networks.models.Paging
 import io.reactivex.rxjava3.core.Single
 

@@ -1,5 +1,6 @@
 package com.lttrung.notepro.ui.editnote
 
+import android.annotation.SuppressLint
 import android.app.Service
 import android.content.ComponentName
 import android.content.Intent
@@ -12,6 +13,7 @@ import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.lttrung.notepro.R
@@ -34,6 +36,7 @@ import com.ramotion.cardslider.CardSliderLayoutManager
 import com.ramotion.cardslider.CardSnapHelper
 import dagger.hilt.android.AndroidEntryPoint
 
+@SuppressLint("InflateParams")
 @AndroidEntryPoint
 class EditNoteActivity : AddImagesActivity() {
     private lateinit var menu: Menu
@@ -49,6 +52,12 @@ class EditNoteActivity : AddImagesActivity() {
         adapter
     }
     private val editNoteViewModel: EditNoteViewModel by viewModels()
+    private val alertDialog: AlertDialog by lazy {
+        val builder = AlertDialog.Builder(this)
+        builder.setView(layoutInflater.inflate(R.layout.dialog_loading, null))
+        builder.setCancelable(false)
+        builder.create()
+    }
     private val connection: ServiceConnection by lazy {
         object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -113,15 +122,17 @@ class EditNoteActivity : AddImagesActivity() {
         editNoteViewModel.editNote.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-
+                    alertDialog.show()
                 }
                 is Resource.Success -> {
+                    alertDialog.dismiss()
                     val resultIntent = Intent()
                     resultIntent.putExtra(EDITED_NOTE, resource.data)
                     setResult(RESULT_OK, resultIntent)
                     finish()
                 }
                 is Resource.Error -> {
+                    alertDialog.dismiss()
                     Snackbar.make(
                         binding.root, resource.t.message.toString(),
                         Snackbar.LENGTH_LONG
@@ -133,9 +144,10 @@ class EditNoteActivity : AddImagesActivity() {
         editNoteViewModel.deleteNote.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-
+                    alertDialog.show()
                 }
                 is Resource.Success -> {
+                    alertDialog.dismiss()
                     val note = intent.getSerializableExtra(NOTE) as Note
                     val roomId = note.id
 
@@ -147,6 +159,7 @@ class EditNoteActivity : AddImagesActivity() {
                     finish()
                 }
                 is Resource.Error -> {
+                    alertDialog.dismiss()
                     Snackbar.make(
                         binding.root, resource.t.message.toString(),
                         Snackbar.LENGTH_LONG
@@ -158,9 +171,10 @@ class EditNoteActivity : AddImagesActivity() {
         editNoteViewModel.noteDetails.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-
+                    alertDialog.show()
                 }
                 is Resource.Success -> {
+                    alertDialog.dismiss()
                     val note = resource.data
                     intent.putExtra(NOTE, note)
                     binding.edtNoteTitle.setText(note.title)
@@ -169,6 +183,7 @@ class EditNoteActivity : AddImagesActivity() {
                     imagesAdapter.submitList(note.images)
                 }
                 is Resource.Error -> {
+                    alertDialog.dismiss()
                     Snackbar.make(
                         binding.root, resource.t.message.toString(),
                         Snackbar.LENGTH_LONG

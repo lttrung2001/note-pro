@@ -1,5 +1,6 @@
 package com.lttrung.notepro.ui.addnote
 
+import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -11,6 +12,7 @@ import android.view.MenuItem
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
 import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
@@ -27,6 +29,7 @@ import com.ramotion.cardslider.CardSliderLayoutManager
 import com.ramotion.cardslider.CardSnapHelper
 import dagger.hilt.android.AndroidEntryPoint
 
+@SuppressLint("InflateParams")
 @AndroidEntryPoint
 class AddNoteActivity : AddImagesActivity() {
     private val binding: ActivityAddNoteBinding by lazy {
@@ -41,8 +44,14 @@ class AddNoteActivity : AddImagesActivity() {
         }
         adapter
     }
-    private lateinit var menu: Menu
     private val addNoteViewModel: AddNoteViewModel by viewModels()
+    private val alertDialog: AlertDialog by lazy {
+        val builder = AlertDialog.Builder(this)
+        builder.setView(layoutInflater.inflate(R.layout.dialog_loading, null))
+        builder.setCancelable(false)
+        builder.create()
+    }
+    private lateinit var menu: Menu
     private lateinit var socketService: ChatSocketService
 
     private val connection: ServiceConnection by lazy {
@@ -81,9 +90,10 @@ class AddNoteActivity : AddImagesActivity() {
         addNoteViewModel.addNote.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-
+                    alertDialog.show()
                 }
                 is Resource.Success -> {
+                    alertDialog.dismiss()
                     val resultIntent = Intent()
                     val note = resource.data
                     resultIntent.putExtra(NOTE, note)
@@ -94,6 +104,7 @@ class AddNoteActivity : AddImagesActivity() {
                     finish()
                 }
                 is Resource.Error -> {
+                    alertDialog.dismiss()
                     Snackbar.make(binding.root, resource.t.message.toString(), LENGTH_LONG).show()
                 }
             }

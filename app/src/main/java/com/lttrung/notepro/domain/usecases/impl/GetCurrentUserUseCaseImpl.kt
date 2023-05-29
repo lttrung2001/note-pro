@@ -1,6 +1,6 @@
 package com.lttrung.notepro.domain.usecases.impl
 
-import com.lttrung.notepro.domain.data.locals.room.entities.CurrentUser
+import com.lttrung.notepro.domain.data.locals.database.entities.CurrentUser
 import com.lttrung.notepro.domain.repositories.UserRepositories
 import com.lttrung.notepro.domain.usecases.GetCurrentUserUseCase
 import io.reactivex.rxjava3.core.Single

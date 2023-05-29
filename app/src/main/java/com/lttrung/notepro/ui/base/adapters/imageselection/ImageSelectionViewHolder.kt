@@ -4,7 +4,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.LayoutImageSelectionBinding
-import com.lttrung.notepro.domain.data.locals.room.entities.ImageSelectionLocalsModel
+import com.lttrung.notepro.domain.data.locals.models.ImageSelectionLocalsModel
 
 class ImageSelectionViewHolder(private val binding: LayoutImageSelectionBinding) :
     RecyclerView.ViewHolder(binding.root) {
