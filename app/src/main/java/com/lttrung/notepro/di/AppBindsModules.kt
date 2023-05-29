@@ -81,6 +81,12 @@ abstract class AppBindsModules {
     abstract fun bindsGetNotesUseCase(impl: GetNotesUseCaseImpl): GetNotesUseCase
 
     @Binds
+    abstract fun bindsGetArchivedNotesUseCase(impl: GetArchivedNotesUseCaseImpl): GetArchivedNotesUseCase
+
+    @Binds
+    abstract fun bindsGetRemovedNotesUseCase(impl: GetRemovedNotesUseCaseImpl): GetRemovedNotesUseCase
+
+    @Binds
     abstract fun bindsLogoutUseCase(impl: LogoutUseCaseImpl): LogoutUseCase
 
     @Binds
