@@ -26,7 +26,7 @@ class IncomingCallActivity : AppCompatActivity() {
     private val countDownTimer: CountDownTimer by lazy {
         object: CountDownTimer(30 * 1000, 1000) {
             override fun onTick(p0: Long) {
-                
+
             }
 
             override fun onFinish() {
@@ -34,7 +34,7 @@ class IncomingCallActivity : AppCompatActivity() {
                 finish()
                 // Push notification for missing call
                 val incomingUser = intent.getSerializableExtra(USER) as User?
-                val notificationHelper = NotificationHelper.pushNotification(
+                NotificationHelper.pushNotification(
                     this@IncomingCallActivity,
                     MISSED_CALL_CHANNEL_ID,
                     "Missed call",
