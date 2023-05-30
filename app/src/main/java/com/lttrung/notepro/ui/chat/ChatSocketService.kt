@@ -151,7 +151,6 @@ class ChatSocketService : Service() {
                         "Error while connecting chat server",
                         resource.t.message.toString()
                     )
-                    requireLogin()
                     stopSelf()
                 }
             }
@@ -193,7 +192,6 @@ class ChatSocketService : Service() {
     private fun startConnection() {
         socket.connect()
         socket.on(Socket.EVENT_CONNECT_ERROR) {
-            userLocals.logout()
             stopSelf()
         }
         socket.on("chat") { args ->
