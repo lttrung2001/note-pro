@@ -29,6 +29,7 @@ class EditMemberActivity : AppCompatActivity() {
     private val binding: ActivityEditMemberBinding by lazy {
         ActivityEditMemberBinding.inflate(layoutInflater)
     }
+    private val editMemberViewModel: EditMemberViewModel by viewModels()
     private val roleAdapter: ArrayAdapter<String> by lazy {
         val roles = arrayListOf("editor", "viewer")
         val adapter =
@@ -36,18 +37,20 @@ class EditMemberActivity : AppCompatActivity() {
         binding.roleSpinner.adapter = adapter
         adapter
     }
-    private val editMemberViewModel: EditMemberViewModel by viewModels()
+    private val note: Note by lazy {
+        intent.getSerializableExtra(NOTE) as Note
+    }
+    private val member: Member by lazy {
+        intent.getSerializableExtra(MEMBER) as Member
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         initViews()
         initListeners()
         initObservers()
-        if (editMemberViewModel.memberDetails.value == null) {
-            val note = intent.getSerializableExtra(NOTE) as Note
-            val member = intent.getSerializableExtra(MEMBER) as Member
-            editMemberViewModel.getMemberDetails(note.id, member.id)
-        }
+
+        editMemberViewModel.getMemberDetails(note.id, member.id)
     }
 
     private fun initObservers() {
@@ -80,7 +83,6 @@ class EditMemberActivity : AppCompatActivity() {
                     binding.deleteButton.isClickable = true
                     binding.deleteButton.hideProgress(R.string.remove)
                     val resultIntent = Intent()
-                    val member = intent.getSerializableExtra(MEMBER) as Member
                     resultIntent.putExtra(DELETED_MEMBER, member)
                     setResult(RESULT_OK, resultIntent)
                     finish()
@@ -126,7 +128,6 @@ class EditMemberActivity : AppCompatActivity() {
         bindProgressButton(binding.deleteButton)
         binding.deleteButton.attachTextChangeAnimator()
 
-        val member = intent.getSerializableExtra(MEMBER) as Member
         binding.roleSpinner.setSelection(roleAdapter.getPosition(member.role))
         binding.tvId.text = member.id
         binding.tvEmail.text = member.email
@@ -142,7 +143,6 @@ class EditMemberActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_save -> {
-                val note = intent.getSerializableExtra(NOTE) as Note
                 val member = Member(
                     binding.tvId.text.toString(),
                     binding.tvEmail.text.toString(),
@@ -161,8 +161,6 @@ class EditMemberActivity : AppCompatActivity() {
 
     private val deleteListener: View.OnClickListener by lazy {
         View.OnClickListener {
-            val note = intent.getSerializableExtra(NOTE) as Note
-            val member = intent.getSerializableExtra(MEMBER) as Member
             editMemberViewModel.deleteMember(note.id, member.id)
         }
     }

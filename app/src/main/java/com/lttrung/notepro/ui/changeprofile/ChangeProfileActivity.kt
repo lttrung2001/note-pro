@@ -23,6 +23,9 @@ class ChangeProfileActivity : AppCompatActivity() {
         ActivityChangeProfileBinding.inflate(layoutInflater)
     }
     private val changeProfileViewModel: ChangeProfileViewModel by viewModels()
+    private val userInfo: UserInfo by lazy {
+        intent.getSerializableExtra(USER) as UserInfo
+    }
     private val alertDialog: AlertDialog by lazy {
         val builder = AlertDialog.Builder(this)
         builder.setView(layoutInflater.inflate(R.layout.dialog_loading, null))
@@ -64,11 +67,10 @@ class ChangeProfileActivity : AppCompatActivity() {
     }
 
     private fun initData() {
-        val user = intent.getSerializableExtra(USER) as UserInfo
-        binding.tvId.text = user.id
-        binding.tvEmail.text = user.email
-        binding.tvFullName.setText(user.fullName)
-        binding.tvPhoneNumber.setText(user.phoneNumber)
+        binding.tvId.text = userInfo.id
+        binding.tvEmail.text = userInfo.email
+        binding.tvFullName.setText(userInfo.fullName)
+        binding.tvPhoneNumber.setText(userInfo.phoneNumber)
     }
 
     private fun initViews() {
@@ -94,8 +96,7 @@ class ChangeProfileActivity : AppCompatActivity() {
                     binding.tvPhoneNumber.error = getString(R.string.phone_number_check)
                 }
                 if (!helper.hasError) {
-                    val user = intent.getSerializableExtra(USER) as UserInfo
-                    intent.putExtra(USER, UserInfo(user.id, user.email, fullName, phoneNumber))
+                    intent.putExtra(USER, UserInfo(userInfo.id, userInfo.email, fullName, phoneNumber))
                     changeProfileViewModel.changeProfile(fullName, phoneNumber)
                 }
             }

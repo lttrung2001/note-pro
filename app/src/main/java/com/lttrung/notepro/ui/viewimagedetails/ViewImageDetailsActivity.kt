@@ -1,6 +1,7 @@
 package com.lttrung.notepro.ui.viewimagedetails
 
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -40,8 +41,15 @@ class ViewImageDetailsActivity : AppCompatActivity() {
         setupView()
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        finish()
+        return true
+    }
+
     private fun setupView() {
         setContentView(binding.root)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         binding.images.apply {
             layoutManager = LinearLayoutManager(

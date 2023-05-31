@@ -52,6 +52,9 @@ class EditNoteActivity : AddImagesActivity() {
         adapter
     }
     private val editNoteViewModel: EditNoteViewModel by viewModels()
+    private val note: Note by lazy {
+        intent.getSerializableExtra(NOTE) as Note
+    }
     private val alertDialog: AlertDialog by lazy {
         val builder = AlertDialog.Builder(this)
         builder.setView(layoutInflater.inflate(R.layout.dialog_loading, null))
@@ -78,10 +81,7 @@ class EditNoteActivity : AddImagesActivity() {
         initListeners()
         initData()
         initObservers()
-        val note = intent.getSerializableExtra(NOTE) as Note?
-        note?.let {
-            editNoteViewModel.getNoteDetails(it.id)
-        }
+        editNoteViewModel.getNoteDetails(note.id)
     }
 
     override fun onStart() {
@@ -97,7 +97,6 @@ class EditNoteActivity : AddImagesActivity() {
     }
 
     private fun initData() {
-        val note = intent.getSerializableExtra(NOTE) as Note
         binding.apply {
             edtNoteTitle.setText(note.title)
             edtNoteDesc.setText(note.content)
@@ -110,11 +109,8 @@ class EditNoteActivity : AddImagesActivity() {
         binding.btnOpenBottomSheet.setOnClickListener(openBottomSheetDialogListener)
         binding.btnDeleteNote.setOnClickListener(deleteNoteListener)
         binding.btnRestore.setOnClickListener {
-            val note = intent.getSerializableExtra(NOTE) as Note?
-            note?.let {
-                it.isRemoved = false
-                editNoteViewModel.editNote(it)
-            }
+            note.isRemoved = false
+            editNoteViewModel.editNote(note)
         }
     }
 
@@ -197,7 +193,6 @@ class EditNoteActivity : AddImagesActivity() {
         setContentView(binding.root)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val note = intent.getSerializableExtra(NOTE) as Note
         if (note.isRemoved) {
             binding.edtNoteTitle.isEnabled = false
             binding.edtNoteDesc.isEnabled = false
@@ -213,38 +208,36 @@ class EditNoteActivity : AddImagesActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_edit_note, menu)
-        this.menu = menu!!
+        menu?.let {
+            this.menu = menu
 
-        val noteDetails = intent.getSerializableExtra(NOTE) as Note
+            val pinButton = menu.getItem(0)
+            val archiveButton = menu.getItem(1)
 
-        val pinButton = menu.getItem(0)
-        val archiveButton = menu.getItem(1)
+            pinButton.isChecked = note.isPin
+            val pinIcon = if (note.isPin) resources.getColor(
+                R.color.primary,
+                theme
+            ) else resources.getColor(R.color.black, theme)
+            pinButton.icon.setTint(pinIcon)
 
-        pinButton.isChecked = noteDetails.isPin
-        val pinIcon = if (noteDetails.isPin) resources.getColor(
-            R.color.primary,
-            theme
-        ) else resources.getColor(R.color.black, theme)
-        pinButton.icon.setTint(pinIcon)
-
-        val archiveIconResource =
-            if (noteDetails.isArchived) {
-                archiveButton.isChecked = true
-                R.drawable.ic_baseline_unarchive_24
-            } else {
-                archiveButton.isChecked = false
-                R.drawable.ic_baseline_archive_24
-            }
-        archiveButton.setIcon(archiveIconResource)
-
+            val archiveIconResource =
+                if (note.isArchived) {
+                    archiveButton.isChecked = true
+                    R.drawable.ic_baseline_unarchive_24
+                } else {
+                    archiveButton.isChecked = false
+                    R.drawable.ic_baseline_archive_24
+                }
+            archiveButton.setIcon(archiveIconResource)
+        }
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val noteDetails = intent.getSerializableExtra(NOTE) as Note
         when (item.itemId) {
             R.id.action_pin -> {
-                if (noteDetails.isRemoved) {
+                if (note.isRemoved) {
                     Snackbar.make(this, binding.root, "No permission!", Snackbar.LENGTH_LONG).show()
                 } else {
                     if (item.isChecked) {
@@ -256,7 +249,7 @@ class EditNoteActivity : AddImagesActivity() {
                 }
             }
             R.id.action_archive -> {
-                if (noteDetails.isRemoved) {
+                if (note.isRemoved) {
                     Snackbar.make(this, binding.root, "No permission!", Snackbar.LENGTH_LONG).show()
                 } else {
                     val note = getNoteFromUi()
@@ -273,7 +266,7 @@ class EditNoteActivity : AddImagesActivity() {
                 startActivity(showConservationIntent)
             }
             R.id.action_save -> {
-                if (noteDetails.isRemoved) {
+                if (note.isRemoved) {
                     Snackbar.make(this, binding.root, "No permission!", Snackbar.LENGTH_LONG).show()
                 } else {
                     // Save note
@@ -288,16 +281,15 @@ class EditNoteActivity : AddImagesActivity() {
     }
 
     private fun getNoteFromUi(): Note {
-        val noteDetails = intent.getSerializableExtra(NOTE) as Note
         return Note(
-            noteDetails.id,
+            note.id,
             binding.edtNoteTitle.text!!.trim().toString(),
             binding.edtNoteDesc.text!!.trim().toString(),
-            noteDetails.lastModified,
+            note.lastModified,
             menu.getItem(0).isChecked,
             isArchived = menu.getItem(1).isChecked,
-            isRemoved = noteDetails.isRemoved,
-            role = noteDetails.role,
+            isRemoved = note.isRemoved,
+            role = note.role,
             images = imagesAdapter.currentList
         )
     }
@@ -318,7 +310,6 @@ class EditNoteActivity : AddImagesActivity() {
 
     private val deleteNoteListener: View.OnClickListener by lazy {
         View.OnClickListener {
-            val note = intent.getSerializableExtra(NOTE) as Note
             if (note.isRemoved) {
                 editNoteViewModel.deleteNote(note)
             } else {

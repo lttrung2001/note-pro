@@ -38,6 +38,9 @@ class NoteDetailsActivity : AppCompatActivity() {
         adapter
     }
     private val noteDetailsViewModel: NoteDetailsViewModel by viewModels()
+    private val note: Note by lazy {
+        intent.getSerializableExtra(NOTE) as Note
+    }
     private lateinit var menu: Menu
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,7 +81,6 @@ class NoteDetailsActivity : AppCompatActivity() {
     }
 
     private fun initData() {
-        val note = intent.getSerializableExtra(NOTE) as Note
         binding.edtNoteTitle.text = note.title
         binding.edtNoteDesc.text = note.content
         binding.tvLastModified.text = Converter.longToDate(note.lastModified)
@@ -88,14 +90,16 @@ class NoteDetailsActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_note_details, menu)
-        this.menu = menu!!
-        val noteDetails = intent.getSerializableExtra(NOTE) as Note
-        val pinButton = menu.getItem(0)
-        pinButton.isChecked = noteDetails.isPin
-        if (noteDetails.isPin) {
-            pinButton.icon.setTint(resources.getColor(R.color.primary, theme))
-        } else {
-            pinButton.icon.setTint(resources.getColor(R.color.black, theme))
+        menu?.let {
+            this.menu = menu
+            val noteDetails = intent.getSerializableExtra(NOTE) as Note
+            val pinButton = menu.getItem(0)
+            pinButton.isChecked = noteDetails.isPin
+            if (noteDetails.isPin) {
+                pinButton.icon.setTint(resources.getColor(R.color.primary, theme))
+            } else {
+                pinButton.icon.setTint(resources.getColor(R.color.black, theme))
+            }
         }
         return true
     }
@@ -111,7 +115,6 @@ class NoteDetailsActivity : AppCompatActivity() {
                 item.isChecked = !item.isChecked
             }
             R.id.action_show_conservation -> {
-                val note = intent.getSerializableExtra(NOTE) as Note
                 val showConservationIntent =
                     Intent(this@NoteDetailsActivity, ChatActivity::class.java)
                 showConservationIntent.putExtra(ROOM_ID, note.id)
@@ -119,7 +122,6 @@ class NoteDetailsActivity : AppCompatActivity() {
                 startActivity(showConservationIntent)
             }
             else -> {
-                val note = intent.getSerializableExtra(NOTE) as Note
                 note.isPin = menu.getItem(0).isChecked
                 noteDetailsViewModel.editNote(note)
                 val resultIntent = Intent()

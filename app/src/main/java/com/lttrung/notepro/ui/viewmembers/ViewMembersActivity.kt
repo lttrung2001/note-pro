@@ -45,6 +45,9 @@ class ViewMembersActivity : AppCompatActivity() {
     private val addMemberFragment: AddMemberFragment by lazy {
         AddMemberFragment()
     }
+    private val note: Note by lazy {
+        intent.getSerializableExtra(NOTE) as Note
+    }
     private lateinit var toAddMemberButton: MenuItem
     private lateinit var socketService: ChatSocketService
 
@@ -75,7 +78,6 @@ class ViewMembersActivity : AppCompatActivity() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    val note = intent.getSerializableExtra(NOTE) as Note
                     getMembersViewModel.getMembers(
                         note.id,
                         getMembersViewModel.page,
@@ -119,7 +121,6 @@ class ViewMembersActivity : AppCompatActivity() {
     }
 
     private fun initData() {
-        val note = intent.getSerializableExtra(NOTE) as Note
         getMembersViewModel.getMembers(
             note.id, getMembersViewModel.page, PAGE_LIMIT
         )
@@ -143,7 +144,9 @@ class ViewMembersActivity : AppCompatActivity() {
         val note = intent.getSerializableExtra(NOTE) as Note
         if (note.isOwner()) {
             menuInflater.inflate(R.menu.menu_show_members, menu)
-            toAddMemberButton = menu?.getItem(0)!!
+            menu?.let {
+                toAddMemberButton = it.getItem(0)
+            }
         }
         return super.onCreateOptionsMenu(menu)
     }
@@ -190,7 +193,6 @@ class ViewMembersActivity : AppCompatActivity() {
                             )
                         )
 
-                        val note = intent.getSerializableExtra(NOTE) as Note
                         val roomId = note.id
                         socketService.sendRemoveMemberMessage(roomId, member.email)
                     }
@@ -201,7 +203,6 @@ class ViewMembersActivity : AppCompatActivity() {
     private val memberListener: MemberListener by lazy {
         object : MemberListener {
             override fun onClick(member: Member) {
-                val note = intent.getSerializableExtra(NOTE) as Note
                 if (note.isOwner()) {
                     val editMemberIntent =
                         Intent(this@ViewMembersActivity, EditMemberActivity::class.java)
@@ -228,7 +229,6 @@ class ViewMembersActivity : AppCompatActivity() {
             )
         )
 
-        val note = intent.getSerializableExtra(NOTE) as Note
         val roomId = note.id
         socketService.sendAddMemberMessage(roomId, member.email)
     }
