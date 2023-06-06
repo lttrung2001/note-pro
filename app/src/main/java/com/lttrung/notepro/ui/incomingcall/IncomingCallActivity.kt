@@ -90,6 +90,7 @@ class IncomingCallActivity : AppCompatActivity() {
     private fun setListener() {
         binding.buttonCallEnd.setOnClickListener {
             ringtone.stop()
+            countDownTimer.cancel()
             finish()
         }
         binding.buttonAcceptCall.setOnClickListener {
