@@ -1,10 +1,12 @@
 package com.lttrung.notepro.domain.data.locals.models
 
+import com.lttrung.notepro.domain.data.networks.models.Image
+
 data class ImageSelectionLocalsModel(
-    val id: String,
-    val name: String,
-    val url: String,
-    val uploadTime: Long,
-    val uploadBy: String,
+    override val id: String,
+    override val name: String,
+    override val url: String,
+    override val uploadTime: Long,
+    override val uploadBy: String,
     var isSelected: Boolean = false
-) : java.io.Serializable
+) : Image(id, name, url, uploadTime, uploadBy), java.io.Serializable
