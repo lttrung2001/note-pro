@@ -4,32 +4,31 @@ import com.lttrung.notepro.domain.data.networks.MemberNetworks
 import com.lttrung.notepro.domain.data.networks.models.Member
 import com.lttrung.notepro.domain.data.networks.models.Paging
 import com.lttrung.notepro.domain.repositories.MemberRepositories
-import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
 class MemberRepositoriesImpl @Inject constructor(override val networks: MemberNetworks) :
     MemberRepositories {
-    override fun addMember(noteId: String, email: String, role: String): Single<Member> {
-        return networks.addMember(noteId, email, role)
+    override suspend fun addMember(noteId: String, email: String, role: String): Member {
+        return networks.addMember(noteId, email, role).data
     }
 
-    override fun editMember(noteId: String, member: Member): Single<Member> {
-        return networks.editMember(noteId, member)
+    override suspend fun editMember(noteId: String, member: Member): Member {
+        return networks.editMember(noteId, member).data
     }
 
-    override fun deleteMember(noteId: String, memberId: String): Single<Unit> {
-        return networks.deleteMember(noteId, memberId)
+    override suspend fun deleteMember(noteId: String, memberId: String) {
+        return networks.deleteMember(noteId, memberId).data
     }
 
-    override fun getMemberDetails(noteId: String, memberId: String): Single<Member> {
-        return networks.getMemberDetails(noteId, memberId)
+    override suspend fun getMemberDetails(noteId: String, memberId: String): Member {
+        return networks.getMemberDetails(noteId, memberId).data
     }
 
-    override fun getMembers(noteId: String, pageIndex: Int, limit: Int): Single<Paging<Member>> {
-        return networks.getMembers(noteId, pageIndex, limit)
+    override suspend fun getMembers(noteId: String, pageIndex: Int, limit: Int): Paging<Member> {
+        return networks.getMembers(noteId, pageIndex, limit).data
     }
 
-    override fun updatePin(noteId: String, isPin: Boolean): Single<Boolean> {
-        return networks.updatePin(noteId, isPin)
+    override suspend fun updatePin(noteId: String, isPin: Boolean): Boolean {
+        return networks.updatePin(noteId, isPin).data
     }
 }

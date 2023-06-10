@@ -32,20 +32,36 @@ import dagger.hilt.android.AndroidEntryPoint
 @SuppressLint("InflateParams")
 @AndroidEntryPoint
 class AddNoteActivity : AddImagesActivity() {
-    private val binding: ActivityAddNoteBinding by lazy {
+    override val launcher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val resultIntent = result.data
+                resultIntent?.let {
+                    val images = it.getSerializableExtra(SELECTED_IMAGES) as List<Image>
+                    imagesAdapter.submitList(images)
+                    bottomSheet.dismiss()
+                }
+            }
+        }
+
+    private val binding by lazy {
         ActivityAddNoteBinding.inflate(layoutInflater)
     }
-    private val imagesAdapter: ImagesAdapter by lazy {
-        val adapter = ImagesAdapter(imageListener)
-        binding.rcvImages.let {
-            it.adapter = adapter
-            it.layoutManager = CardSliderLayoutManager(this@AddNoteActivity)
-            CardSnapHelper().attachToRecyclerView(it)
-        }
-        adapter
-    }
     private val addNoteViewModel: AddNoteViewModel by viewModels()
-    private val alertDialog: AlertDialog by lazy {
+    private val imagesAdapter: ImagesAdapter by lazy {
+        ImagesAdapter(object : ImagesAdapter.ImageListener {
+            override fun onClick(image: Image) {
+                // Start image details activity
+            }
+
+            override fun onDelete(image: Image) {
+                val currentList = imagesAdapter.currentList.toMutableList()
+                currentList.remove(image)
+                imagesAdapter.submitList(currentList)
+            }
+        })
+    }
+    private val alertDialog by lazy {
         val builder = AlertDialog.Builder(this)
         builder.setView(layoutInflater.inflate(R.layout.dialog_loading, null))
         builder.setCancelable(false)
@@ -54,7 +70,7 @@ class AddNoteActivity : AddImagesActivity() {
     private lateinit var menu: Menu
     private lateinit var socketService: ChatSocketService
 
-    private val connection: ServiceConnection by lazy {
+    private val connection by lazy {
         object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
                 val binder = service as ChatSocketService.LocalBinder
@@ -84,40 +100,6 @@ class AddNoteActivity : AddImagesActivity() {
     override fun onStop() {
         super.onStop()
         unbindService(connection)
-    }
-
-    private fun initObservers() {
-        addNoteViewModel.addNote.observe(this) { resource ->
-            when (resource) {
-                is Resource.Loading -> {
-                    alertDialog.show()
-                }
-                is Resource.Success -> {
-                    alertDialog.dismiss()
-                    val resultIntent = Intent()
-                    val note = resource.data
-                    resultIntent.putExtra(NOTE, note)
-                    setResult(RESULT_OK, resultIntent)
-
-                    socketService.sendAddNoteMessage(note.id)
-
-                    finish()
-                }
-                is Resource.Error -> {
-                    alertDialog.dismiss()
-                    Snackbar.make(binding.root, resource.t.message.toString(), LENGTH_LONG).show()
-                }
-            }
-        }
-    }
-
-    private fun initListeners() {
-        binding.btnOpenBottomSheet.setOnClickListener(openBottomSheetDialogListener)
-    }
-
-    private fun initViews() {
-        setContentView(binding.root)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -161,29 +143,37 @@ class AddNoteActivity : AddImagesActivity() {
         return true
     }
 
-    override val launcher: ActivityResultLauncher<Intent> =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                val resultIntent = result.data
-                resultIntent?.let {
-                    val images = it.getSerializableExtra(SELECTED_IMAGES) as List<Image>
-                    imagesAdapter.submitList(images)
-                    bottomSheet.dismiss()
+    private fun initObservers() {
+        addNoteViewModel.addNoteLiveData.observe(this) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+                    alertDialog.show()
+                }
+                is Resource.Success -> {
+                    alertDialog.dismiss()
+                    val resultIntent = Intent()
+                    val note = resource.data
+                    resultIntent.putExtra(NOTE, note)
+                    setResult(RESULT_OK, resultIntent)
+
+                    socketService.sendAddNoteMessage(note.id)
+
+                    finish()
+                }
+                is Resource.Error -> {
+                    alertDialog.dismiss()
+                    Snackbar.make(binding.root, resource.t.message.toString(), LENGTH_LONG).show()
                 }
             }
         }
+    }
 
-    private val imageListener: ImagesAdapter.ImageListener by lazy {
-        object : ImagesAdapter.ImageListener {
-            override fun onClick(image: Image) {
-                // Start image details activity
-            }
+    private fun initListeners() {
+        binding.btnOpenBottomSheet.setOnClickListener(openBottomSheetDialogListener)
+    }
 
-            override fun onDelete(image: Image) {
-                val currentList = imagesAdapter.currentList.toMutableList()
-                currentList.remove(image)
-                imagesAdapter.submitList(currentList)
-            }
-        }
+    private fun initViews() {
+        setContentView(binding.root)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 }

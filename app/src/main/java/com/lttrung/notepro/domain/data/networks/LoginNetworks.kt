@@ -1,18 +1,17 @@
 package com.lttrung.notepro.domain.data.networks
 
-import io.reactivex.rxjava3.core.Single
 import javax.inject.Singleton
 
 @Singleton
 interface LoginNetworks {
-    fun login(email: String, password: String): Single<String>
-    fun register(
+    suspend fun login(email: String, password: String): ResponseEntity<String>
+    suspend fun register(
         email: String,
         password: String,
         fullName: String,
         phoneNumber: String
-    ): Single<Unit>
+    ): ResponseEntity<Unit>
 
-    fun forgotPassword(email: String): Single<Unit>
-    fun resetPassword(code: String, newPassword: String): Single<Unit>
+    suspend fun forgotPassword(email: String): ResponseEntity<Unit>
+    suspend fun resetPassword(code: String, newPassword: String): ResponseEntity<Unit>
 }

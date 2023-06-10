@@ -5,16 +5,12 @@ import android.content.SharedPreferences
 import androidx.room.Room
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.lttrung.notepro.domain.data.locals.database.dao.CurrentUserDao
-import com.lttrung.notepro.domain.data.locals.database.dao.NoteDao
-import com.lttrung.notepro.domain.data.locals.database.UserDatabase
-import com.lttrung.notepro.domain.data.locals.database.UserDatabase.Companion.MIGRATION_1_2
-import com.lttrung.notepro.domain.data.locals.database.UserDatabase.Companion.MIGRATION_2_3
-import com.lttrung.notepro.domain.data.locals.database.UserDatabase.Companion.MIGRATION_3_4
-import com.lttrung.notepro.domain.data.networks.impl.LoginRetrofitServiceImpl
-import com.lttrung.notepro.domain.data.networks.impl.MemberRetrofitServiceImpl
-import com.lttrung.notepro.domain.data.networks.impl.NoteRetrofitServiceImpl
-import com.lttrung.notepro.domain.data.networks.impl.UserRetrofitServiceImpl
+import com.lttrung.notepro.domain.data.locals.dao.CurrentUserDao
+import com.lttrung.notepro.domain.data.locals.dao.NoteDao
+import com.lttrung.notepro.domain.data.locals.UserDatabase
+import com.lttrung.notepro.domain.data.locals.UserDatabase.Companion.MIGRATION_1_2
+import com.lttrung.notepro.domain.data.locals.UserDatabase.Companion.MIGRATION_2_3
+import com.lttrung.notepro.domain.data.locals.UserDatabase.Companion.MIGRATION_3_4
 import com.lttrung.notepro.domain.data.networks.interceptors.AuthorizationInterceptor
 import com.lttrung.notepro.domain.data.networks.interceptors.NetworksInterceptor
 import com.lttrung.notepro.utils.AppConstant.Companion.DEFAULT_PREFERENCES_NAME
@@ -144,24 +140,4 @@ class AppProvidesModules {
     fun providesSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
         return context.getSharedPreferences(DEFAULT_PREFERENCES_NAME, Context.MODE_PRIVATE)
     }
-
-    @Provides
-    @Singleton
-    fun providesLoginService(@Named("NoTokenRetrofit") retrofit: Retrofit): LoginRetrofitServiceImpl.Service =
-        retrofit.create(LoginRetrofitServiceImpl.Service::class.java)
-
-    @Provides
-    @Singleton
-    fun providesNoteService(@Named("TokenRetrofit") retrofit: Retrofit): NoteRetrofitServiceImpl.Service =
-        retrofit.create(NoteRetrofitServiceImpl.Service::class.java)
-
-    @Provides
-    @Singleton
-    fun providesMemberService(@Named("TokenRetrofit") retrofit: Retrofit): MemberRetrofitServiceImpl.Service =
-        retrofit.create(MemberRetrofitServiceImpl.Service::class.java)
-
-    @Provides
-    @Singleton
-    fun providesUserService(@Named("TokenRetrofit") retrofit: Retrofit): UserRetrofitServiceImpl.Service =
-        retrofit.create(UserRetrofitServiceImpl.Service::class.java)
 }

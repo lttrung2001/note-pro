@@ -4,7 +4,6 @@ import com.lttrung.notepro.domain.data.locals.NoteLocals
 import com.lttrung.notepro.domain.data.networks.NoteNetworks
 import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.domain.repositories.NoteRepositories
-import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
 class NoteRepositoriesImpl @Inject constructor(
@@ -12,44 +11,40 @@ class NoteRepositoriesImpl @Inject constructor(
     override val locals: NoteLocals
 ) :
     NoteRepositories {
-    override fun addNote(note: Note): Single<Note> {
-        return networks.addNote(note).map {
-            locals.addNote(note.toNoteLocalsModel())
-            it
+    override suspend fun addNote(note: Note): Note {
+        val responseNote = networks.addNote(note).data
+        locals.addNote(responseNote.toNoteLocalsModel())
+        return responseNote
+    }
+
+    override suspend fun editNote(note: Note, deleteImageIds: List<String>): Note {
+        val responseNote = networks.editNote(note, deleteImageIds).data
+        locals.editNote(responseNote.toNoteLocalsModel())
+        return responseNote
+    }
+
+    override suspend fun deleteNote(noteId: String) {
+        val response = networks.deleteNote(noteId)
+        locals.deleteNote(noteId)
+    }
+
+    override suspend fun getNoteDetails(noteId: String): Note {
+        return try {
+            val responseNote = networks.getNoteDetails(noteId).data
+            locals.addNote(responseNote.toNoteLocalsModel())
+            responseNote
+        } catch (ex: Exception) {
+            locals.getNoteDetails(noteId).toNoteNetworksModel()
         }
     }
 
-    override fun editNote(note: Note, deleteImageIds: List<String>): Single<Note> {
-        return networks.editNote(note, deleteImageIds).map {
-            locals.editNote(note.toNoteLocalsModel())
-            it
-        }
-    }
-
-    override fun deleteNote(noteId: String): Single<Unit> {
-        return networks.deleteNote(noteId).map {
-            locals.deleteNote(noteId)
-        }
-    }
-
-    override fun getNoteDetails(noteId: String): Single<Note> {
-        return networks.getNoteDetails(noteId).map {
-            locals.addNote(it.toNoteLocalsModel())
-            it
-        }
-    }
-
-    override fun getNotes(): Single<List<Note>> {
-        return networks.getNotes().map { ls ->
-            val localsNotes = ls.map {
-                it.toNoteLocalsModel()
-            }
-            locals.addNotes(localsNotes)
-            ls
-        }.onErrorReturn {
-            locals.getNotes().blockingGet().map {
-                it.toNoteNetworksModel()
-            }
+    override suspend fun getNotes(): List<Note> {
+        return try {
+            val notes = networks.getNotes().data
+            locals.addNotes(notes.map { it.toNoteLocalsModel() })
+            notes
+        } catch (ex: Exception) {
+            locals.getNotes().map { it.toNoteNetworksModel() }
         }
     }
 }

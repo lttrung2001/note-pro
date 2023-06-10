@@ -19,11 +19,11 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ViewProfileActivity : AppCompatActivity() {
-    private val binding: ActivityViewProfileBinding by lazy {
+    private val binding by lazy {
         ActivityViewProfileBinding.inflate(layoutInflater)
     }
     private val viewProfileViewModel: ViewProfileViewModel by viewModels()
-    private val alertDialog: AlertDialog by lazy {
+    private val alertDialog by lazy {
         val builder = AlertDialog.Builder(this)
         builder.setView(layoutInflater.inflate(R.layout.dialog_loading, null))
         builder.setCancelable(false)
@@ -39,7 +39,7 @@ class ViewProfileActivity : AppCompatActivity() {
     }
 
     private fun initObserver() {
-        viewProfileViewModel.profile.observe(this) { resource ->
+        viewProfileViewModel.profileLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
                     alertDialog.show()

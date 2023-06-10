@@ -26,4 +26,12 @@ class ValidationHelper {
         }
         return value
     }
+
+    fun matchesConfirmPassword(password: String, confirmPassword: String): Boolean {
+        val value = password == confirmPassword
+        if (!value) {
+            hasError = true
+        }
+        return value
+    }
 }

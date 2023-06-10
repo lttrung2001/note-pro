@@ -17,19 +17,10 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ForgotPasswordActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityForgotPasswordBinding
-    private val viewModel: ForgotPasswordViewModel by viewModels()
-
-    private val sendInstructionsListener: View.OnClickListener by lazy {
-        View.OnClickListener {
-            val email = binding.edtEmail.text?.trim().toString()
-            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                binding.emailLayout.error = getString(R.string.this_text_is_not_email_type)
-            } else {
-                viewModel.forgotPassword(email)
-            }
-        }
+    private val binding by lazy {
+        ActivityForgotPasswordBinding.inflate(layoutInflater)
     }
+    private val viewModel: ForgotPasswordViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +31,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
     }
 
     private fun initObservers() {
-        viewModel.forgotPassword.observe(this) { resource ->
+        viewModel.forgotPasswordLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
                     binding.btnSendInstructions.showProgress {
@@ -68,11 +59,17 @@ class ForgotPasswordActivity : AppCompatActivity() {
     }
 
     private fun initListeners() {
-        binding.btnSendInstructions.setOnClickListener(sendInstructionsListener)
+        binding.btnSendInstructions.setOnClickListener {
+            val email = binding.edtEmail.text?.trim().toString()
+            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                binding.emailLayout.error = getString(R.string.this_text_is_not_email_type)
+            } else {
+                viewModel.forgotPassword(email)
+            }
+        }
     }
 
     private fun initViews() {
-        binding = ActivityForgotPasswordBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }

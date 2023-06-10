@@ -8,7 +8,7 @@ import android.os.IBinder
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.lttrung.notepro.domain.data.locals.UserLocals
-import com.lttrung.notepro.domain.data.networks.models.ApiResponse
+import com.lttrung.notepro.domain.data.networks.ResponseEntity
 import com.lttrung.notepro.domain.data.networks.models.Message
 import com.lttrung.notepro.domain.data.networks.models.User
 import com.lttrung.notepro.domain.repositories.MessageRepositories
@@ -31,7 +31,9 @@ import com.lttrung.notepro.utils.RetrofitUtils.BASE_URL
 import dagger.hilt.android.AndroidEntryPoint
 import io.socket.client.IO
 import io.socket.client.Socket
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -41,65 +43,73 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ChatSocketService : Service() {
-    private val job = SupervisorJob()
-    private val scope = CoroutineScope(Dispatchers.IO + job)
-
-    @Inject
-    lateinit var messageRepositories: MessageRepositories
-
-    @Inject
-    lateinit var userLocals: UserLocals
-
-    @Inject
-    lateinit var gson: Gson
-
-
-    private lateinit var socket: Socket
-    internal fun sendMessage(message: Message) {
-        return messageRepositories.sendMessage(socket, message)
-    }
-
-    internal fun sendAddNoteMessage(roomId: String) {
-        return messageRepositories.sendAddNoteMessage(socket, roomId)
-    }
-
-    internal fun sendDeleteNoteMessage(roomId: String) {
-        return messageRepositories.sendDeleteNoteMessage(socket, roomId)
-    }
-
-    internal fun sendAddMemberMessage(roomId: String, email: String) {
-        return messageRepositories.sendAddMemberMessage(socket, roomId, email)
-    }
-
-    internal fun sendRemoveMemberMessage(roomId: String, email: String) {
-        return messageRepositories.sendRemoveMemberMessage(socket, roomId, email)
-    }
-
-    internal fun getMessages(roomId: String, pageIndex: Int, limit: Int) {
-        return messageRepositories.getMessages(socket, roomId, pageIndex, limit)
-    }
-
-    internal fun call(roomId: String) {
-        return messageRepositories.call(socket, roomId)
-    }
-
-
-    private val accessTokenLiveData: MutableLiveData<Resource<String>> by lazy {
-        MutableLiveData<Resource<String>>()
-    }
-
-
     inner class LocalBinder : Binder() {
         // Return this instance of LocalService so clients can call public methods.
         fun getService(): ChatSocketService = this@ChatSocketService
     }
 
-    private val binder: Binder by lazy {
+
+    @Inject
+    lateinit var messageRepositories: MessageRepositories
+    @Inject
+    lateinit var userLocals: UserLocals
+    @Inject
+    lateinit var gson: Gson
+    private lateinit var socket: Socket
+
+    private val scope = CoroutineScope(Dispatchers.IO)
+    private val binder by lazy {
         LocalBinder()
     }
+    private val accessTokenLiveData by lazy {
+        MutableLiveData<Resource<String>>()
+    }
+
 
     override fun onBind(intent: Intent): IBinder {
         return binder
+    }
+
+    internal fun sendMessage(message: Message) {
+        scope.launch {
+            messageRepositories.sendMessage(socket, message)
+        }
+    }
+
+    internal fun sendAddNoteMessage(roomId: String) {
+        scope.launch {
+            messageRepositories.sendAddNoteMessage(socket, roomId)
+        }
+    }
+
+    internal fun sendDeleteNoteMessage(roomId: String) {
+        scope.launch {
+            messageRepositories.sendDeleteNoteMessage(socket, roomId)
+        }
+    }
+
+    internal fun sendAddMemberMessage(roomId: String, email: String) {
+        scope.launch {
+            messageRepositories.sendAddMemberMessage(socket, roomId, email)
+        }
+    }
+
+    internal fun sendRemoveMemberMessage(roomId: String, email: String) {
+        scope.launch {
+            messageRepositories.sendRemoveMemberMessage(socket, roomId, email)
+        }
+    }
+
+    internal fun getMessages(roomId: String, pageIndex: Int, limit: Int) {
+        scope.launch {
+            messageRepositories.getMessages(socket, roomId, pageIndex, limit)
+        }
+    }
+
+    internal fun call(roomId: String) {
+        scope.launch {
+            messageRepositories.call(socket, roomId)
+        }
     }
 
 
@@ -136,26 +146,37 @@ class ChatSocketService : Service() {
                 is Resource.Loading -> {
 
                 }
+
                 is Resource.Success -> {
                     val accessToken = resource.data
                     socket = createSocket(accessToken)
                     startConnection()
-                    val chatListenerNotification =
-                        NotificationHelper.buildChatListenerNotification(baseContext)
-                    startForeground(CHAT_LISTENER_NOTIFICATION_ID, chatListenerNotification)
+                    startNotification()
                 }
+
                 is Resource.Error -> {
-                    NotificationHelper.pushNotification(
-                        this,
-                        CHAT_LISTENER_CHANNEL_ID,
-                        "Error while connecting chat server",
-                        resource.t.message.toString()
-                    )
+                    pushErrorNotification(resource)
                     stopSelf()
                 }
             }
         }
     }
+
+    private fun pushErrorNotification(resource: Resource.Error<String>) {
+        NotificationHelper.pushNotification(
+            this,
+            CHAT_LISTENER_CHANNEL_ID,
+            "Error while connecting chat server",
+            resource.t.message.toString()
+        )
+    }
+
+    private fun startNotification() {
+        val chatListenerNotification =
+            NotificationHelper.buildChatListenerNotification(baseContext)
+        startForeground(CHAT_LISTENER_NOTIFICATION_ID, chatListenerNotification)
+    }
+
     private fun callGetAccessTokenApi(refreshToken: String) {
         scope.launch(Dispatchers.IO) {
             accessTokenLiveData.postValue(Resource.Loading())
@@ -173,7 +194,7 @@ class ChatSocketService : Service() {
                 val accessToken =
                     Gson().fromJson(
                         response.body!!.string(),
-                        ApiResponse::class.java
+                        ResponseEntity::class.java
                     ).data as String
                 accessTokenLiveData.postValue(Resource.Success(accessToken))
             } catch (e: Exception) {
@@ -181,6 +202,7 @@ class ChatSocketService : Service() {
             }
         }
     }
+
     private fun createSocket(accessToken: String): Socket {
         return IO.socket(BASE_URL, IO.Options.builder().setReconnection(true).setAuth(buildMap {
             if (accessToken.isEmpty()) {
@@ -189,6 +211,7 @@ class ChatSocketService : Service() {
             this["token"] = accessToken
         }).build())
     }
+
     private fun startConnection() {
         socket.connect()
         socket.on(Socket.EVENT_CONNECT_ERROR) {

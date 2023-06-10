@@ -6,11 +6,11 @@ import javax.inject.Singleton
 
 @Singleton
 interface MessageRepositories {
-    fun sendMessage(socket: Socket, message: Message)
-    fun sendAddNoteMessage(socket: Socket, roomId: String)
-    fun sendDeleteNoteMessage(socket: Socket, roomId: String)
-    fun sendAddMemberMessage(socket: Socket, roomId: String, email: String)
-    fun sendRemoveMemberMessage(socket: Socket, roomId: String, email: String)
-    fun getMessages(socket: Socket, roomId: String, pageIndex: Int, limit: Int)
-    fun call(socket: Socket, roomId: String)
+    suspend fun sendMessage(socket: Socket, message: Message)
+    suspend fun sendAddNoteMessage(socket: Socket, roomId: String)
+    suspend fun sendDeleteNoteMessage(socket: Socket, roomId: String)
+    suspend fun sendAddMemberMessage(socket: Socket, roomId: String, email: String)
+    suspend fun sendRemoveMemberMessage(socket: Socket, roomId: String, email: String)
+    suspend fun getMessages(socket: Socket, roomId: String, pageIndex: Int, limit: Int)
+    suspend fun call(socket: Socket, roomId: String)
 }

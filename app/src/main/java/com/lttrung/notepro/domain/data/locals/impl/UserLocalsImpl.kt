@@ -5,14 +5,13 @@ import android.content.Intent
 import android.content.SharedPreferences
 import com.auth0.android.jwt.JWT
 import com.lttrung.notepro.domain.data.locals.UserLocals
-import com.lttrung.notepro.domain.data.locals.database.entities.CurrentUser
-import com.lttrung.notepro.domain.data.locals.database.dao.CurrentUserDao
-import com.lttrung.notepro.domain.data.locals.database.dao.NoteDao
+import com.lttrung.notepro.domain.data.locals.dao.CurrentUserDao
+import com.lttrung.notepro.domain.data.locals.dao.NoteDao
+import com.lttrung.notepro.domain.data.locals.entities.CurrentUser
 import com.lttrung.notepro.ui.chat.ChatSocketService
 import com.lttrung.notepro.utils.AppConstant.Companion.ACCESS_TOKEN
 import com.lttrung.notepro.utils.AppConstant.Companion.REFRESH_TOKEN
 import dagger.hilt.android.qualifiers.ApplicationContext
-import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
 class UserLocalsImpl @Inject constructor(
@@ -27,14 +26,14 @@ class UserLocalsImpl @Inject constructor(
     }
 
     override fun changePassword(password: String, refreshToken: String) {
-        val currentUser = currentUserDao.getCurrentUser().blockingGet()
+        val currentUser = currentUserDao.getCurrentUser()
         currentUser.password = password
         currentUserDao.updateCurrentUser(currentUser)
         sharedPreferences.edit().putString(REFRESH_TOKEN, refreshToken).apply()
     }
 
     override fun changeProfile(fullName: String, phoneNumber: String) {
-        val currentUser = currentUserDao.getCurrentUser().blockingGet()
+        val currentUser = currentUserDao.getCurrentUser()
         currentUser.fullName = fullName
         currentUser.phoneNumber = phoneNumber
         currentUserDao.updateCurrentUser(currentUser)
@@ -42,7 +41,7 @@ class UserLocalsImpl @Inject constructor(
 
     override fun fetchAccessToken(accessToken: String) {
         val decoded = JWT(accessToken)
-        val currentUser = currentUserDao.getCurrentUser().blockingGet()
+        val currentUser = currentUserDao.getCurrentUser()
         currentUser.fullName = decoded.getClaim("name").asString().toString()
         currentUser.phoneNumber = decoded.getClaim("phone_number").asString().toString()
         currentUser.id = decoded.getClaim("user_id").asString().toString()
@@ -50,7 +49,7 @@ class UserLocalsImpl @Inject constructor(
         sharedPreferences.edit().putString(ACCESS_TOKEN, accessToken).apply()
     }
 
-    override fun getCurrentUser(): Single<CurrentUser> {
+    override fun getCurrentUser(): CurrentUser {
         return currentUserDao.getCurrentUser()
     }
 

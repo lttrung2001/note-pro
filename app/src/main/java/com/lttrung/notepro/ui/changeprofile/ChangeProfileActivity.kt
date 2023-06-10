@@ -19,14 +19,14 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ChangeProfileActivity : AppCompatActivity() {
-    private val binding: ActivityChangeProfileBinding by lazy {
+    private val binding by lazy {
         ActivityChangeProfileBinding.inflate(layoutInflater)
     }
     private val changeProfileViewModel: ChangeProfileViewModel by viewModels()
-    private val userInfo: UserInfo by lazy {
+    private val userInfo by lazy {
         intent.getSerializableExtra(USER) as UserInfo
     }
-    private val alertDialog: AlertDialog by lazy {
+    private val alertDialog by lazy {
         val builder = AlertDialog.Builder(this)
         builder.setView(layoutInflater.inflate(R.layout.dialog_loading, null))
         builder.setCancelable(false)
@@ -41,12 +41,54 @@ class ChangeProfileActivity : AppCompatActivity() {
         initObserver()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_change_profile, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_save_info -> {
+                val fullName = binding.tvFullName.text?.trim().toString()
+                val phoneNumber = binding.tvPhoneNumber.text?.trim().toString()
+                val helper = validateInputs(fullName, phoneNumber, ValidationHelper())
+                if (!helper.hasError) {
+                    intent.putExtra(
+                        USER,
+                        UserInfo(userInfo.id, userInfo.email, fullName, phoneNumber)
+                    )
+                    changeProfileViewModel.changeProfile(fullName, phoneNumber)
+                }
+            }
+
+            else -> {
+                finish()
+            }
+        }
+        return true
+    }
+
+    private fun validateInputs(
+        fullName: String,
+        phoneNumber: String,
+        validationHelper: ValidationHelper
+    ): ValidationHelper {
+        if (!validationHelper.matchesFullName(fullName)) {
+            binding.tvFullName.error = getString(R.string.invalid_full_name)
+        }
+        if (!validationHelper.matchesPhoneNumber(phoneNumber)) {
+            binding.tvPhoneNumber.error = getString(R.string.phone_number_check)
+        }
+        return validationHelper
+    }
+
     private fun initObserver() {
-        changeProfileViewModel.changeProfile.observe(this) { resource ->
+        changeProfileViewModel.changeProfileLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
                     alertDialog.show()
                 }
+
                 is Resource.Success -> {
                     alertDialog.dismiss()
                     val resultIntent = Intent()
@@ -55,6 +97,7 @@ class ChangeProfileActivity : AppCompatActivity() {
                     setResult(RESULT_OK, resultIntent)
                     finish()
                 }
+
                 is Resource.Error -> {
                     alertDialog.dismiss()
                     Snackbar.make(
@@ -76,34 +119,5 @@ class ChangeProfileActivity : AppCompatActivity() {
     private fun initViews() {
         setContentView(binding.root)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_change_profile, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_save_info -> {
-                val fullName = binding.tvFullName.text?.trim().toString()
-                val phoneNumber = binding.tvPhoneNumber.text?.trim().toString()
-                val helper = ValidationHelper()
-                if (!helper.matchesFullName(fullName)) {
-                    binding.tvFullName.error = getString(R.string.invalid_full_name)
-                }
-                if (!helper.matchesPhoneNumber(phoneNumber)) {
-                    binding.tvPhoneNumber.error = getString(R.string.phone_number_check)
-                }
-                if (!helper.hasError) {
-                    intent.putExtra(USER, UserInfo(userInfo.id, userInfo.email, fullName, phoneNumber))
-                    changeProfileViewModel.changeProfile(fullName, phoneNumber)
-                }
-            }
-            else -> {
-                finish()
-            }
-        }
-        return true
     }
 }

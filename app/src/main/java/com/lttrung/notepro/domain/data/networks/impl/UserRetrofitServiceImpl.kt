@@ -1,10 +1,8 @@
 package com.lttrung.notepro.domain.data.networks.impl
 
+import com.lttrung.notepro.domain.data.networks.ResponseEntity
 import com.lttrung.notepro.domain.data.networks.UserNetworks
-import com.lttrung.notepro.domain.data.networks.models.ApiResponse
 import com.lttrung.notepro.domain.data.networks.models.UserInfo
-import com.lttrung.notepro.utils.HttpStatusCodes
-import io.reactivex.rxjava3.core.Single
 import retrofit2.Response
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -15,57 +13,62 @@ import javax.inject.Inject
 class UserRetrofitServiceImpl @Inject constructor(
     private val service: Service
 ) : UserNetworks {
+    companion object {
+        private const val PATH = "/api/v1"
+    }
+
     interface Service {
         @GET("$PATH/get-user-details")
-        fun getProfile(): Single<Response<ApiResponse<UserInfo>>>
+        suspend fun getProfile(): Response<ResponseEntity<UserInfo>>
 
         @FormUrlEncoded
         @PUT("$PATH/change-infor")
-        fun changeProfile(
+        suspend fun changeProfile(
             @Field("fullName") fullName: String,
             @Field("phoneNumber") phoneNumber: String
-        ): Single<Response<ApiResponse<UserInfo>>>
+        ): Response<ResponseEntity<UserInfo>>
 
         @FormUrlEncoded
         @PUT("$PATH/change-password")
-        fun changePassword(
+        suspend fun changePassword(
             @Field("oldPassword") oldPassword: String,
             @Field("newPassword") newPassword: String
-        ): Single<Response<ApiResponse<String>>>
+        ): Response<ResponseEntity<String>>
     }
 
-    override fun changePassword(oldPassword: String, newPassword: String): Single<String> {
-        return service.changePassword(oldPassword, newPassword).map { response ->
-            if (response.code() == HttpStatusCodes.OK.code) {
-                response.body()!!.data
-            } else {
-                throw Exception(response.message())
-            }
+    override suspend fun changePassword(
+        oldPassword: String,
+        newPassword: String
+    ): ResponseEntity<String> {
+        val response = service.changePassword(oldPassword, newPassword)
+        val body = response.body()
+        return if (response.isSuccessful && body != null) {
+            body
+        } else {
+            throw Exception(body?.message)
         }
     }
 
-    override fun changeProfile(fullName: String, phoneNumber: String): Single<UserInfo> {
-        return service.changeProfile(fullName, phoneNumber).map { response ->
-            if (response.code() == HttpStatusCodes.OK.code) {
-                response.body()!!.data
-            } else {
-                throw Exception(response.message())
-            }
+    override suspend fun changeProfile(
+        fullName: String,
+        phoneNumber: String
+    ): ResponseEntity<UserInfo> {
+        val response = service.changeProfile(fullName, phoneNumber)
+        val body = response.body()
+        return if (response.isSuccessful && body != null) {
+            body
+        } else {
+            throw Exception(body?.message)
         }
     }
 
-    override fun getProfile(): Single<UserInfo> {
-        return service.getProfile().map { response ->
-            if (response.code() == HttpStatusCodes.OK.code) {
-                val data = response.body()!!.data
-                UserInfo(data.id, data.email, data.fullName, data.phoneNumber.replace("+84", "0"))
-            } else {
-                throw Exception(response.message())
-            }
+    override suspend fun getProfile(): ResponseEntity<UserInfo> {
+        val response = service.getProfile()
+        val body = response.body()
+        return if (response.isSuccessful && body != null) {
+            body
+        } else {
+            throw Exception(body?.message)
         }
-    }
-
-    companion object {
-        private const val PATH = "/api/v1"
     }
 }

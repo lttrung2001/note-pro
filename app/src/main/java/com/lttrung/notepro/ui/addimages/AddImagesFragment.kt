@@ -16,7 +16,10 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class AddImagesFragment : BottomSheetDialogFragment() {
-    private val binding: FragmentAddImagesBinding by lazy {
+    companion object {
+        const val TAG = "com.lttrung.notepro.AddImagesFragment"
+    }
+    private val binding by lazy {
         FragmentAddImagesBinding.inflate(layoutInflater)
     }
 
@@ -30,12 +33,7 @@ class AddImagesFragment : BottomSheetDialogFragment() {
     }
 
     private fun initListeners() {
-        binding.btnTakePhoto.setOnClickListener(takePhotoListener)
-        binding.btnOpenGallery.setOnClickListener(openGalleryListener)
-    }
-
-    private val takePhotoListener: View.OnClickListener by lazy {
-        View.OnClickListener {
+        binding.btnTakePhoto.setOnClickListener {
             if (ActivityCompat.checkSelfPermission(
                     requireContext(),
                     Manifest.permission.CAMERA
@@ -51,10 +49,7 @@ class AddImagesFragment : BottomSheetDialogFragment() {
                 parentActivity.openCamera()
             }
         }
-    }
-
-    private val openGalleryListener: View.OnClickListener by lazy {
-        View.OnClickListener {
+        binding.btnOpenGallery.setOnClickListener {
             if (ActivityCompat.checkSelfPermission(
                     requireContext(),
                     Manifest.permission.READ_EXTERNAL_STORAGE

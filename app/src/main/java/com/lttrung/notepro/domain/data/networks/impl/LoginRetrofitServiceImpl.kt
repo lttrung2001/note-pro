@@ -1,10 +1,7 @@
 package com.lttrung.notepro.domain.data.networks.impl
 
 import com.lttrung.notepro.domain.data.networks.LoginNetworks
-import com.lttrung.notepro.domain.data.networks.models.ApiResponse
-import com.lttrung.notepro.exceptions.VerifiedEmailException
-import com.lttrung.notepro.utils.HttpStatusCodes
-import io.reactivex.rxjava3.core.Single
+import com.lttrung.notepro.domain.data.networks.ResponseEntity
 import retrofit2.Response
 import retrofit2.http.*
 import javax.inject.Inject
@@ -17,10 +14,10 @@ class LoginRetrofitServiceImpl @Inject constructor(private val service: Service)
     interface Service {
         @FormUrlEncoded
         @POST("$PATH/login")
-        fun login(
+        suspend fun login(
             @Field("email") email: String,
             @Field("password") password: String
-        ): Single<Response<ApiResponse<String>>>
+        ): Response<ResponseEntity<String>>
 
         @FormUrlEncoded
         @POST("$PATH/register")
@@ -29,62 +26,62 @@ class LoginRetrofitServiceImpl @Inject constructor(private val service: Service)
             @Field("password") password: String,
             @Field("fullName") fullName: String,
             @Field("phoneNumber") phoneNumber: String
-        ): Single<Response<ApiResponse<Unit>>>
+        ): Response<ResponseEntity<Unit>>
 
         @FormUrlEncoded
         @POST("$PATH/forget-password")
-        fun forgotPassword(@Field("email") email: String): Single<Response<ApiResponse<Unit>>>
+        fun forgotPassword(@Field("email") email: String): Response<ResponseEntity<Unit>>
 
         @FormUrlEncoded
         @POST("$PATH/reset-password")
         fun resetPassword(
             @Field("codeVerify") code: String,
             @Field("newPassword") password: String
-        ): Single<Response<ApiResponse<Unit>>>
+        ): Response<ResponseEntity<Unit>>
     }
 
-    override fun login(email: String, password: String): Single<String> {
-        return service.login(email, password).map {
-            when (it.code()) {
-                HttpStatusCodes.OK.code -> it.body()!!.data
-                HttpStatusCodes.FORBIDDEN.code -> throw VerifiedEmailException()
-                else -> throw RuntimeException(it.message())
-            }
+    override suspend fun login(email: String, password: String): ResponseEntity<String> {
+        val response = service.login(email, password)
+        val body = response.body()
+        return if (response.isSuccessful && body != null) {
+            body
+        } else {
+            throw Exception(body?.message)
         }
     }
 
-    override fun register(
+    override suspend fun register(
         email: String,
         password: String,
         fullName: String,
         phoneNumber: String
-    ): Single<Unit> {
-        return service.register(email, password, fullName, phoneNumber).map {
-            if (it.code() == HttpStatusCodes.OK.code) {
-                it.body()!!.data
-            } else {
-                throw Exception(it.message())
-            }
+    ): ResponseEntity<Unit> {
+        val response = service.register(email, password, fullName, phoneNumber)
+        val body = response.body()
+        return if (response.isSuccessful && body != null) {
+            body
+        } else {
+            throw Exception(body?.message)
         }
     }
 
-    override fun forgotPassword(email: String): Single<Unit> {
-        return service.forgotPassword(email).map {
-            if (it.code() == HttpStatusCodes.OK.code) {
-                it.body()!!.data
-            } else {
-                throw Exception(it.message())
-            }
+    override suspend fun forgotPassword(email: String): ResponseEntity<Unit> {
+        val response = service.forgotPassword(email)
+        val body = response.body()
+        return if (response.isSuccessful && body != null) {
+            body
+        } else {
+            throw Exception(body?.message)
         }
     }
 
-    override fun resetPassword(code: String, newPassword: String): Single<Unit> {
-        return service.resetPassword(code, newPassword).map {
-            if (it.code() == HttpStatusCodes.OK.code) {
-                it.body()!!.data
-            } else {
-                throw Exception(it.message())
-            }
+    override suspend fun resetPassword(code: String, newPassword: String): ResponseEntity<Unit> {
+        val response = service.resetPassword(code, newPassword)
+        val body = response.body()
+        return if (response.isSuccessful && body != null) {
+            body
+        } else {
+            throw Exception(body?.message)
         }
     }
 }

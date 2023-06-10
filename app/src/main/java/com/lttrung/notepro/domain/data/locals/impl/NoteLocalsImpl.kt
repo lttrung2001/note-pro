@@ -1,36 +1,35 @@
 package com.lttrung.notepro.domain.data.locals.impl
 
 import com.lttrung.notepro.domain.data.locals.NoteLocals
-import com.lttrung.notepro.domain.data.locals.database.entities.NoteLocalsModel
-import com.lttrung.notepro.domain.data.locals.database.dao.NoteDao
-import io.reactivex.rxjava3.core.Single
+import com.lttrung.notepro.domain.data.locals.dao.NoteDao
+import com.lttrung.notepro.domain.data.locals.entities.NoteLocalsModel
 import javax.inject.Inject
 
 class NoteLocalsImpl @Inject constructor(
     private val noteDao: NoteDao
 ) : NoteLocals {
-    override fun addNote(note: NoteLocalsModel) {
-        return noteDao.addNote(note)
+    override suspend fun addNote(note: NoteLocalsModel) {
+        noteDao.addNote(note)
     }
 
-    override fun addNotes(notes: List<NoteLocalsModel>) {
-        return noteDao.addNotes(notes)
+    override suspend fun addNotes(notes: List<NoteLocalsModel>) {
+        noteDao.addNotes(notes)
     }
 
-    override fun editNote(note: NoteLocalsModel) {
-        return noteDao.editNote(note)
+    override suspend fun editNote(note: NoteLocalsModel) {
+        noteDao.editNote(note)
     }
 
-    override fun deleteNote(noteId: String) {
-        val deletingNote = getNoteDetails(noteId).blockingGet()
-        return noteDao.deleteNote(deletingNote)
+    override suspend fun deleteNote(noteId: String) {
+        val deletingNote = getNoteDetails(noteId)
+        noteDao.deleteNote(deletingNote)
     }
 
-    override fun getNoteDetails(noteId: String): Single<NoteLocalsModel> {
+    override suspend fun getNoteDetails(noteId: String): NoteLocalsModel {
         return noteDao.getNoteDetails(noteId)
     }
 
-    override fun getNotes(): Single<List<NoteLocalsModel>> {
+    override suspend fun getNotes(): List<NoteLocalsModel> {
         return noteDao.getNotes()
     }
 }

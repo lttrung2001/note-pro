@@ -25,14 +25,20 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class AddMemberFragment : BottomSheetDialogFragment() {
-    private val binding: FragmentAddMemberBinding by lazy {
+    private val binding by lazy {
         FragmentAddMemberBinding.inflate(layoutInflater)
     }
     private val addMemberViewModel: AddMemberViewModel by activityViewModels()
-    private val roleAdapter: ArrayAdapter<String> by lazy {
-        val roles = arrayListOf("editor", "viewer")
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, roles)
+    private val roleAdapter by lazy {
+        val adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_list_item_1,
+            listOf("editor", "viewer")
+        )
         adapter
+    }
+    private val note by lazy {
+        requireActivity().intent.getSerializableExtra(NOTE) as Note
     }
 
     override fun onCreateView(
@@ -52,7 +58,7 @@ class AddMemberFragment : BottomSheetDialogFragment() {
     }
 
     private fun initObservers() {
-        addMemberViewModel.member.observe(viewLifecycleOwner) { resource ->
+        addMemberViewModel.memberLiveData.observe(viewLifecycleOwner) { resource ->
             when (resource) {
                 is Resource.Loading -> {
                     binding.addButton.isClickable = false
@@ -66,7 +72,7 @@ class AddMemberFragment : BottomSheetDialogFragment() {
                     binding.addButton.isClickable = true
                     binding.addButton.hideProgress(R.string.add)
                     val parentActivity = (requireActivity() as ViewMembersActivity)
-                    parentActivity.addMemberResult(resource.data)
+                    parentActivity.handleAddResult(resource.data)
                 }
 
                 is Resource.Error -> {
@@ -82,12 +88,7 @@ class AddMemberFragment : BottomSheetDialogFragment() {
     }
 
     private fun initListeners() {
-        binding.addButton.setOnClickListener(addListener)
-    }
-
-    private val addListener: View.OnClickListener by lazy {
-        View.OnClickListener {
-            val note = requireActivity().intent.getSerializableExtra(NOTE) as Note
+        binding.addButton.setOnClickListener {
             val email = binding.email.text?.trim().toString()
             val role = binding.roleSpinner.selectedItem.toString()
             if (Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
@@ -96,11 +97,5 @@ class AddMemberFragment : BottomSheetDialogFragment() {
                 binding.email.error = getString(R.string.this_text_is_not_email_type)
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        val parentActivity = (requireActivity() as ViewMembersActivity)
-        parentActivity.onAddMemberFragmentDestroyView()
     }
 }

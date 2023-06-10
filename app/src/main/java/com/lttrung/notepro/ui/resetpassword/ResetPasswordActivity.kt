@@ -3,7 +3,6 @@ package com.lttrung.notepro.ui.resetpassword
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.github.razir.progressbutton.hideProgress
@@ -18,7 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ResetPasswordActivity : AppCompatActivity() {
-    private val binding: ActivityResetPasswordBinding by lazy {
+    private val binding by lazy {
         ActivityResetPasswordBinding.inflate(layoutInflater)
     }
     private val viewModel: ResetPasswordViewModel by viewModels()
@@ -31,8 +30,23 @@ class ResetPasswordActivity : AppCompatActivity() {
         initObservers()
     }
 
+    private fun validateInputs(
+        code: String,
+        password: String,
+        validationHelper: ValidationHelper
+    ): ValidationHelper {
+        if (code.isBlank()) {
+            validationHelper.hasError = true
+            binding.codeLayout.error = getString(R.string.code_check)
+        }
+        if (!validationHelper.matchesPasswordLength(password)) {
+            binding.passwordLayout.error = getString(R.string.password_check)
+        }
+        return validationHelper
+    }
+
     private fun initObservers() {
-        viewModel.resetPassword.observe(this) { resource ->
+        viewModel.resetPasswordLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
                     binding.btnResetPassword.isClickable = false
@@ -41,6 +55,7 @@ class ResetPasswordActivity : AppCompatActivity() {
                         progressColor = Color.WHITE
                     }
                 }
+
                 is Resource.Success -> {
                     binding.btnResetPassword.hideProgress(R.string.reset_password)
                     binding.btnResetPassword.isClickable = true
@@ -50,6 +65,7 @@ class ResetPasswordActivity : AppCompatActivity() {
                         Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                     startActivity(loginIntent)
                 }
+
                 is Resource.Error -> {
                     binding.btnResetPassword.hideProgress(R.string.reset_password)
                     binding.btnResetPassword.isClickable = true
@@ -63,29 +79,18 @@ class ResetPasswordActivity : AppCompatActivity() {
     }
 
     private fun initListeners() {
-        binding.btnResetPassword.setOnClickListener(resetPasswordListener)
+        binding.btnResetPassword.setOnClickListener {
+            val code = binding.edtCode.text?.trim().toString()
+            val password = binding.edtPassword.text?.trim().toString()
+            val helper = validateInputs(code, password, ValidationHelper())
+            if (!helper.hasError) {
+                viewModel.resetPassword(code, password)
+            }
+        }
     }
 
     private fun initViews() {
         setContentView(binding.root)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    }
-
-    private val resetPasswordListener: View.OnClickListener by lazy {
-        View.OnClickListener {
-            val code = binding.edtCode.text?.trim().toString()
-            val password = binding.edtPassword.text?.trim().toString()
-            val helper = ValidationHelper()
-            if (code.isBlank()) {
-                helper.hasError = true
-                binding.codeLayout.error = getString(R.string.code_check)
-            }
-            if (!helper.matchesPasswordLength(password)) {
-                binding.passwordLayout.error = getString(R.string.password_check)
-            }
-            if (!helper.hasError) {
-                viewModel.resetPassword(code, password)
-            }
-        }
     }
 }

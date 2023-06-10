@@ -1,10 +1,9 @@
 package com.lttrung.notepro.domain.repositories.impl
 
 import com.lttrung.notepro.domain.data.locals.UserLocals
-import com.lttrung.notepro.domain.data.locals.database.entities.CurrentUser
+import com.lttrung.notepro.domain.data.locals.entities.CurrentUser
 import com.lttrung.notepro.domain.data.networks.LoginNetworks
 import com.lttrung.notepro.domain.repositories.LoginRepositories
-import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
 class LoginRepositoriesImpl @Inject constructor(
@@ -12,26 +11,26 @@ class LoginRepositoriesImpl @Inject constructor(
     override val networks: LoginNetworks
 ) :
     LoginRepositories {
-    override fun login(email: String, password: String): Single<String> {
-        return networks.login(email, password).doAfterSuccess { refreshToken ->
-            locals.login(CurrentUser(email, password), refreshToken)
-        }
+    override suspend fun login(email: String, password: String): String {
+        val refreshToken = networks.login(email, password).data
+        locals.login(CurrentUser(email, password), refreshToken)
+        return refreshToken
     }
 
-    override fun register(
+    override suspend fun register(
         email: String,
         password: String,
         fullName: String,
         phoneNumber: String
-    ): Single<Unit> {
-        return networks.register(email, password, fullName, phoneNumber)
+    ) {
+        return networks.register(email, password, fullName, phoneNumber).data
     }
 
-    override fun forgotPassword(email: String): Single<Unit> {
-        return networks.forgotPassword(email)
+    override suspend fun forgotPassword(email: String) {
+        return networks.forgotPassword(email).data
     }
 
-    override fun resetPassword(code: String, newPassword: String): Single<Unit> {
-        return networks.resetPassword(code, newPassword)
+    override suspend fun resetPassword(code: String, newPassword: String) {
+        return networks.resetPassword(code, newPassword).data
     }
 }

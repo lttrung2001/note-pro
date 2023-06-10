@@ -3,7 +3,6 @@ package com.lttrung.notepro.ui.viewimagedetails
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.google.gson.Gson
 import com.lttrung.notepro.databinding.ActivityViewImageDetailsBinding
@@ -16,10 +15,10 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ViewImageDetailsActivity : AppCompatActivity() {
-    private val binding: ActivityViewImageDetailsBinding by lazy {
+    private val binding by lazy {
         ActivityViewImageDetailsBinding.inflate(layoutInflater)
     }
-    private val imageDetailsAdapter: ImageDetailsAdapter by lazy {
+    private val imageDetailsAdapter by lazy {
         val adapter = ImageDetailsAdapter()
         val images =
             Gson().fromJson(intent.getStringExtra(IMAGES_JSON), Array<Image>::class.java).toList()
@@ -38,7 +37,7 @@ class ViewImageDetailsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setupView()
+        initViews()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -46,19 +45,14 @@ class ViewImageDetailsActivity : AppCompatActivity() {
         return true
     }
 
-    private fun setupView() {
+    private fun initViews() {
         setContentView(binding.root)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        binding.images.apply {
-            layoutManager = LinearLayoutManager(
-                this@ViewImageDetailsActivity,
-                LinearLayoutManager.HORIZONTAL,
-                false
-            )
-            adapter = imageDetailsAdapter
-            PagerSnapHelper().attachToRecyclerView(this)
+        binding.images.let {
+            it.adapter = imageDetailsAdapter
+            PagerSnapHelper().attachToRecyclerView(it)
         }
     }
 }

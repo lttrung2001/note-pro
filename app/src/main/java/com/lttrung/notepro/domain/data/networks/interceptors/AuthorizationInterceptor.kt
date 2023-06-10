@@ -6,7 +6,7 @@ import android.content.SharedPreferences
 import com.auth0.android.jwt.JWT
 import com.google.gson.Gson
 import com.lttrung.notepro.domain.data.locals.UserLocals
-import com.lttrung.notepro.domain.data.networks.models.ApiResponse
+import com.lttrung.notepro.domain.data.networks.ResponseEntity
 import com.lttrung.notepro.exceptions.InvalidTokenException
 import com.lttrung.notepro.ui.chat.ChatSocketService
 import com.lttrung.notepro.ui.login.LoginActivity
@@ -15,7 +15,15 @@ import com.lttrung.notepro.utils.AppConstant.Companion.REFRESH_TOKEN
 import com.lttrung.notepro.utils.HttpStatusCodes
 import com.lttrung.notepro.utils.RetrofitUtils.BASE_URL
 import dagger.hilt.android.qualifiers.ApplicationContext
-import okhttp3.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.FormBody
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import java.net.SocketTimeoutException
 import javax.inject.Inject
@@ -26,7 +34,11 @@ class AuthorizationInterceptor @Inject constructor(
     private val httpLoggingInterceptor: HttpLoggingInterceptor,
     private val userLocals: UserLocals
 ) : Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response {
+    private val scope by lazy {
+        CoroutineScope(Dispatchers.IO)
+    }
+
+    override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
         val builder = chain.request().newBuilder()
         // Get access token
         val accessToken = try {
@@ -64,7 +76,7 @@ class AuthorizationInterceptor @Inject constructor(
             throw InvalidTokenException("Refresh token not found or empty")
         }
         try {
-            // Create client object
+            // Call api to get access token
             return callGetAccessTokenApi(refreshToken)
         } catch (ex: SocketTimeoutException) {
             throw SocketTimeoutException()
@@ -84,16 +96,22 @@ class AuthorizationInterceptor @Inject constructor(
         val response = client.newCall(request).execute()
         // Convert response to object
         val accessToken =
-            Gson().fromJson(response.body!!.string(), ApiResponse::class.java).data as String
-        userLocals.fetchAccessToken(accessToken)
+            Gson().fromJson(response.body!!.string(), ResponseEntity::class.java).data as String
+        scope.launch {
+            userLocals.fetchAccessToken(accessToken)
+        }
         return accessToken
     }
 
     private fun requireLogin() {
-        userLocals.logout()
-        context.startActivity(Intent(context, LoginActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        })
-        context.stopService(Intent(context, ChatSocketService::class.java))
+        scope.launch {
+            userLocals.logout()
+            withContext(Dispatchers.Main) {
+                context.startActivity(Intent(context, LoginActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                })
+                context.stopService(Intent(context, ChatSocketService::class.java))
+            }
+        }
     }
 }

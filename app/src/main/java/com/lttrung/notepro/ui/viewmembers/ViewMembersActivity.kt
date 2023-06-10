@@ -33,19 +33,54 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ViewMembersActivity : AppCompatActivity() {
-    private val binding: ActivityShowMembersBinding by lazy {
+    private val binding by lazy {
         ActivityShowMembersBinding.inflate(layoutInflater)
     }
     private val getMembersViewModel: ViewMembersViewModel by viewModels()
-    private val memberAdapter: MemberAdapter by lazy {
-        val adapter = MemberAdapter(memberListener)
-        binding.rcvMembers.adapter = adapter
-        adapter
+    private val memberListener: MemberListener by lazy {
+        object : MemberListener {
+            override fun onClick(member: Member) {
+                if (note.isOwner()) {
+                    val editMemberIntent =
+                        Intent(this@ViewMembersActivity, EditMemberActivity::class.java)
+                    editMemberIntent.putExtra(NOTE, note)
+                    editMemberIntent.putExtra(MEMBER, member)
+                    launcher.launch(editMemberIntent)
+                }
+            }
+        }
     }
-    private val addMemberFragment: AddMemberFragment by lazy {
+    private val memberAdapter by lazy {
+        MemberAdapter(memberListener)
+    }
+    private val onScrollListener by lazy {
+        object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    getMembersViewModel.getMembers(
+                        note.id,
+                        getMembersViewModel.page,
+                        PAGE_LIMIT
+                    )
+                }
+            }
+        }
+    }
+    private val connection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as ChatSocketService.LocalBinder
+            socketService = binder.getService()
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+
+        }
+    }
+    private val addMemberFragment by lazy {
         AddMemberFragment()
     }
-    private val note: Note by lazy {
+    private val note by lazy {
         intent.getSerializableExtra(NOTE) as Note
     }
     private lateinit var toAddMemberButton: MenuItem
@@ -56,9 +91,9 @@ class ViewMembersActivity : AppCompatActivity() {
         initViews()
         initListeners()
         initObservers()
-        if (getMembersViewModel.getMembers.value == null) {
-            initData()
-        }
+        getMembersViewModel.getMembers(
+            note.id, getMembersViewModel.page, PAGE_LIMIT
+        )
     }
 
     override fun onStart() {
@@ -73,31 +108,17 @@ class ViewMembersActivity : AppCompatActivity() {
         unbindService(connection)
     }
 
-    private val onScrollListener: RecyclerView.OnScrollListener by lazy {
-        object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    getMembersViewModel.getMembers(
-                        note.id,
-                        getMembersViewModel.page,
-                        PAGE_LIMIT
-                    )
-                }
-            }
-        }
-    }
-
     private fun initListeners() {
     }
 
     private fun initObservers() {
-        getMembersViewModel.getMembers.observe(this) { resource ->
+        getMembersViewModel.membersLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
                     memberAdapter.showLoading()
                     binding.rcvMembers.removeOnScrollListener(onScrollListener)
                 }
+
                 is Resource.Success -> {
                     memberAdapter.hideLoading()
                     val paging = resource.data
@@ -108,6 +129,7 @@ class ViewMembersActivity : AppCompatActivity() {
                         binding.rcvMembers.removeOnScrollListener(onScrollListener)
                     }
                 }
+
                 is Resource.Error -> {
                     memberAdapter.hideLoading()
                     Snackbar.make(
@@ -118,12 +140,6 @@ class ViewMembersActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    private fun initData() {
-        getMembersViewModel.getMembers(
-            note.id, getMembersViewModel.page, PAGE_LIMIT
-        )
     }
 
     private fun initViews() {
@@ -162,64 +178,66 @@ class ViewMembersActivity : AppCompatActivity() {
                         rIntent.getSerializableExtra(AppConstant.DELETED_MEMBER) as Member?
                     val paging = memberAdapter.getPaging()
                     val members = paging.data.toMutableList()
-                    editedMember?.let { member ->
-                        val findingMember = members.find {
-                            it.id == member.id
-                        }
-                        members.remove(findingMember)
-                        members.add(member)
-                        getMembersViewModel.getMembers.postValue(
-                            Resource.Success(
-                                Paging(
-                                    paging.hasPreviousPage,
-                                    paging.hasNextPage,
-                                    members
-                                )
-                            )
-                        )
-                    }
-                    deletedMember?.let { member ->
-                        val findingMember = members.find {
-                            it.id == member.id
-                        }
-                        members.remove(findingMember)
-                        getMembersViewModel.getMembers.postValue(
-                            Resource.Success(
-                                Paging(
-                                    paging.hasPreviousPage,
-                                    paging.hasNextPage,
-                                    members
-                                )
-                            )
-                        )
-
-                        val roomId = note.id
-                        socketService.sendRemoveMemberMessage(roomId, member.email)
-                    }
+                    handleEditResult(editedMember, paging, members)
+                    handleDeleteResult(deletedMember, paging, members)
                 }
             }
         }
 
-    private val memberListener: MemberListener by lazy {
-        object : MemberListener {
-            override fun onClick(member: Member) {
-                if (note.isOwner()) {
-                    val editMemberIntent =
-                        Intent(this@ViewMembersActivity, EditMemberActivity::class.java)
-                    editMemberIntent.putExtra(NOTE, note)
-                    editMemberIntent.putExtra(MEMBER, member)
-                    launcher.launch(editMemberIntent)
-                }
+    private fun handleDeleteResult(
+        deletedMember: Member?,
+        paging: Paging<Member>,
+        members: MutableList<Member>
+    ) {
+        deletedMember?.let { member ->
+            val findingMember = members.find {
+                it.id == member.id
             }
+            members.remove(findingMember)
+            getMembersViewModel.membersLiveData.postValue(
+                Resource.Success(
+                    Paging(
+                        paging.hasPreviousPage,
+                        paging.hasNextPage,
+                        members
+                    )
+                )
+            )
+
+            val roomId = note.id
+            socketService.sendRemoveMemberMessage(roomId, member.email)
         }
     }
 
-    fun addMemberResult(member: Member) {
+    private fun handleEditResult(
+        editedMember: Member?,
+        paging: Paging<Member>,
+        members: MutableList<Member>
+    ) {
+        editedMember?.let { member ->
+            val findingMember = members.find {
+                it.id == member.id
+            }
+            members.remove(findingMember)
+            members.add(member)
+            getMembersViewModel.membersLiveData.postValue(
+                Resource.Success(
+                    Paging(
+                        paging.hasPreviousPage,
+                        paging.hasNextPage,
+                        members
+                    )
+                )
+            )
+        }
+    }
+
+    fun handleAddResult(member: Member) {
         addMemberFragment.dismiss()
         val paging = memberAdapter.getPaging()
         val members = paging.data.toMutableList()
         members.add(member)
-        getMembersViewModel.getMembers.postValue(
+        getMembersViewModel.membersLiveData.postValue(
             Resource.Success(
                 Paging(
                     paging.hasPreviousPage,
@@ -231,20 +249,5 @@ class ViewMembersActivity : AppCompatActivity() {
 
         val roomId = note.id
         socketService.sendAddMemberMessage(roomId, member.email)
-    }
-
-    fun onAddMemberFragmentDestroyView() {
-        addMemberFragment.dismiss()
-    }
-
-    private val connection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            val binder = service as ChatSocketService.LocalBinder
-            socketService = binder.getService()
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-
-        }
     }
 }

@@ -19,11 +19,11 @@ import org.jitsi.meet.sdk.JitsiMeetActivity
 
 @AndroidEntryPoint
 class IncomingCallActivity : AppCompatActivity() {
-    private val binding: ActivityIncomingCallBinding by lazy {
+    private val binding by lazy {
         ActivityIncomingCallBinding.inflate(layoutInflater)
     }
     private val incomingCallViewModel: IncomingCallViewModel by viewModels()
-    private val countDownTimer: CountDownTimer by lazy {
+    private val countDownTimer by lazy {
         object: CountDownTimer(30 * 1000, 1000) {
             override fun onTick(p0: Long) {
 
@@ -44,7 +44,7 @@ class IncomingCallActivity : AppCompatActivity() {
 
         }
     }
-    private val ringtone: Ringtone by lazy {
+    private val ringtone by lazy {
         val defaultRingtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
         RingtoneManager.getRingtone(this@IncomingCallActivity, defaultRingtoneUri)
     }
@@ -52,12 +52,12 @@ class IncomingCallActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        setupView()
-        setListener()
-        setObserver()
+        setupViews()
+        setListeners()
+        setObservers()
     }
 
-    private fun setupView() {
+    private fun setupViews() {
         val incomingUser = intent.getSerializableExtra(USER) as User?
         incomingUser?.let { user ->
             binding.fullName.text = user.fullName
@@ -67,7 +67,7 @@ class IncomingCallActivity : AppCompatActivity() {
         }
     }
 
-    private fun setObserver() {
+    private fun setObservers() {
         incomingCallViewModel.currentUserLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
@@ -87,7 +87,7 @@ class IncomingCallActivity : AppCompatActivity() {
         }
     }
 
-    private fun setListener() {
+    private fun setListeners() {
         binding.buttonCallEnd.setOnClickListener {
             ringtone.stop()
             countDownTimer.cancel()

@@ -18,15 +18,13 @@ import java.io.Serializable
 
 @AndroidEntryPoint
 class ViewGalleryActivity : AppCompatActivity() {
-    private val binding: ActivityViewGalleryBinding by lazy {
+    private val binding by lazy {
         ActivityViewGalleryBinding.inflate(layoutInflater)
     }
-    private val imageSelectionAdapter: ImageSelectionAdapter by lazy {
-        val adapter = ImageSelectionAdapter()
-        binding.rcvImages.adapter = adapter
-        adapter
-    }
     private val viewModel: ViewGalleryViewModel by viewModels()
+    private val imageSelectionAdapter by lazy {
+        ImageSelectionAdapter()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initViews()
@@ -35,7 +33,7 @@ class ViewGalleryActivity : AppCompatActivity() {
     }
 
     private fun initObservers() {
-        viewModel.images.observe(this) { resource ->
+        viewModel.imagesLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
 
@@ -61,6 +59,8 @@ class ViewGalleryActivity : AppCompatActivity() {
     private fun initViews() {
         setContentView(binding.root)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        binding.rcvImages.adapter = imageSelectionAdapter
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

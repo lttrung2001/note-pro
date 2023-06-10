@@ -1,7 +1,7 @@
 package com.lttrung.notepro.utils
 
 import android.os.Bundle
-import com.lttrung.notepro.domain.data.locals.database.entities.CurrentUser
+import com.lttrung.notepro.domain.data.locals.entities.CurrentUser
 import org.jitsi.meet.sdk.JitsiMeet
 import org.jitsi.meet.sdk.JitsiMeetConferenceOptions
 import org.jitsi.meet.sdk.JitsiMeetUserInfo

@@ -1,44 +1,48 @@
 package com.lttrung.notepro.domain.repositories.impl
 
 import com.lttrung.notepro.domain.data.locals.UserLocals
-import com.lttrung.notepro.domain.data.locals.database.entities.CurrentUser
+import com.lttrung.notepro.domain.data.locals.entities.CurrentUser
 import com.lttrung.notepro.domain.data.networks.UserNetworks
 import com.lttrung.notepro.domain.data.networks.models.UserInfo
 import com.lttrung.notepro.domain.repositories.UserRepositories
-import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
 class UserRepositoriesImpl @Inject constructor(
     override val networks: UserNetworks,
     override val locals: UserLocals
 ) : UserRepositories {
-    override fun changePassword(oldPassword: String, newPassword: String): Single<String> {
-        return networks.changePassword(oldPassword, newPassword).doAfterSuccess { refreshToken ->
-            locals.changePassword(newPassword, refreshToken)
+    override suspend fun changePassword(oldPassword: String, newPassword: String): String {
+        val refreshToken = networks.changePassword(oldPassword, newPassword).data
+        locals.changePassword(newPassword, refreshToken)
+        return refreshToken
+    }
+
+    override suspend fun changeProfile(fullName: String, phoneNumber: String): UserInfo {
+        val userInfo = networks.changeProfile(fullName, phoneNumber).data
+        locals.changeProfile(fullName, phoneNumber)
+        return userInfo
+    }
+
+    override suspend fun getProfile(): UserInfo {
+        return try {
+            val userInfo = networks.getProfile().data
+            locals.changeProfile(userInfo.fullName, userInfo.phoneNumber)
+            userInfo
+        } catch (ex: Exception) {
+            val user = locals.getCurrentUser()
+            if (user.id != null && user.fullName != null && user.phoneNumber != null) {
+                UserInfo(user.id!!, user.email, user.fullName!!, user.phoneNumber!!)
+            } else {
+                throw ex
+            }
         }
     }
 
-    override fun changeProfile(fullName: String, phoneNumber: String): Single<UserInfo> {
-        return networks.changeProfile(fullName, phoneNumber).doAfterSuccess {
-            locals.changeProfile(fullName, phoneNumber)
-        }
-    }
-
-    override fun getProfile(): Single<UserInfo> {
-        return networks.getProfile().doAfterSuccess { user ->
-            locals.changeProfile(user.fullName, user.phoneNumber)
-        }.onErrorReturn {
-            locals.getCurrentUser().map {
-                UserInfo(it.id!!, it.email, it.fullName!!, it.phoneNumber!!.replace("+84", "0"))
-            }.blockingGet()
-        }
-    }
-
-    override fun getCurrentUser(): Single<CurrentUser> {
+    override suspend fun getCurrentUser(): CurrentUser {
         return locals.getCurrentUser()
     }
 
-    override fun logout() {
+    override suspend fun logout() {
         return locals.logout()
     }
 }

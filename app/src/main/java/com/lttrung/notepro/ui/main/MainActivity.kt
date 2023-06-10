@@ -34,33 +34,34 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var searchView: SearchView
-    private val binding: ActivityMainBinding by lazy {
+    private val launcher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val resultIntent = result.data
+                resultIntent?.let { _ ->
+                    fetchData()
+                }
+            }
+        }
+    private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
     private val mainViewModel: MainViewModel by viewModels()
-    private val pinNotesAdapter: NoteAdapter by lazy {
-        val adapter = NoteAdapter(noteListener)
-        binding.rcvPinnedNotes.adapter = adapter
-        adapter
+    private val pinNotesAdapter by lazy {
+        NoteAdapter(noteListener)
     }
-    private val normalNotesAdapter: NoteAdapter by lazy {
-        val adapter = NoteAdapter(noteListener)
-        binding.rcvOtherNotes.adapter = adapter
-        adapter
+    private val normalNotesAdapter by lazy {
+        NoteAdapter(noteListener)
     }
-    private val categoryAdapter: ArrayAdapter<String> by lazy {
-        val data = ArrayList<String>()
-        data.add("Current")
-        data.add("Archived")
-        data.add("Removed")
-
-        val adapter = ArrayAdapter<String>(this@MainActivity, android.R.layout.simple_list_item_1)
-        adapter.addAll(data)
-        adapter.notifyDataSetChanged()
-        adapter
+    private val categoryAdapter by lazy {
+        ArrayAdapter(
+            this@MainActivity,
+            android.R.layout.simple_list_item_1,
+            listOf("Current", "Archived", "Removed")
+        )
     }
 
-    private val noteListener: NoteListener by lazy {
+    private val noteListener by lazy {
         object : NoteListener {
             override fun onClick(note: Note) {
                 if (note.hasEditPermission()) {
@@ -77,14 +78,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val fabOnClickListener: View.OnClickListener by lazy {
+    private val fabOnClickListener by lazy {
         View.OnClickListener {
             val addNoteIntent = Intent(this, AddNoteActivity::class.java)
             launcher.launch(addNoteIntent)
         }
     }
 
-    private val fabOnScrollChangeListener: View.OnScrollChangeListener by lazy {
+    private val fabOnScrollChangeListener by lazy {
         View.OnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
             if (oldScrollY == 0 && scrollY > 0) {
                 binding.fab.shrink()
@@ -94,13 +95,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val refreshListener: SwipeRefreshLayout.OnRefreshListener by lazy {
+    private val refreshListener by lazy {
         SwipeRefreshLayout.OnRefreshListener {
             mainViewModel.getNotes(GET_CURRENT_NOTES)
         }
     }
 
-    private val searchListener: SearchView.OnQueryTextListener by lazy {
+    private val searchListener by lazy {
         object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
@@ -117,8 +118,8 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText == null || newText.isBlank()) {
-                    val resource = mainViewModel.getNotes.value
+                if (newText.isNullOrBlank()) {
+                    val resource = mainViewModel.notesLiveData.value
                     if (resource is Resource.Success) {
                         val pinNotes = filterNotes(resource.data, isPin = true)
                         val normalNotes = filterNotes(resource.data, isPin = false)
@@ -138,12 +139,39 @@ class MainActivity : AppCompatActivity() {
         initObservers()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        menu?.let {
+            searchView = it.getItem(0)?.actionView as SearchView
+            searchView.setOnQueryTextListener(searchListener)
+            return true
+        }
+        return false
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                startActivity(Intent(this, SettingActivity::class.java))
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     private fun initObservers() {
-        mainViewModel.getNotes.observe(this) { resource ->
+        mainViewModel.notesLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
                     binding.refreshLayout.isRefreshing = true
                 }
+
                 is Resource.Success -> {
                     binding.refreshLayout.isRefreshing = false
                     val currentNotes = resource.data
@@ -156,6 +184,7 @@ class MainActivity : AppCompatActivity() {
                         startService(Intent(this, ChatSocketService::class.java))
                     }
                 }
+
                 is Resource.Error -> {
                     binding.refreshLayout.isRefreshing = false
                     Snackbar.make(
@@ -176,6 +205,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         supportActionBar?.title = getString(R.string.dashboard)
 
+        binding.rcvPinnedNotes.adapter = pinNotesAdapter
+        binding.rcvOtherNotes.adapter = normalNotesAdapter
+
         binding.spinnerCategories.adapter = categoryAdapter
         binding.spinnerCategories.setSelection(0, true)
         binding.spinnerCategories.onItemSelectedListener =
@@ -186,9 +218,11 @@ class MainActivity : AppCompatActivity() {
 
                             mainViewModel.getNotes(GET_CURRENT_NOTES)
                         }
+
                         1 -> {
                             mainViewModel.getNotes(GET_ARCHIVED_NOTES)
                         }
+
                         2 -> {
                             mainViewModel.getNotes(GET_REMOVED_NOTES)
                         }
@@ -196,42 +230,10 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onNothingSelected(p0: AdapterView<*>?) {
-                    TODO("Not yet implemented")
+
                 }
             }
     }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        searchView = menu?.getItem(0)?.actionView as SearchView
-        searchView.setOnQueryTextListener(searchListener)
-        return super.onPrepareOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_settings -> {
-                startActivity(Intent(this, SettingActivity::class.java))
-                super.onOptionsItemSelected(item)
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    private val launcher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                val resultIntent = result.data
-                resultIntent?.let { intent ->
-                    fetchData()
-                }
-            }
-        }
 
     private fun filterNotes(list: List<Note>, isPin: Boolean): List<Note> {
         return list.filter {
@@ -244,9 +246,11 @@ class MainActivity : AppCompatActivity() {
             0 -> {
                 mainViewModel.getNotes(GET_CURRENT_NOTES)
             }
+
             1 -> {
                 mainViewModel.getNotes(GET_ARCHIVED_NOTES)
             }
+
             2 -> {
                 mainViewModel.getNotes(GET_REMOVED_NOTES)
             }

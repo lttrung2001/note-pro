@@ -57,7 +57,7 @@ class NoteDetailsActivity : AppCompatActivity() {
     }
 
     private fun initObservers() {
-        noteDetailsViewModel.noteDetails.observe(this) { resource ->
+        noteDetailsViewModel.noteDetailsLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
 

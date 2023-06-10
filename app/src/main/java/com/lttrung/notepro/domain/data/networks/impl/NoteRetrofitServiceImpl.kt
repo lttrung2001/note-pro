@@ -3,10 +3,8 @@ package com.lttrung.notepro.domain.data.networks.impl
 import android.webkit.URLUtil
 import com.google.gson.Gson
 import com.lttrung.notepro.domain.data.networks.NoteNetworks
-import com.lttrung.notepro.domain.data.networks.models.ApiResponse
+import com.lttrung.notepro.domain.data.networks.ResponseEntity
 import com.lttrung.notepro.domain.data.networks.models.Note
-import com.lttrung.notepro.utils.HttpStatusCodes
-import io.reactivex.rxjava3.core.Single
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -28,16 +26,16 @@ class NoteRetrofitServiceImpl @Inject constructor(
     interface Service {
         @Multipart
         @POST("$PATH/add-note")
-        fun addNote(
+        suspend fun addNote(
             @Part("title") title: RequestBody,
             @Part("content") content: RequestBody,
             @Part("isPin") isPin: Boolean,
             @Part images: List<MultipartBody.Part>?
-        ): Single<Response<ApiResponse<Note>>>
+        ): Response<ResponseEntity<Note>>
 
         @Multipart
         @PUT("$PATH/edit-note")
-        fun editNote(
+        suspend fun editNote(
             @Query("id") id: String,
             @Part("title") title: RequestBody,
             @Part("content") content: RequestBody,
@@ -46,19 +44,19 @@ class NoteRetrofitServiceImpl @Inject constructor(
             @Part("isRemoved") isRemoved: Boolean,
             @Part("deleteImageIds") ids: RequestBody,
             @Part images: List<MultipartBody.Part>?
-        ): Single<Response<ApiResponse<Note>>>
+        ): Response<ResponseEntity<Note>>
 
         @DELETE("$PATH/delete-note")
-        fun deleteNote(@Query("id") noteId: String): Single<Response<ApiResponse<Unit>>>
+        suspend fun deleteNote(@Query("id") noteId: String): Response<ResponseEntity<Unit>>
 
         @GET("$PATH/get-notes")
-        fun getNotes(): Single<Response<ApiResponse<List<Note>>>>
+        suspend fun getNotes(): Response<ResponseEntity<List<Note>>>
 
         @GET("$PATH/get-note-details")
-        fun getNoteDetails(@Query("id") noteId: String): Single<Response<ApiResponse<Note>>>
+        suspend fun getNoteDetails(@Query("id") noteId: String): Response<ResponseEntity<Note>>
     }
 
-    override fun addNote(note: Note): Single<Note> {
+    override suspend fun addNote(note: Note): ResponseEntity<Note> {
         val title = note.title.toRequestBody(MultipartBody.FORM)
         val content = note.content.toRequestBody(MultipartBody.FORM)
         val parts = note.images.map { image ->
@@ -66,16 +64,16 @@ class NoteRetrofitServiceImpl @Inject constructor(
             val requestBody = file.asRequestBody(MultipartBody.FORM)
             MultipartBody.Part.createFormData("images", file.name, requestBody)
         }
-        return service.addNote(title, content, note.isPin, parts).map { response ->
-            if (response.code() == HttpStatusCodes.OK.code) {
-                response.body()!!.data
-            } else {
-                throw Exception(response.message())
-            }
+        val response = service.addNote(title, content, note.isPin, parts)
+        val body = response.body()
+        return if (response.isSuccessful && body != null) {
+            body
+        } else {
+            throw Exception(body?.message)
         }
     }
 
-    override fun editNote(note: Note, deleteImageIds: List<String>): Single<Note> {
+    override suspend fun editNote(note: Note, deleteImageIds: List<String>): ResponseEntity<Note> {
         val newImages = note.images.filter { image ->
             !URLUtil.isNetworkUrl(image.url)
         }.map { image ->
@@ -83,49 +81,50 @@ class NoteRetrofitServiceImpl @Inject constructor(
             val requestBody = file.asRequestBody(MultipartBody.FORM)
             MultipartBody.Part.createFormData("images", file.name, requestBody)
         }
-        return service.editNote(
+        val response = service.editNote(
             note.id,
             note.title.toRequestBody(MultipartBody.FORM),
             note.content.toRequestBody(MultipartBody.FORM),
             note.isPin, note.isArchived, note.isRemoved,
             gson.toJson(deleteImageIds).toRequestBody(MultipartBody.FORM),
             newImages
-        ).map { response ->
-            if (response.code() == HttpStatusCodes.OK.code) {
-                response.body()!!.data
-            } else {
-                throw Exception(response.message())
-            }
+        )
+        val body = response.body()
+
+        return if (response.isSuccessful && body != null) {
+            body
+        } else {
+            throw Exception(body?.message)
         }
     }
 
-    override fun deleteNote(noteId: String): Single<Unit> {
-        return service.deleteNote(noteId).map { response ->
-            if (response.code() == HttpStatusCodes.OK.code) {
-                response.body()!!.data
-            } else {
-                throw Exception(response.message())
-            }
+    override suspend fun deleteNote(noteId: String): ResponseEntity<Unit> {
+        val response = service.deleteNote(noteId)
+        val body = response.body()
+        return if (response.isSuccessful && body != null) {
+            body
+        } else {
+            throw Exception(body?.message)
         }
     }
 
-    override fun getNoteDetails(noteId: String): Single<Note> {
-        return service.getNoteDetails(noteId).map { response ->
-            if (response.code() == HttpStatusCodes.OK.code) {
-                response.body()!!.data
-            } else {
-                throw Exception(response.message())
-            }
+    override suspend fun getNoteDetails(noteId: String): ResponseEntity<Note> {
+        val response = service.getNoteDetails(noteId)
+        val body = response.body()
+        return if (response.isSuccessful && body != null) {
+            body
+        } else {
+            throw Exception(body?.message)
         }
     }
 
-    override fun getNotes(): Single<List<Note>> {
-        return service.getNotes().map { response ->
-            if (response.code() == HttpStatusCodes.OK.code) {
-                response.body()!!.data
-            } else {
-                throw Exception(response.message())
-            }
+    override suspend fun getNotes(): ResponseEntity<List<Note>> {
+        val response = service.getNotes()
+        val body = response.body()
+        return if (response.isSuccessful && body != null) {
+            body
+        } else {
+            throw Exception(body?.message)
         }
     }
 }

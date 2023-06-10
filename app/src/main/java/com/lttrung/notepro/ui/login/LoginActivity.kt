@@ -23,52 +23,20 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
-    private val binding: ActivityLoginBinding by lazy {
+    private val binding by lazy {
         ActivityLoginBinding.inflate(layoutInflater)
     }
     private val viewModel: LoginViewModel by viewModels()
 
-    private val btnToForgotPasswordListener: View.OnClickListener by lazy {
-        View.OnClickListener {
-            startActivity(Intent(this, ForgotPasswordActivity::class.java))
-        }
-    }
-
-    private val btnLoginOnClickListener: View.OnClickListener by lazy {
-        View.OnClickListener {
-            val email = binding.edtEmail.text?.trim().toString()
-            val password = binding.edtPassword.text?.trim().toString()
-            val helper = ValidationHelper()
-            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                helper.hasError = true
-                binding.emailLayout.error = getString(R.string.this_text_is_not_email_type)
-            }
-            if (!helper.matchesPasswordLength(password)) {
-                binding.passwordLayout.error = getString(R.string.password_check)
-            }
-            if (!helper.hasError) {
-                viewModel.login(email, password)
-            }
-        }
-    }
-
-    private val btnToRegisterOnClickListener: View.OnClickListener by lazy {
-        View.OnClickListener {
-            val intent = Intent(this, RegisterActivity::class.java)
-            startActivity(intent)
-        }
-    }
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        setupListener()
-        setupObserver()
+        initListeners()
+        initObservers()
     }
 
-    private fun setupObserver() {
-        viewModel.login.observe(this) { resource ->
+    private fun initObservers() {
+        viewModel.refreshTokenLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
                     binding.btnLogin.showProgress {
@@ -96,10 +64,31 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupListener() {
-        binding.btnToForgotPassword.setOnClickListener(btnToForgotPasswordListener)
-        binding.btnLogin.setOnClickListener(btnLoginOnClickListener)
-        binding.btnToRegister.setOnClickListener(btnToRegisterOnClickListener)
+    private fun initListeners() {
+        binding.btnToForgotPassword.setOnClickListener {
+            startActivity(Intent(this, ForgotPasswordActivity::class.java))
+        }
+
+        binding.btnLogin.setOnClickListener {
+            val email = binding.edtEmail.text?.trim().toString()
+            val password = binding.edtPassword.text?.trim().toString()
+            val helper = ValidationHelper()
+            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                helper.hasError = true
+                binding.emailLayout.error = getString(R.string.this_text_is_not_email_type)
+            }
+            if (!helper.matchesPasswordLength(password)) {
+                binding.passwordLayout.error = getString(R.string.password_check)
+            }
+            if (!helper.hasError) {
+                viewModel.login(email, password)
+            }
+        }
+
+        binding.btnToRegister.setOnClickListener {
+            val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
+        }
 
         bindProgressButton(binding.btnLogin)
         binding.btnLogin.attachTextChangeAnimator()

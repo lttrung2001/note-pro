@@ -14,26 +14,26 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class SettingActivity : AppCompatActivity() {
-    private val binding: ActivitySettingBinding by lazy {
+    private val binding by lazy {
         ActivitySettingBinding.inflate(layoutInflater)
     }
     private val settingViewModel: SettingViewModel by viewModels()
 
-    private val viewProfileListener: View.OnClickListener by lazy {
+    private val viewProfileListener by lazy {
         View.OnClickListener {
             val viewProfileIntent = Intent(this, ViewProfileActivity::class.java)
             startActivity(viewProfileIntent)
         }
     }
 
-    private val changePasswordListener: View.OnClickListener by lazy {
+    private val changePasswordListener by lazy {
         View.OnClickListener {
             val changePasswordIntent = Intent(this, ChangePasswordActivity::class.java)
             startActivity(changePasswordIntent)
         }
     }
 
-    private val logoutOnClickListener: View.OnClickListener by lazy {
+    private val logoutOnClickListener by lazy {
         View.OnClickListener {
             settingViewModel.logout()
             val logoutIntent = Intent(this, LoginActivity::class.java)
@@ -48,11 +48,12 @@ class SettingActivity : AppCompatActivity() {
         initViews()
         initListeners()
         initObservers()
+        settingViewModel.getCurrentUserInfo()
     }
 
-    override fun onResume() {
-        super.onResume()
-        settingViewModel.getCurrentUserInfo()
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        finish()
+        return true
     }
 
     private fun initObservers() {
@@ -70,10 +71,5 @@ class SettingActivity : AppCompatActivity() {
     private fun initViews() {
         setContentView(binding.root)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        finish()
-        return true
     }
 }

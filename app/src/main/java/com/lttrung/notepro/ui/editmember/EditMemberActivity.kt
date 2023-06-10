@@ -26,23 +26,24 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class EditMemberActivity : AppCompatActivity() {
-    private val binding: ActivityEditMemberBinding by lazy {
+    private val binding by lazy {
         ActivityEditMemberBinding.inflate(layoutInflater)
     }
     private val editMemberViewModel: EditMemberViewModel by viewModels()
-    private val roleAdapter: ArrayAdapter<String> by lazy {
-        val roles = arrayListOf("editor", "viewer")
-        val adapter =
-            ArrayAdapter(this@EditMemberActivity, android.R.layout.simple_list_item_1, roles)
-        binding.roleSpinner.adapter = adapter
-        adapter
+    private val roleAdapter by lazy {
+        ArrayAdapter(
+            this@EditMemberActivity,
+            android.R.layout.simple_list_item_1,
+            listOf("editor", "viewer")
+        )
     }
-    private val note: Note by lazy {
+    private val note by lazy {
         intent.getSerializableExtra(NOTE) as Note
     }
-    private val member: Member by lazy {
+    private val member by lazy {
         intent.getSerializableExtra(MEMBER) as Member
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -51,88 +52,6 @@ class EditMemberActivity : AppCompatActivity() {
         initObservers()
 
         editMemberViewModel.getMemberDetails(note.id, member.id)
-    }
-
-    private fun initObservers() {
-        editMemberViewModel.memberLiveData.observe(this) { resource ->
-            when (resource) {
-                is Resource.Loading -> {
-
-                }
-                is Resource.Success -> {
-                    val resultIntent = Intent()
-                    resultIntent.putExtra(EDITED_MEMBER, resource.data)
-                    setResult(RESULT_OK, resultIntent)
-                    finish()
-                }
-                is Resource.Error -> {
-                    Toast.makeText(this, resource.t.message.toString(), Toast.LENGTH_LONG).show()
-                }
-            }
-        }
-
-        editMemberViewModel.deleteMember.observe(this) { resource ->
-            when (resource) {
-                is Resource.Loading -> {
-                    binding.deleteButton.isClickable = false
-                    binding.deleteButton.showProgress {
-                        buttonTextRes = R.string.loading
-                    }
-                }
-                is Resource.Success -> {
-                    binding.deleteButton.isClickable = true
-                    binding.deleteButton.hideProgress(R.string.remove)
-                    val resultIntent = Intent()
-                    resultIntent.putExtra(DELETED_MEMBER, member)
-                    setResult(RESULT_OK, resultIntent)
-                    finish()
-                }
-                is Resource.Error -> {
-                    binding.deleteButton.isClickable = true
-                    binding.deleteButton.hideProgress(R.string.remove)
-                    Toast.makeText(this, resource.t.message.toString(), Toast.LENGTH_LONG).show()
-                }
-            }
-        }
-
-        editMemberViewModel.memberDetails.observe(this) { resource ->
-            when (resource) {
-                is Resource.Loading -> {
-                    binding.deleteButton.isClickable = false
-                }
-                is Resource.Success -> {
-                    binding.deleteButton.isClickable = true
-                    val member = resource.data
-                    binding.tvId.text = member.id
-                    binding.tvEmail.text = member.email
-                    binding.tvFullName.text = member.fullName
-                    binding.tvPhoneNumber.text = member.phoneNumber
-                    binding.roleSpinner.setSelection(roleAdapter.getPosition(member.role))
-                }
-                is Resource.Error -> {
-                    binding.deleteButton.isClickable = true
-                    Toast.makeText(this, resource.t.message.toString(), Toast.LENGTH_LONG).show()
-                }
-            }
-        }
-    }
-
-    private fun initListeners() {
-        binding.deleteButton.setOnClickListener(deleteListener)
-    }
-
-    private fun initViews() {
-        setContentView(binding.root)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        bindProgressButton(binding.deleteButton)
-        binding.deleteButton.attachTextChangeAnimator()
-
-        binding.roleSpinner.setSelection(roleAdapter.getPosition(member.role))
-        binding.tvId.text = member.id
-        binding.tvEmail.text = member.email
-        binding.tvFullName.text = member.fullName
-        binding.tvPhoneNumber.text = member.phoneNumber
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -151,17 +70,104 @@ class EditMemberActivity : AppCompatActivity() {
                     binding.tvPhoneNumber.text.toString()
                 )
                 editMemberViewModel.editMember(note.id, member)
-            }
-            else -> {
+            } else -> {
                 finish()
             }
         }
         return true
     }
 
-    private val deleteListener: View.OnClickListener by lazy {
-        View.OnClickListener {
+    private fun initObservers() {
+        editMemberViewModel.editMemberLiveData.observe(this) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+
+                }
+
+                is Resource.Success -> {
+                    val resultIntent = Intent()
+                    resultIntent.putExtra(EDITED_MEMBER, resource.data)
+                    setResult(RESULT_OK, resultIntent)
+                    finish()
+                }
+
+                is Resource.Error -> {
+                    Toast.makeText(this, resource.t.message.toString(), Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+
+        editMemberViewModel.deleteMemberLiveData.observe(this) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+                    binding.deleteButton.isClickable = false
+                    binding.deleteButton.showProgress {
+                        buttonTextRes = R.string.loading
+                    }
+                }
+
+                is Resource.Success -> {
+                    binding.deleteButton.isClickable = true
+                    binding.deleteButton.hideProgress(R.string.remove)
+                    val resultIntent = Intent()
+                    resultIntent.putExtra(DELETED_MEMBER, member)
+                    setResult(RESULT_OK, resultIntent)
+                    finish()
+                }
+
+                is Resource.Error -> {
+                    binding.deleteButton.isClickable = true
+                    binding.deleteButton.hideProgress(R.string.remove)
+                    Toast.makeText(this, resource.t.message.toString(), Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+
+        editMemberViewModel.memberDetailsLiveData.observe(this) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+                    binding.deleteButton.isClickable = false
+                }
+
+                is Resource.Success -> {
+                    binding.deleteButton.isClickable = true
+                    val member = resource.data
+                    bindMemberDataToViews(member)
+                }
+
+                is Resource.Error -> {
+                    binding.deleteButton.isClickable = true
+                    Toast.makeText(this, resource.t.message.toString(), Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    private fun bindMemberDataToViews(member: Member) {
+        binding.tvId.text = member.id
+        binding.tvEmail.text = member.email
+        binding.tvFullName.text = member.fullName
+        binding.tvPhoneNumber.text = member.phoneNumber
+        binding.roleSpinner.setSelection(roleAdapter.getPosition(member.role))
+    }
+
+    private fun initListeners() {
+        binding.deleteButton.setOnClickListener {
             editMemberViewModel.deleteMember(note.id, member.id)
         }
+    }
+
+    private fun initViews() {
+        setContentView(binding.root)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        bindProgressButton(binding.deleteButton)
+        binding.deleteButton.attachTextChangeAnimator()
+
+        binding.roleSpinner.setSelection(roleAdapter.getPosition(member.role))
+        binding.tvId.text = member.id
+        binding.tvEmail.text = member.email
+        binding.tvFullName.text = member.fullName
+        binding.tvPhoneNumber.text = member.phoneNumber
     }
 }

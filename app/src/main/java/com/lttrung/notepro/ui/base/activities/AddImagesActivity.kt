@@ -13,26 +13,8 @@ import com.lttrung.notepro.ui.viewgallery.ViewGalleryActivity
 import com.lttrung.notepro.utils.AppConstant
 
 abstract class AddImagesActivity : AppCompatActivity() {
-    val bottomSheet: AddImagesFragment by lazy {
-        AddImagesFragment()
-    }
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == AppConstant.CAMERA_REQUEST && permissions.contains(Manifest.permission.CAMERA)) {
-            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            launcher.launch(cameraIntent)
-        } else if (requestCode == AppConstant.READ_EXTERNAL_STORAGE_REQUEST && permissions.contains(
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            )
-        ) {
-            val pickImagesIntent = Intent(this, ViewGalleryActivity::class.java)
-            launcher.launch(pickImagesIntent)
-        }
-    }
+    abstract val launcher: ActivityResultLauncher<Intent>
+    lateinit var bottomSheet: AddImagesFragment
 
     protected val openBottomSheetDialogListener: View.OnClickListener by lazy {
         View.OnClickListener {
@@ -52,11 +34,23 @@ abstract class AddImagesActivity : AppCompatActivity() {
         }
     }
 
-    private fun openBottomSheetMenu() {
-        bottomSheet.show(supportFragmentManager, bottomSheet.tag)
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == AppConstant.CAMERA_REQUEST && permissions.contains(Manifest.permission.CAMERA)) {
+            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            launcher.launch(cameraIntent)
+        } else if (requestCode == AppConstant.READ_EXTERNAL_STORAGE_REQUEST && permissions.contains(
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+        ) {
+            val pickImagesIntent = Intent(this, ViewGalleryActivity::class.java)
+            launcher.launch(pickImagesIntent)
+        }
     }
-
-    protected abstract val launcher: ActivityResultLauncher<Intent>
 
     fun openCamera() {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -66,5 +60,10 @@ abstract class AddImagesActivity : AppCompatActivity() {
     fun openGallery() {
         val pickImagesIntent = Intent(this, ViewGalleryActivity::class.java)
         launcher.launch(pickImagesIntent)
+    }
+
+    private fun openBottomSheetMenu() {
+        bottomSheet = AddImagesFragment()
+        bottomSheet.show(supportFragmentManager, AddImagesFragment.TAG)
     }
 }

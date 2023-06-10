@@ -7,12 +7,11 @@ import android.os.Bundle
 import android.provider.MediaStore
 import com.lttrung.notepro.domain.data.locals.models.ImageSelectionLocalsModel
 import com.lttrung.notepro.domain.data.networks.models.Paging
-import io.reactivex.rxjava3.core.Single
 
 object GalleryUtils {
     fun findImages(
         context: Context, page: Int, limit: Int
-    ): Single<Paging<ImageSelectionLocalsModel>> {
+    ): Paging<ImageSelectionLocalsModel> {
         val imageList: ArrayList<ImageSelectionLocalsModel> = ArrayList()
         val columns = arrayOf(
             MediaStore.Images.Media.DISPLAY_NAME,
@@ -71,6 +70,6 @@ object GalleryUtils {
         val hasNextPage = (nextPageCursor?.count ?: 0) > 0
         imageCursor?.close()
         nextPageCursor?.close()
-        return Single.just(Paging(hasPreviousPage = false, hasNextPage = hasNextPage, imageList))
+        return Paging(hasPreviousPage = false, hasNextPage = hasNextPage, imageList)
     }
 }

@@ -51,6 +51,7 @@
                 android:id="@+id/rcv_images"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
+                android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/layout_image" />
         </LinearLayout>
