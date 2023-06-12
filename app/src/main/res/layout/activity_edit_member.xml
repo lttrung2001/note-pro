@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingHorizontal="16dp"
-        tools:context=".ui.editmember.EditMemberActivity">
+        tools:context=".ui.activities.editmember.EditMemberActivity">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/img_avt"

@@ -8,7 +8,7 @@ import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import com.lttrung.notepro.ui.addimages.AddImagesFragment
+import com.lttrung.notepro.ui.fragments.addimages.AddImagesFragment
 import com.lttrung.notepro.ui.viewgallery.ViewGalleryActivity
 import com.lttrung.notepro.utils.AppConstant
 

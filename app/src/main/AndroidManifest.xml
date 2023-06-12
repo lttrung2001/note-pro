@@ -60,7 +60,7 @@
             android:exported="false"
             android:label="Conservation" />
         <activity
-            android:name=".ui.editmember.EditMemberActivity"
+            android:name=".ui.activities.editmember.EditMemberActivity"
             android:exported="false"
             android:label="Edit member" />
         <activity

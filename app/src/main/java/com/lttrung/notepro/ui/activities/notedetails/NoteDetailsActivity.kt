@@ -1,0 +1,155 @@
+package com.lttrung.notepro.ui.activities.notedetails
+
+import android.content.Intent
+import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
+import com.lttrung.notepro.R
+import com.lttrung.notepro.databinding.ActivityNoteDetailsBinding
+import com.lttrung.notepro.domain.data.networks.models.Image
+import com.lttrung.notepro.domain.data.networks.models.Note
+import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
+import com.lttrung.notepro.ui.chat.ChatActivity
+import com.lttrung.notepro.ui.viewimagedetails.ViewImageDetailsActivity
+import com.lttrung.notepro.utils.AppConstant.Companion.EDITED_NOTE
+import com.lttrung.notepro.utils.AppConstant.Companion.IMAGES_JSON
+import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
+import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
+import com.lttrung.notepro.utils.Converter
+import com.lttrung.notepro.utils.Resource
+import com.ramotion.cardslider.CardSliderLayoutManager
+import com.ramotion.cardslider.CardSnapHelper
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
+class NoteDetailsActivity : AppCompatActivity() {
+    private val binding: ActivityNoteDetailsBinding by lazy {
+        ActivityNoteDetailsBinding.inflate(layoutInflater)
+    }
+    private val imagesAdapter: ImagesAdapter by lazy {
+        val adapter = ImagesAdapter(imageListener)
+        binding.rcvImages.adapter = adapter
+        binding.rcvImages.layoutManager = CardSliderLayoutManager(this@NoteDetailsActivity)
+        CardSnapHelper().attachToRecyclerView(binding.rcvImages)
+        adapter
+    }
+    private val noteDetailsViewModel: NoteDetailsViewModel by viewModels()
+    private val note: Note by lazy {
+        intent.getSerializableExtra(NOTE) as Note
+    }
+    private lateinit var menu: Menu
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        initViews()
+        initData()
+        initObservers()
+    }
+
+    private fun initViews() {
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        setContentView(binding.root)
+    }
+
+    private fun initObservers() {
+        noteDetailsViewModel.noteDetailsLiveData.observe(this) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+
+                }
+                is Resource.Success -> {
+                    val note = resource.data
+                    intent.putExtra(NOTE, note)
+                    binding.edtNoteTitle.text = note.title
+                    binding.edtNoteDesc.text = note.content
+                    binding.tvLastModified.text = Converter.longToDate(note.lastModified)
+                    imagesAdapter.submitList(note.images)
+                }
+                is Resource.Error -> {
+                    Snackbar.make(
+                        binding.root, resource.t.message.toString(),
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
+    }
+
+    private fun initData() {
+        binding.edtNoteTitle.text = note.title
+        binding.edtNoteDesc.text = note.content
+        binding.tvLastModified.text = Converter.longToDate(note.lastModified)
+
+        noteDetailsViewModel.getNoteDetails(note)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_note_details, menu)
+        menu?.let {
+            this.menu = menu
+            val noteDetails = intent.getSerializableExtra(NOTE) as Note
+            val pinButton = menu.getItem(0)
+            pinButton.isChecked = noteDetails.isPin
+            if (noteDetails.isPin) {
+                pinButton.icon.setTint(resources.getColor(R.color.primary, theme))
+            } else {
+                pinButton.icon.setTint(resources.getColor(R.color.black, theme))
+            }
+        }
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_pin -> {
+                if (item.isChecked) {
+                    item.icon.setTint(resources.getColor(R.color.black, theme))
+                } else {
+                    item.icon.setTint(resources.getColor(R.color.primary, theme))
+                }
+                item.isChecked = !item.isChecked
+            }
+            R.id.action_show_conservation -> {
+                val showConservationIntent =
+                    Intent(this@NoteDetailsActivity, ChatActivity::class.java)
+                showConservationIntent.putExtra(ROOM_ID, note.id)
+                showConservationIntent.putExtra(NOTE, note)
+                startActivity(showConservationIntent)
+            }
+            else -> {
+                note.isPin = menu.getItem(0).isChecked
+                noteDetailsViewModel.editNote(note)
+                val resultIntent = Intent()
+                resultIntent.putExtra(EDITED_NOTE, note)
+                setResult(RESULT_OK, resultIntent)
+                finish()
+            }
+        }
+        return true
+    }
+
+    private val imageListener: ImagesAdapter.ImageListener by lazy {
+        object: ImagesAdapter.ImageListener {
+            override fun onClick(image: Image) {
+                // Start image details activity
+                startActivity(
+                    Intent(
+                        this@NoteDetailsActivity,
+                        ViewImageDetailsActivity::class.java
+                    ).apply {
+                        putExtra(IMAGES_JSON, Gson().toJson(imagesAdapter.currentList))
+                    }
+                )
+            }
+
+            override fun onDelete(image: Image) {
+                return
+            }
+        }
+    }
+}
