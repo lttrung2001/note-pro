@@ -29,8 +29,17 @@ class FeatureAdapter : ListAdapter<Feature, FeatureAdapter.FeatureViewHolder>(ob
     }
 
     class FeatureViewHolder(val binding: FeatureItemBinding) : ViewHolder(binding.root) {
+        init {
+            binding.root.setOnClickListener {
+                
+            }
+        }
         fun bind(feature: Feature) {
             binding.icon.setImageResource(feature.icon)
         }
+    }
+
+    interface FeatureListener {
+        fun onClick(item: Feature)
     }
 }
