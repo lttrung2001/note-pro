@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".ui.notedetails.NoteDetailsActivity">
+    tools:context=".ui.activities.notedetails.NoteDetailsActivity">
 
-    <ScrollView
-        android:id="@+id/scroll_view"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_above="@id/rvFeatures"
+        android:layout_alignParentTop="true"
+
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -19,16 +22,17 @@
             android:orientation="vertical"
             android:paddingHorizontal="16dp">
 
-            <com.google.android.material.textview.MaterialTextView
+            <EditText
                 android:id="@+id/edt_note_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="16dp"
                 android:background="@android:color/transparent"
                 android:hint="@string/title"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-            <com.google.android.material.textview.MaterialTextView
+            <EditText
                 android:id="@+id/edt_note_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -40,7 +44,7 @@
                 android:minHeight="200dp"
                 android:textSize="16sp" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_images"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -48,29 +52,22 @@
                 android:text="@string/images" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rcv_images"
+                android:id="@+id/rvImages"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                tools:listitem="@layout/layout_image" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="2"
+                tools:listitem="@layout/image_item" />
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/bottom_bar"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvFeatures"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_gravity="bottom"
-        android:background="@color/secondary">
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tv_last_modified"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/today"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/feature_item" />
+</RelativeLayout>

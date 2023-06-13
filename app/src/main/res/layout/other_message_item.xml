@@ -9,7 +9,7 @@
         android:id="@+id/img_avt"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/app"
+        android:src="@drawable/app_test"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

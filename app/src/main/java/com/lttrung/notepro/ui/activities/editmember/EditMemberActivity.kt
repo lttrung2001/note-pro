@@ -17,6 +17,7 @@ import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityEditMemberBinding
 import com.lttrung.notepro.domain.data.networks.models.Member
 import com.lttrung.notepro.domain.data.networks.models.Note
+import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.DELETED_MEMBER
 import com.lttrung.notepro.utils.AppConstant.Companion.EDITED_MEMBER
 import com.lttrung.notepro.utils.AppConstant.Companion.MEMBER
@@ -25,8 +26,8 @@ import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class EditMemberActivity : AppCompatActivity() {
-    private val binding by lazy {
+class EditMemberActivity : BaseActivity() {
+    override val binding by lazy {
         ActivityEditMemberBinding.inflate(layoutInflater)
     }
     private val editMemberViewModel: EditMemberViewModel by viewModels()
@@ -54,30 +55,20 @@ class EditMemberActivity : AppCompatActivity() {
         editMemberViewModel.getMemberDetails(note.id, member.id)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_edit_member, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
+    // R.id.action_save -> {
+    //                val member = Member(
+    //                    binding.tvId.text.toString(),
+    //                    binding.tvEmail.text.toString(),
+    //                    binding.tvFullName.text.toString(),
+    //                    binding.roleSpinner.selectedItem.toString(),
+    //                    binding.tvPhoneNumber.text.toString()
+    //                )
+    //                editMemberViewModel.editMember(note.id, member)
+    //            } else -> {
+    //                finish()
+    //            }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_save -> {
-                val member = Member(
-                    binding.tvId.text.toString(),
-                    binding.tvEmail.text.toString(),
-                    binding.tvFullName.text.toString(),
-                    binding.roleSpinner.selectedItem.toString(),
-                    binding.tvPhoneNumber.text.toString()
-                )
-                editMemberViewModel.editMember(note.id, member)
-            } else -> {
-                finish()
-            }
-        }
-        return true
-    }
-
-    private fun initObservers() {
+    override fun initObservers() {
         editMemberViewModel.editMemberLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
@@ -151,16 +142,13 @@ class EditMemberActivity : AppCompatActivity() {
         binding.roleSpinner.setSelection(roleAdapter.getPosition(member.role))
     }
 
-    private fun initListeners() {
+    override fun initListeners() {
         binding.deleteButton.setOnClickListener {
             editMemberViewModel.deleteMember(note.id, member.id)
         }
     }
 
-    private fun initViews() {
-        setContentView(binding.root)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
+    override fun initViews() {
         bindProgressButton(binding.deleteButton)
         binding.deleteButton.attachTextChangeAnimator()
 

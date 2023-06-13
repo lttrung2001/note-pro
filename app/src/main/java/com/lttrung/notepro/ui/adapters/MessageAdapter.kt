@@ -1,18 +1,36 @@
-package com.lttrung.notepro.ui.base.adapters.message
+package com.lttrung.notepro.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.lttrung.notepro.R
+import com.lttrung.notepro.databinding.LoadingItemBinding
+import com.lttrung.notepro.databinding.MyMessageItemBinding
+import com.lttrung.notepro.databinding.OtherMessageItemBinding
 import com.lttrung.notepro.domain.data.networks.models.Message
 import com.lttrung.notepro.domain.data.networks.models.User
-import com.lttrung.notepro.databinding.LayoutLoadingBinding
-import com.lttrung.notepro.databinding.LayoutMyMessageBinding
-import com.lttrung.notepro.databinding.LayoutOtherMessageBinding
-import com.lttrung.notepro.ui.base.adapters.LoadingViewHolder
 
 class MessageAdapter : ListAdapter<Message, ViewHolder>(CALLBACK) {
+    companion object {
+        private val CALLBACK = object : DiffUtil.ItemCallback<Message>() {
+            override fun areItemsTheSame(oldItem: Message, newItem: Message): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun areContentsTheSame(oldItem: Message, newItem: Message): Boolean {
+                return oldItem == newItem
+            }
+
+        }
+
+        private const val LOADING = 1
+        private const val MY_MESSAGE = 2
+        private const val OTHER_MESSAGE = 3
+    }
+
     var userId = ""
 
     fun showLoading() {
@@ -40,25 +58,27 @@ class MessageAdapter : ListAdapter<Message, ViewHolder>(CALLBACK) {
         return when (viewType) {
             MY_MESSAGE -> {
                 val binding =
-                    LayoutMyMessageBinding.inflate(
+                    MyMessageItemBinding.inflate(
                         LayoutInflater.from(parent.context),
                         parent,
                         false
                     )
                 MyMessageViewHolder(binding)
             }
+
             OTHER_MESSAGE -> {
                 val binding =
-                    LayoutOtherMessageBinding.inflate(
+                    OtherMessageItemBinding.inflate(
                         LayoutInflater.from(parent.context),
                         parent,
                         false
                     )
                 OtherMessageViewHolder(binding)
             }
+
             else -> {
                 val binding =
-                    LayoutLoadingBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                    LoadingItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 LoadingViewHolder(binding)
             }
         }
@@ -81,29 +101,31 @@ class MessageAdapter : ListAdapter<Message, ViewHolder>(CALLBACK) {
             "" -> {
                 LOADING
             }
+
             userId -> {
                 MY_MESSAGE
             }
+
             else -> {
                 OTHER_MESSAGE
             }
         }
     }
 
-    companion object {
-        private val CALLBACK = object : DiffUtil.ItemCallback<Message>() {
-            override fun areItemsTheSame(oldItem: Message, newItem: Message): Boolean {
-                return oldItem.id == newItem.id
-            }
-
-            override fun areContentsTheSame(oldItem: Message, newItem: Message): Boolean {
-                return oldItem == newItem
-            }
-
+    class MyMessageViewHolder(private val binding: MyMessageItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(message: Message) {
+            binding.message.text = message.content
         }
+    }
 
-        private const val LOADING = 1
-        private const val MY_MESSAGE = 2
-        private const val OTHER_MESSAGE = 3
+    class OtherMessageViewHolder(
+        private val binding: OtherMessageItemBinding
+    ) : ViewHolder(binding.root) {
+        fun bind(message: Message) {
+            binding.imgAvt.setImageResource(R.drawable.me)
+            binding.name.text = message.user.fullName
+            binding.message.text = message.content
+        }
     }
 }

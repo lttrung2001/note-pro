@@ -1,55 +1,45 @@
 package com.lttrung.notepro.ui.activities.addnote
 
-import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import android.view.Menu
-import android.view.MenuItem
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
 import com.google.android.material.snackbar.Snackbar
-import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityAddNoteBinding
 import com.lttrung.notepro.domain.data.networks.models.Image
 import com.lttrung.notepro.domain.data.networks.models.Note
-import com.lttrung.notepro.ui.base.activities.AddImagesActivity
-import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
-import com.lttrung.notepro.ui.chat.ChatSocketService
+import com.lttrung.notepro.ui.activities.chat.ChatSocketService
+import com.lttrung.notepro.ui.adapters.ImageAdapter
+import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.SELECTED_IMAGES
 import com.lttrung.notepro.utils.Resource
-import com.ramotion.cardslider.CardSliderLayoutManager
-import com.ramotion.cardslider.CardSnapHelper
 import dagger.hilt.android.AndroidEntryPoint
 
-@SuppressLint("InflateParams")
 @AndroidEntryPoint
-class AddNoteActivity : AddImagesActivity() {
-    override val launcher =
+class AddNoteActivity : BaseActivity() {
+    private val launcher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val resultIntent = result.data
                 resultIntent?.let {
                     val images = it.getSerializableExtra(SELECTED_IMAGES) as List<Image>
                     imagesAdapter.submitList(images)
-                    bottomSheet.dismiss()
                 }
             }
         }
 
-    private val binding by lazy {
+    override val binding by lazy {
         ActivityAddNoteBinding.inflate(layoutInflater)
     }
     private val addNoteViewModel: AddNoteViewModel by viewModels()
-    private val imagesAdapter: ImagesAdapter by lazy {
-        ImagesAdapter(object : ImagesAdapter.ImageListener {
+    private val imagesAdapter: ImageAdapter by lazy {
+        ImageAdapter(object : ImageAdapter.ImageListener {
             override fun onClick(image: Image) {
                 // Start image details activity
             }
@@ -61,13 +51,6 @@ class AddNoteActivity : AddImagesActivity() {
             }
         })
     }
-    private val alertDialog by lazy {
-        val builder = AlertDialog.Builder(this)
-        builder.setView(layoutInflater.inflate(R.layout.dialog_loading, null))
-        builder.setCancelable(false)
-        builder.create()
-    }
-    private lateinit var menu: Menu
     private lateinit var socketService: ChatSocketService
 
     private val connection by lazy {
@@ -85,8 +68,6 @@ class AddNoteActivity : AddImagesActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initViews()
-        initListeners()
         initObservers()
     }
 
@@ -102,55 +83,36 @@ class AddNoteActivity : AddImagesActivity() {
         unbindService(connection)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_add_note, menu)
-        this.menu = menu!!
-        val pinButton = menu.getItem(0)
-        pinButton.isChecked = false
-        pinButton.icon.setTint(resources.getColor(R.color.black, theme))
-        return true
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val note = Note(
+            String(),
+            binding.edtNoteTitle.text?.trim().toString(),
+            binding.edtNoteDesc.text?.trim().toString(),
+            0L,
+            false,
+            isArchived = false,
+            isRemoved = false,
+            role = String(),
+            images = imagesAdapter.currentList,
+        )
+        addNoteViewModel.addNote(note)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        menu
-        when (item.itemId) {
-            R.id.action_pin -> {
-                if (item.isChecked) {
-                    item.icon.setTint(resources.getColor(R.color.black, theme))
-                } else {
-                    item.icon.setTint(resources.getColor(R.color.primary, theme))
-                }
-                item.isChecked = !item.isChecked
-            }
-            R.id.action_save -> {
-                val note = Note(
-                    String(),
-                    binding.edtNoteTitle.text?.trim().toString(),
-                    binding.edtNoteDesc.text?.trim().toString(),
-                    0L,
-                    menu.getItem(0).isChecked,
-                    isArchived = false,
-                    isRemoved = false,
-                    role = String(),
-                    images = imagesAdapter.currentList,
-                )
-                addNoteViewModel.addNote(note)
-            }
-            else -> {
-                finish()
-            }
-        }
-        return true
+    override fun initViews() {
+        setContentView(binding.root)
     }
 
-    private fun initObservers() {
+    override fun initListeners() {
+    }
+
+    override fun initObservers() {
         addNoteViewModel.addNoteLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-                    alertDialog.show()
                 }
+
                 is Resource.Success -> {
-                    alertDialog.dismiss()
                     val resultIntent = Intent()
                     val note = resource.data
                     resultIntent.putExtra(NOTE, note)
@@ -160,20 +122,11 @@ class AddNoteActivity : AddImagesActivity() {
 
                     finish()
                 }
+
                 is Resource.Error -> {
-                    alertDialog.dismiss()
-                    Snackbar.make(binding.root, resource.t.message.toString(), LENGTH_LONG).show()
+//                    Snackbar.make(binding.root, resource.t.message.toString(), LENGTH_LONG).show()
                 }
             }
         }
-    }
-
-    private fun initListeners() {
-        binding.btnOpenBottomSheet.setOnClickListener(openBottomSheetDialogListener)
-    }
-
-    private fun initViews() {
-        setContentView(binding.root)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 }

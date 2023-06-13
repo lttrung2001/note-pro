@@ -9,7 +9,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.Person
 import com.lttrung.notepro.R
 import com.lttrung.notepro.domain.data.networks.models.Message
-import com.lttrung.notepro.ui.chat.ChatActivity
+import com.lttrung.notepro.ui.activities.chat.ChatActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE
 import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
 

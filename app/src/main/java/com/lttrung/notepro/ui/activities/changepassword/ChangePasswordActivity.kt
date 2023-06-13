@@ -3,7 +3,6 @@ package com.lttrung.notepro.ui.activities.changepassword
 import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import com.github.razir.progressbutton.attachTextChangeAnimator
 import com.github.razir.progressbutton.bindProgressButton
 import com.github.razir.progressbutton.hideProgress
@@ -11,13 +10,14 @@ import com.github.razir.progressbutton.showProgress
 import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityChangePasswordBinding
+import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.utils.Resource
 import com.lttrung.notepro.utils.ValidationHelper
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ChangePasswordActivity : AppCompatActivity() {
-    private val binding by lazy {
+class ChangePasswordActivity : BaseActivity() {
+    override val binding by lazy {
         ActivityChangePasswordBinding.inflate(layoutInflater)
     }
     private val changePasswordViewModel: ChangePasswordViewModel by viewModels()
@@ -28,7 +28,7 @@ class ChangePasswordActivity : AppCompatActivity() {
         initObservers()
     }
 
-    private fun initObservers() {
+    override fun initObservers() {
         changePasswordViewModel.changePasswordLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
@@ -56,7 +56,7 @@ class ChangePasswordActivity : AppCompatActivity() {
         }
     }
 
-    private fun initListeners() {
+    override fun initListeners() {
         bindProgressButton(binding.btnChangePassword)
         binding.btnChangePassword.attachTextChangeAnimator()
         binding.btnChangePassword.setOnClickListener {
@@ -71,9 +71,7 @@ class ChangePasswordActivity : AppCompatActivity() {
         }
     }
 
-    private fun initViews() {
-        setContentView(binding.root)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    override fun initViews() {
     }
 
     private fun validateInputs(

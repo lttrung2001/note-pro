@@ -4,14 +4,13 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Patterns
-import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityForgotPasswordBinding
-import com.lttrung.notepro.ui.resetpassword.ResetPasswordActivity
+import com.lttrung.notepro.ui.activities.resetpassword.ResetPasswordActivity
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -40,6 +39,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
                     }
                     binding.btnSendInstructions.isClickable = false
                 }
+
                 is Resource.Success -> {
                     binding.btnSendInstructions.hideProgress(R.string.send_instructions)
                     binding.btnSendInstructions.isClickable = true
@@ -49,6 +49,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
                         Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                     startActivity(resetPasswordIntent)
                 }
+
                 is Resource.Error -> {
                     binding.btnSendInstructions.hideProgress(R.string.send_instructions)
                     binding.btnSendInstructions.isClickable = true

@@ -8,7 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"
-        android:src="@drawable/app" />
+        android:src="@drawable/app_test" />
 
     <CheckBox
         android:id="@+id/checkbox"

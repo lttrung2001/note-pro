@@ -12,5 +12,5 @@
         android:layout_height="wrap_content"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="3"
-        tools:listitem="@layout/layout_image" />
+        tools:listitem="@layout/image_item" />
 </LinearLayout>

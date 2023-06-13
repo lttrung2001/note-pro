@@ -6,7 +6,7 @@
     android:layout_margin="16dp"
     android:orientation="vertical">
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/upload_by"
@@ -26,7 +26,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/img_upload_by"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/img_upload_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
             app:layout_constraintTop_toBottomOf="@id/img_upload_by" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -62,7 +62,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/img_icon"
             android:layout_width="60dp"
             android:layout_height="60dp"
@@ -74,7 +74,7 @@
             app:layout_constraintVertical_bias="0.0"
             app:tint="@color/primary" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/img_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -86,11 +86,19 @@
             app:layout_constraintTop_toTopOf="@+id/img_icon" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ImageView
-        android:id="@+id/img"
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/me" />
+        android:layout_margin="10dp"
+        app:cardCornerRadius="@dimen/medium_corner"
+        app:cardElevation="8dp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/img"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="20dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/me" />
+    </androidx.cardview.widget.CardView>
 </LinearLayout>

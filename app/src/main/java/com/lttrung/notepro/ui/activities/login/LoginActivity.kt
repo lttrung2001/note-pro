@@ -4,7 +4,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Patterns
-import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.github.razir.progressbutton.attachTextChangeAnimator
@@ -14,9 +13,9 @@ import com.github.razir.progressbutton.showProgress
 import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityLoginBinding
-import com.lttrung.notepro.ui.forgotpassword.ForgotPasswordActivity
-import com.lttrung.notepro.ui.main.MainActivity
-import com.lttrung.notepro.ui.register.RegisterActivity
+import com.lttrung.notepro.ui.activities.forgotpassword.ForgotPasswordActivity
+import com.lttrung.notepro.ui.activities.main.MainActivity
+import com.lttrung.notepro.ui.activities.register.RegisterActivity
 import com.lttrung.notepro.utils.Resource
 import com.lttrung.notepro.utils.ValidationHelper
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,11 +44,13 @@ class LoginActivity : AppCompatActivity() {
                     }
                     binding.btnLogin.isClickable = false
                 }
+
                 is Resource.Success -> {
                     binding.btnLogin.hideProgress(R.string.login)
                     binding.btnLogin.isClickable = true
                     switchToMain()
                 }
+
                 is Resource.Error -> {
                     Snackbar.make(
                         this@LoginActivity,

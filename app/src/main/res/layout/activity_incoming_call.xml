@@ -3,13 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linearLayout"
-    android:background="@color/secondary"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".ui.incomingcall.IncomingCallActivity">
+    android:background="@color/secondary"
+    tools:context=".ui.activities.incomingcall.IncomingCallActivity">
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,7 +34,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/full_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -47,39 +46,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/circleImageView" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="50dp"
-        android:layout_marginBottom="60dp"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/button_call_end"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="40dp"
+        android:background="@drawable/bg_call_end_red"
+        android:padding="12dp"
+        android:src="@drawable/ic_baseline_call_end_24"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/button_accept_call"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/button_accept_call"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/bg_accept_call_green"
+        android:padding="12dp"
+        android:src="@drawable/ic_baseline_phone_callback_24"
+        app:layout_constraintBottom_toBottomOf="@+id/button_call_end"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/button_call_end"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:background="@drawable/bg_call_end_red"
-            android:padding="12dp"
-            android:src="@drawable/ic_baseline_call_end_24"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/button_accept_call"
-            app:layout_constraintHorizontal_chainStyle="spread_inside"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/button_accept_call"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:background="@drawable/bg_accept_call_green"
-            android:padding="12dp"
-            android:src="@drawable/ic_baseline_phone_callback_24"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/button_call_end"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintStart_toEndOf="@id/button_call_end"
+        app:layout_constraintTop_toTopOf="@+id/button_call_end" />
 </androidx.constraintlayout.widget.ConstraintLayout>

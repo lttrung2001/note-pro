@@ -13,8 +13,8 @@ import com.lttrung.notepro.domain.data.networks.models.Message
 import com.lttrung.notepro.domain.data.networks.models.User
 import com.lttrung.notepro.domain.repositories.MessageRepositories
 import com.lttrung.notepro.exceptions.InvalidTokenException
-import com.lttrung.notepro.ui.incomingcall.IncomingCallActivity
-import com.lttrung.notepro.ui.login.LoginActivity
+import com.lttrung.notepro.ui.activities.incomingcall.IncomingCallActivity
+import com.lttrung.notepro.ui.activities.login.LoginActivity
 import com.lttrung.notepro.utils.AppConstant
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_LISTENER_CHANNEL_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_LISTENER_NOTIFICATION_ID
@@ -51,8 +51,10 @@ class ChatSocketService : Service() {
 
     @Inject
     lateinit var messageRepositories: MessageRepositories
+
     @Inject
     lateinit var userLocals: UserLocals
+
     @Inject
     lateinit var gson: Gson
     private lateinit var socket: Socket
@@ -172,30 +174,25 @@ class ChatSocketService : Service() {
     }
 
     private fun startNotification() {
-        val chatListenerNotification =
-            NotificationHelper.buildChatListenerNotification(baseContext)
+        val chatListenerNotification = NotificationHelper.buildChatListenerNotification(baseContext)
         startForeground(CHAT_LISTENER_NOTIFICATION_ID, chatListenerNotification)
     }
 
     private fun callGetAccessTokenApi(refreshToken: String) {
         scope.launch(Dispatchers.IO) {
             accessTokenLiveData.postValue(Resource.Loading())
-            val client = OkHttpClient.Builder()
-                .build()
+            val client = OkHttpClient.Builder().build()
             // Create form data
             val formBody: RequestBody = FormBody.Builder().add("refreshToken", refreshToken).build()
             val request =
-                Request.Builder().post(formBody).url(BASE_URL + "api/v1/get-access-token")
-                    .build()
+                Request.Builder().post(formBody).url(BASE_URL + "api/v1/get-access-token").build()
             try {
                 // Send request to api server and wait for response
                 val response = client.newCall(request).execute()
                 // Convert response to object
-                val accessToken =
-                    Gson().fromJson(
-                        response.body!!.string(),
-                        ResponseEntity::class.java
-                    ).data as String
+                val accessToken = Gson().fromJson(
+                    response.body!!.string(), ResponseEntity::class.java
+                ).data as String
                 accessTokenLiveData.postValue(Resource.Success(accessToken))
             } catch (e: Exception) {
                 accessTokenLiveData.postValue(Resource.Error(e))
@@ -224,9 +221,7 @@ class ChatSocketService : Service() {
             val isChatActivity = CurrentActivityHolder.currentActivity is ChatActivity
             if (process.importance != ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND || !isChatActivity) {
                 NotificationHelper.pushNotification(
-                    baseContext,
-                    AppConstant.CHAT_CHANNEL_ID,
-                    message
+                    baseContext, AppConstant.CHAT_CHANNEL_ID, message
                 )
             } else {
                 // Send broadcast
@@ -246,16 +241,13 @@ class ChatSocketService : Service() {
             val roomId = args[0] as String
             val userJson = args[1]
             val user = gson.fromJson(userJson.toString(), User::class.java)
-            baseContext.startActivity(
-                Intent(
-                    this@ChatSocketService,
-                    IncomingCallActivity::class.java
-                ).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    putExtra(ROOM_ID, roomId)
-                    putExtra(USER, user)
-                }
-            )
+            baseContext.startActivity(Intent(
+                this@ChatSocketService, IncomingCallActivity::class.java
+            ).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                putExtra(ROOM_ID, roomId)
+                putExtra(USER, user)
+            })
         }
     }
 }

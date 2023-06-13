@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.viewimagedetails.ViewImageDetailsActivity">
+    tools:context=".ui.activities.viewimagedetails.ViewImageDetailsActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/images"
@@ -13,5 +13,5 @@
         android:orientation="horizontal"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:reverseLayout="false"
-        tools:listitem="@layout/layout_image_details" />
+        tools:listitem="@layout/image_details_item" />
 </LinearLayout>

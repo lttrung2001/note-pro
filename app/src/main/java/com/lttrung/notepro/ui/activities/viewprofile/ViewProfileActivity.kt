@@ -12,7 +12,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityViewProfileBinding
 import com.lttrung.notepro.domain.data.networks.models.UserInfo
-import com.lttrung.notepro.ui.changeprofile.ChangeProfileActivity
+import com.lttrung.notepro.ui.activities.changeprofile.ChangeProfileActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.USER
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,6 +44,7 @@ class ViewProfileActivity : AppCompatActivity() {
                 is Resource.Loading -> {
                     alertDialog.show()
                 }
+
                 is Resource.Success -> {
                     alertDialog.dismiss()
                     val user = resource.data
@@ -52,6 +53,7 @@ class ViewProfileActivity : AppCompatActivity() {
                     binding.tvEmail.text = user.email
                     binding.tvPhoneNumber.text = user.phoneNumber
                 }
+
                 is Resource.Error -> {
                     alertDialog.dismiss()
                     Snackbar.make(
@@ -68,30 +70,21 @@ class ViewProfileActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_view_profile, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_edit_info -> {
-                val editProfileIntent = Intent(this, ChangeProfileActivity::class.java)
-                val user = UserInfo(
-                    binding.tvId.text.toString(),
-                    binding.tvEmail.text.toString(),
-                    binding.tvFullName.text.toString(),
-                    binding.tvPhoneNumber.text.toString()
-                )
-                editProfileIntent.putExtra(USER, user)
-                launcher.launch(editProfileIntent)
-            }
-            else -> {
-                onBackPressed()
-            }
-        }
-        return true
-    }
+    // R.id.action_edit_info -> {
+    //                val editProfileIntent = Intent(this, ChangeProfileActivity::class.java)
+    //                val user = UserInfo(
+    //                    binding.tvId.text.toString(),
+    //                    binding.tvEmail.text.toString(),
+    //                    binding.tvFullName.text.toString(),
+    //                    binding.tvPhoneNumber.text.toString()
+    //                )
+    //                editProfileIntent.putExtra(USER, user)
+    //                launcher.launch(editProfileIntent)
+    //            }
+    //
+    //            else -> {
+    //                onBackPressed()
+    //            }
 
     private val launcher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->

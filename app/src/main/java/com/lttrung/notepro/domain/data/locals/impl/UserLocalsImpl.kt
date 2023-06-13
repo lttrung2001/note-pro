@@ -8,7 +8,7 @@ import com.lttrung.notepro.domain.data.locals.UserLocals
 import com.lttrung.notepro.domain.data.locals.dao.CurrentUserDao
 import com.lttrung.notepro.domain.data.locals.dao.NoteDao
 import com.lttrung.notepro.domain.data.locals.entities.CurrentUser
-import com.lttrung.notepro.ui.chat.ChatSocketService
+import com.lttrung.notepro.ui.activities.chat.ChatSocketService
 import com.lttrung.notepro.utils.AppConstant.Companion.ACCESS_TOKEN
 import com.lttrung.notepro.utils.AppConstant.Companion.REFRESH_TOKEN
 import dagger.hilt.android.qualifiers.ApplicationContext

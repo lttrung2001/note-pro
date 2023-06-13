@@ -6,23 +6,19 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityShowMembersBinding
 import com.lttrung.notepro.domain.data.networks.models.Member
 import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.domain.data.networks.models.Paging
-import com.lttrung.notepro.ui.fragments.addmember.AddMemberFragment
-import com.lttrung.notepro.ui.base.adapters.member.MemberAdapter
-import com.lttrung.notepro.ui.base.adapters.member.MemberListener
-import com.lttrung.notepro.ui.chat.ChatSocketService
+import com.lttrung.notepro.ui.activities.chat.ChatSocketService
 import com.lttrung.notepro.ui.activities.editmember.EditMemberActivity
+import com.lttrung.notepro.ui.adapters.MemberAdapter
 import com.lttrung.notepro.utils.AppConstant
 import com.lttrung.notepro.utils.AppConstant.Companion.MEMBER
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
@@ -37,8 +33,8 @@ class ViewMembersActivity : AppCompatActivity() {
         ActivityShowMembersBinding.inflate(layoutInflater)
     }
     private val getMembersViewModel: ViewMembersViewModel by viewModels()
-    private val memberListener: MemberListener by lazy {
-        object : MemberListener {
+    private val memberListener: MemberAdapter.MemberListener by lazy {
+        object : MemberAdapter.MemberListener {
             override fun onClick(member: Member) {
                 if (note.isOwner()) {
                     val editMemberIntent =
@@ -77,9 +73,7 @@ class ViewMembersActivity : AppCompatActivity() {
 
         }
     }
-    private val addMemberFragment by lazy {
-        AddMemberFragment()
-    }
+
     private val note by lazy {
         intent.getSerializableExtra(NOTE) as Note
     }
@@ -116,7 +110,7 @@ class ViewMembersActivity : AppCompatActivity() {
             when (resource) {
                 is Resource.Loading -> {
                     memberAdapter.showLoading()
-                    binding.rcvMembers.removeOnScrollListener(onScrollListener)
+                    binding.rvMembers.removeOnScrollListener(onScrollListener)
                 }
 
                 is Resource.Success -> {
@@ -124,9 +118,9 @@ class ViewMembersActivity : AppCompatActivity() {
                     val paging = resource.data
                     memberAdapter.setPaging(paging)
                     if (paging.hasNextPage) {
-                        binding.rcvMembers.addOnScrollListener(onScrollListener)
+                        binding.rvMembers.addOnScrollListener(onScrollListener)
                     } else {
-                        binding.rcvMembers.removeOnScrollListener(onScrollListener)
+                        binding.rvMembers.removeOnScrollListener(onScrollListener)
                     }
                 }
 
@@ -136,7 +130,7 @@ class ViewMembersActivity : AppCompatActivity() {
                         binding.root, resource.t.message.toString(),
                         Snackbar.LENGTH_LONG
                     ).show()
-                    binding.rcvMembers.removeOnScrollListener(onScrollListener)
+                    binding.rvMembers.removeOnScrollListener(onScrollListener)
                 }
             }
         }
@@ -145,26 +139,6 @@ class ViewMembersActivity : AppCompatActivity() {
     private fun initViews() {
         setContentView(binding.root)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_add_member) {
-            addMemberFragment.show(supportFragmentManager, addMemberFragment.tag)
-        } else {
-            finish()
-        }
-        return true
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val note = intent.getSerializableExtra(NOTE) as Note
-        if (note.isOwner()) {
-            menuInflater.inflate(R.menu.menu_show_members, menu)
-            menu?.let {
-                toAddMemberButton = it.getItem(0)
-            }
-        }
-        return super.onCreateOptionsMenu(menu)
     }
 
     private val launcher =
@@ -233,7 +207,6 @@ class ViewMembersActivity : AppCompatActivity() {
     }
 
     fun handleAddResult(member: Member) {
-        addMemberFragment.dismiss()
         val paging = memberAdapter.getPaging()
         val members = paging.data.toMutableList()
         members.add(member)

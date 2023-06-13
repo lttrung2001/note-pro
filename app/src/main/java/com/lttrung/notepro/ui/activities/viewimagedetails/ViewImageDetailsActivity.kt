@@ -9,7 +9,7 @@ import com.lttrung.notepro.databinding.ActivityViewImageDetailsBinding
 import com.lttrung.notepro.domain.data.networks.models.Image
 import com.lttrung.notepro.domain.data.networks.models.ImageDetails
 import com.lttrung.notepro.domain.data.networks.models.User
-import com.lttrung.notepro.ui.base.adapters.imagedetails.ImageDetailsAdapter
+import com.lttrung.notepro.ui.adapters.ImageDetailsAdapter
 import com.lttrung.notepro.utils.AppConstant.Companion.IMAGES_JSON
 import dagger.hilt.android.AndroidEntryPoint
 

@@ -20,7 +20,7 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@drawable/ic_app"
         android:supportsRtl="true"
-        android:theme="@style/Theme.NotePro"
+        android:theme="@style/Theme.NotePro.NoActionBar"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
@@ -42,21 +42,20 @@
         </activity>
 
         <activity
-            android:name=".ui.incomingcall.IncomingCallActivity"
-            android:theme="@style/Theme.NotePro.NoActionBar"
+            android:name=".ui.activities.incomingcall.IncomingCallActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.viewimagedetails.ViewImageDetailsActivity"
+            android:name=".ui.activities.viewimagedetails.ViewImageDetailsActivity"
             android:exported="false"
             android:label="@string/images" />
 
         <service
-            android:name=".ui.chat.ChatSocketService"
+            android:name=".ui.activities.chat.ChatSocketService"
             android:enabled="true"
             android:exported="false" />
 
         <activity
-            android:name=".ui.chat.ChatActivity"
+            android:name=".ui.activities.chat.ChatActivity"
             android:exported="false"
             android:label="Conservation" />
         <activity
@@ -64,76 +63,59 @@
             android:exported="false"
             android:label="Edit member" />
         <activity
-            android:name=".ui.viewgallery.ViewGalleryActivity"
+            android:name=".ui.activities.viewgallery.ViewGalleryActivity"
             android:exported="false"
             android:label="Gallery" />
         <activity
-            android:name=".ui.changeprofile.ChangeProfileActivity"
+            android:name=".ui.activities.changeprofile.ChangeProfileActivity"
             android:exported="false"
             android:label="Edit profile"
-            android:parentActivityName=".ui.viewprofile.ViewProfileActivity"
             android:theme="@style/Theme.NotePro" />
         <activity
-            android:name=".ui.resetpassword.ResetPasswordActivity"
+            android:name=".ui.activities.resetpassword.ResetPasswordActivity"
             android:exported="true"
             android:label="Reset password"
-            android:parentActivityName=".ui.forgotpassword.ForgotPasswordActivity"
             android:theme="@style/Theme.NotePro" />
         <activity
-            android:name=".ui.forgotpassword.ForgotPasswordActivity"
+            android:name=".ui.activities.forgotpassword.ForgotPasswordActivity"
             android:exported="false"
             android:label="Forgot password"
-            android:parentActivityName=".ui.login.LoginActivity"
             android:theme="@style/Theme.NotePro" />
         <activity
-            android:name=".ui.viewprofile.ViewProfileActivity"
+            android:name=".ui.activities.viewprofile.ViewProfileActivity"
             android:exported="false"
             android:label="@string/your_info"
-            android:parentActivityName=".ui.setting.SettingActivity"
             android:theme="@style/Theme.NotePro" />
         <activity
-            android:name=".ui.editnote.EditNoteActivity"
+            android:name=".ui.activities.editnote.EditNoteActivity"
             android:exported="false"
-            android:label="@string/edit_note"
-            android:parentActivityName=".ui.notedetails.NoteDetailsActivity"
-            android:theme="@style/Theme.NotePro" />
+            android:label="@string/edit_note" />
         <activity
-            android:name=".ui.notedetails.NoteDetailsActivity"
+            android:name=".ui.activities.notedetails.NoteDetailsActivity"
             android:exported="false"
-            android:label="@string/note_details"
-            android:parentActivityName=".ui.main.MainActivity"
-            android:theme="@style/Theme.NotePro" />
+            android:label="@string/note_details" />
         <activity
-            android:name=".ui.register.RegisterActivity"
-            android:exported="false"
-            android:parentActivityName=".ui.login.LoginActivity"
-            android:theme="@style/Theme.NotePro.NoActionBar" />
+            android:name=".ui.activities.register.RegisterActivity"
+            android:exported="false"/>
         <activity
-            android:name=".ui.login.LoginActivity"
-            android:exported="true"
-            android:theme="@style/Theme.NotePro.NoActionBar" />
+            android:name=".ui.activities.login.LoginActivity"
+            android:exported="true" />
         <activity
-            android:name=".ui.viewmembers.ViewMembersActivity"
+            android:name=".ui.activities.viewmembers.ViewMembersActivity"
             android:configChanges="orientation"
             android:exported="false"
-            android:label="@string/members"
-            android:theme="@style/Theme.NotePro" />
+            android:label="@string/members" />
         <activity
-            android:name=".ui.addnote.AddNoteActivity"
+            android:name=".ui.activities.addnote.AddNoteActivity"
             android:exported="false"
-            android:label="@string/add_note"
-            android:parentActivityName=".ui.main.MainActivity"
-            android:theme="@style/Theme.NotePro" />
+            android:label="@string/add_note" />
         <activity
-            android:name=".ui.setting.SettingActivity"
+            android:name=".ui.activities.setting.SettingActivity"
             android:exported="false"
-            android:label="@string/action_settings"
-            android:parentActivityName=".ui.main.MainActivity"
-            android:theme="@style/Theme.NotePro" />
+            android:label="@string/action_settings" />
         <activity
-            android:name=".ui.main.MainActivity"
-            android:exported="true"
-            android:theme="@style/Theme.NotePro">
+            android:name=".ui.activities.main.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -141,11 +123,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.changepassword.ChangePasswordActivity"
+            android:name=".ui.activities.changepassword.ChangePasswordActivity"
             android:exported="false"
-            android:label="@string/change_password"
-            android:parentActivityName=".ui.setting.SettingActivity"
-            android:theme="@style/Theme.NotePro" />
+            android:label="@string/change_password"/>
     </application>
 
 </manifest>

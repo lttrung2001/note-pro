@@ -10,7 +10,7 @@ import com.github.razir.progressbutton.showProgress
 import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityResetPasswordBinding
-import com.lttrung.notepro.ui.login.LoginActivity
+import com.lttrung.notepro.ui.activities.login.LoginActivity
 import com.lttrung.notepro.utils.Resource
 import com.lttrung.notepro.utils.ValidationHelper
 import dagger.hilt.android.AndroidEntryPoint

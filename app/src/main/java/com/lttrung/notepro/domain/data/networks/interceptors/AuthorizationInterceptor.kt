@@ -8,8 +8,8 @@ import com.google.gson.Gson
 import com.lttrung.notepro.domain.data.locals.UserLocals
 import com.lttrung.notepro.domain.data.networks.ResponseEntity
 import com.lttrung.notepro.exceptions.InvalidTokenException
-import com.lttrung.notepro.ui.chat.ChatSocketService
-import com.lttrung.notepro.ui.login.LoginActivity
+import com.lttrung.notepro.ui.activities.chat.ChatSocketService
+import com.lttrung.notepro.ui.activities.login.LoginActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.ACCESS_TOKEN
 import com.lttrung.notepro.utils.AppConstant.Companion.REFRESH_TOKEN
 import com.lttrung.notepro.utils.HttpStatusCodes

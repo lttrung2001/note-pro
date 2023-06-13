@@ -7,9 +7,9 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.lttrung.notepro.databinding.ActivitySettingBinding
-import com.lttrung.notepro.ui.changepassword.ChangePasswordActivity
-import com.lttrung.notepro.ui.login.LoginActivity
-import com.lttrung.notepro.ui.viewprofile.ViewProfileActivity
+import com.lttrung.notepro.ui.activities.changepassword.ChangePasswordActivity
+import com.lttrung.notepro.ui.activities.login.LoginActivity
+import com.lttrung.notepro.ui.activities.viewprofile.ViewProfileActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

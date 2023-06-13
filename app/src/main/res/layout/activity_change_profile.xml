@@ -1,116 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:paddingHorizontal="16dp"
-    tools:context=".ui.changeprofile.ChangeProfileActivity">
+    tools:context=".ui.activities.changeprofile.ChangeProfileActivity">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/img_avt"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginTop="48dp"
-        android:src="@drawable/me"
-        app:civ_border_color="@color/primary"
-        app:civ_border_width="4dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="0dp"
+        android:layout_above="@id/btn_change_profile"
+        android:layout_alignParentTop="true">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/title_id"
-        android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/img_avt"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="40dp"
+                android:src="@drawable/me"
+                app:civ_border_color="@color/primary"
+                app:civ_border_width="4dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/title_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="48dp"
+                android:paddingVertical="16dp"
+                android:text="@string/id"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/img_avt" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_id"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingVertical="16dp"
+                android:textAlignment="textEnd"
+                android:textSize="16sp"
+                app:layout_constraintLeft_toRightOf="@id/title_id"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/title_id" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/title_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingVertical="16dp"
+                android:text="@string/email"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/title_id" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_email"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingVertical="16dp"
+                android:textAlignment="textEnd"
+                android:textSize="16sp"
+                app:layout_constraintLeft_toRightOf="@id/title_email"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/title_email" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/title_full_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingVertical="16dp"
+                android:text="@string/full_name"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/title_email" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tv_full_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:paddingVertical="16dp"
+                android:textAlignment="textEnd"
+                android:textSize="16sp"
+                app:layout_constraintLeft_toRightOf="@id/title_full_name"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/title_full_name" />
+
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/title_phone_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingVertical="16dp"
+                android:text="@string/phone_number"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/title_full_name" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tv_phone_number"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:inputType="phone"
+                android:paddingVertical="16dp"
+                android:textAlignment="textEnd"
+                android:textSize="16sp"
+                app:layout_constraintLeft_toRightOf="@id/title_phone_number"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/title_phone_number" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_change_profile"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:paddingVertical="16dp"
-        android:text="@string/id"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/img_avt" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tv_id"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:paddingVertical="16dp"
-        android:textAlignment="textEnd"
-        android:textSize="16sp"
-        app:layout_constraintLeft_toRightOf="@id/title_id"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/title_id" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/title_email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingVertical="16dp"
-        android:text="@string/email"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title_id" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tv_email"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:paddingVertical="16dp"
-        android:textAlignment="textEnd"
-        android:textSize="16sp"
-        app:layout_constraintLeft_toRightOf="@id/title_email"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/title_email" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/title_full_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingVertical="16dp"
-        android:text="@string/full_name"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title_email" />
-
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/tv_full_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:paddingVertical="16dp"
-        android:textAlignment="textEnd"
-        android:textSize="16sp"
-        app:layout_constraintLeft_toRightOf="@id/title_full_name"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/title_full_name" />
-
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/title_phone_number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingVertical="16dp"
-        android:text="@string/phone_number"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title_full_name" />
-
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/tv_phone_number"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:inputType="phone"
-        android:paddingVertical="16dp"
-        android:textAlignment="textEnd"
-        android:textSize="16sp"
-        app:layout_constraintLeft_toRightOf="@id/title_phone_number"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/title_phone_number" />
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:text="@string/edit" />
+</RelativeLayout>

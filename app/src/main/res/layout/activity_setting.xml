@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.setting.SettingActivity">
+    tools:context=".ui.activities.setting.SettingActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -42,65 +42,43 @@
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
             android:text="@string/account"
-            android:textSize="16sp" />
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-        <LinearLayout
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_change_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:orientation="horizontal">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-
-                android:src="@drawable/ic_baseline_change_password_24"
-                app:civ_circle_background_color="@android:color/holo_blue_light" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="36dp"
-                android:drawableEnd="@drawable/ic_baseline_arrow_forward_ios_24"
-                android:text="@string/change_password"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-        </LinearLayout>
+            android:background="@android:color/transparent"
+            android:drawableStart="@drawable/ic_baseline_change_password_24"
+            android:drawableEnd="@drawable/ic_baseline_arrow_forward_ios_24"
+            android:drawablePadding="20dp"
+            android:drawableTint="@android:color/holo_blue_light"
+            android:text="@string/change_password"
+            android:textAlignment="viewStart"
+            android:textSize="16sp" />
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
             android:text="@string/others"
-            android:textSize="16sp" />
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-        <LinearLayout
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_logout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:orientation="horizontal">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_baseline_exit_to_app_24"
-                app:civ_circle_background_color="@android:color/holo_red_light" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="36dp"
-                android:drawableEnd="@drawable/ic_baseline_arrow_forward_ios_24"
-                android:text="@string/logout"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-        </LinearLayout>
+            android:background="@android:color/transparent"
+            android:drawableStart="@drawable/ic_baseline_exit_to_app_24"
+            android:drawableEnd="@drawable/ic_baseline_arrow_forward_ios_24"
+            android:drawablePadding="20dp"
+            android:drawableTint="@android:color/holo_red_light"
+            android:text="@string/change_password"
+            android:textAlignment="viewStart"
+            android:textSize="16sp" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

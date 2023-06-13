@@ -3,20 +3,15 @@ package com.lttrung.notepro.ui.activities.chat
 import android.content.*
 import android.os.Bundle
 import android.os.IBinder
-import android.view.Menu
-import android.view.MenuItem
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
-import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityChatBinding
-import com.lttrung.notepro.domain.data.locals.entities.CurrentUser
 import com.lttrung.notepro.domain.data.networks.models.Message
 import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.domain.data.networks.models.User
-import com.lttrung.notepro.ui.base.adapters.message.MessageAdapter
-import com.lttrung.notepro.ui.viewmembers.ViewMembersActivity
+import com.lttrung.notepro.ui.adapters.MessageAdapter
+import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_CHANNEL_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.LOAD_MESSAGES_RECEIVED
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE
@@ -26,16 +21,14 @@ import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.PAGE_LIMIT
 import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.USER
-import com.lttrung.notepro.utils.JitsiHelper
 import com.lttrung.notepro.utils.NotificationHelper
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
-import org.jitsi.meet.sdk.JitsiMeetActivity
 
 @AndroidEntryPoint
-class ChatActivity : AppCompatActivity() {
+class ChatActivity : BaseActivity() {
     private lateinit var socketService: ChatSocketService
-    private val binding by lazy {
+    override val binding by lazy {
         ActivityChatBinding.inflate(layoutInflater)
     }
     private val chatViewModel: ChatViewModel by viewModels()
@@ -156,37 +149,27 @@ class ChatActivity : AppCompatActivity() {
         unbindService(connection)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_chat, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_show_members -> {
-                val viewMembersIntent =
-                    Intent(this@ChatActivity, ViewMembersActivity::class.java).apply {
-                        putExtra(NOTE, note)
-                    }
-                startActivity(viewMembersIntent)
-            }
-
-            R.id.action_call -> {
-                val currentUser = intent.getSerializableExtra(USER) as CurrentUser?
-                if (currentUser != null) {
-                    val roomId = note.id
-                    socketService.call(roomId)
-                    val options = JitsiHelper.createOptions(roomId, currentUser)
-                    JitsiMeetActivity.launch(this, options)
-                }
-            }
-
-            else -> {
-                finish()
-            }
-        }
-        return true
-    }
+    // R.id.action_show_members -> {
+    //                val viewMembersIntent =
+    //                    Intent(this@ChatActivity, ViewMembersActivity::class.java).apply {
+    //                        putExtra(NOTE, note)
+    //                    }
+    //                startActivity(viewMembersIntent)
+    //            }
+    //
+    //            R.id.action_call -> {
+    //                val currentUser = intent.getSerializableExtra(USER) as CurrentUser?
+    //                if (currentUser != null) {
+    //                    val roomId = note.id
+    //                    socketService.call(roomId)
+    //                    val options = JitsiHelper.createOptions(roomId, currentUser)
+    //                    JitsiMeetActivity.launch(this, options)
+    //                }
+    //            }
+    //
+    //            else -> {
+    //                finish()
+    //            }
 
     private fun removeLoadingIfNeeded() {
         if (chatViewModel.messagesLiveData.value is Resource.Loading) {
@@ -207,7 +190,7 @@ class ChatActivity : AppCompatActivity() {
         registerReceiver(loadMessagesReceiver, loadMessagesIntentFilter)
     }
 
-    private fun initObservers() {
+    override fun initObservers() {
         chatViewModel.currentUserLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
@@ -248,17 +231,14 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    private fun initListeners() {
+    override fun initListeners() {
         binding.sendMessageButton.setOnClickListener {
             sendMessage()
         }
 
     }
 
-    private fun initViews() {
-        setContentView(binding.root)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
+    override fun initViews() {
         binding.messages.adapter = messageAdapter
     }
 

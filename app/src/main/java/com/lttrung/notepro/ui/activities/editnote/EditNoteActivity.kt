@@ -7,22 +7,22 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.SnapHelper
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
-import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityEditNoteBinding
 import com.lttrung.notepro.domain.data.networks.models.Image
 import com.lttrung.notepro.domain.data.networks.models.Note
-import com.lttrung.notepro.ui.base.activities.AddImagesActivity
-import com.lttrung.notepro.ui.base.adapters.image.ImagesAdapter
-import com.lttrung.notepro.ui.chat.ChatActivity
-import com.lttrung.notepro.ui.chat.ChatSocketService
-import com.lttrung.notepro.ui.viewimagedetails.ViewImageDetailsActivity
+import com.lttrung.notepro.ui.activities.chat.ChatSocketService
+import com.lttrung.notepro.ui.activities.main.MainFeatures
+import com.lttrung.notepro.ui.activities.viewimagedetails.ViewImageDetailsActivity
+import com.lttrung.notepro.ui.adapters.FeatureAdapter
+import com.lttrung.notepro.ui.adapters.ImageAdapter
+import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.utils.AppConstant
 import com.lttrung.notepro.utils.AppConstant.Companion.DELETED_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.EDITED_NOTE
@@ -30,12 +30,11 @@ import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.SELECTED_IMAGES
 import com.lttrung.notepro.utils.Converter
 import com.lttrung.notepro.utils.Resource
-import com.ramotion.cardslider.CardSnapHelper
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class EditNoteActivity : AddImagesActivity() {
-    override val launcher =
+class EditNoteActivity : BaseActivity() {
+    private val launcher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val resultIntent = result.data
@@ -44,7 +43,6 @@ class EditNoteActivity : AddImagesActivity() {
                     val tempList = imagesAdapter.currentList.toMutableList()
                     tempList.addAll(images)
                     imagesAdapter.submitList(tempList)
-                    bottomSheet.dismiss()
                 }
             }
         }
@@ -52,24 +50,21 @@ class EditNoteActivity : AddImagesActivity() {
     private lateinit var menu: Menu
     private lateinit var socketService: ChatSocketService
 
-    private val binding: ActivityEditNoteBinding by lazy {
+    override val binding by lazy {
         ActivityEditNoteBinding.inflate(layoutInflater)
     }
-    private val imagesAdapter: ImagesAdapter by lazy {
-        ImagesAdapter(imageListener)
+    private val imagesAdapter: ImageAdapter by lazy {
+        ImageAdapter(imageListener)
     }
     private val imageListener by lazy {
-        object : ImagesAdapter.ImageListener {
+        object : ImageAdapter.ImageListener {
             override fun onClick(image: Image) {
                 // Start image details activity
-                startActivity(
-                    Intent(
-                        this@EditNoteActivity,
-                        ViewImageDetailsActivity::class.java
-                    ).apply {
-                        putExtra(AppConstant.IMAGES_JSON, Gson().toJson(imagesAdapter.currentList))
-                    }
-                )
+                startActivity(Intent(
+                    this@EditNoteActivity, ViewImageDetailsActivity::class.java
+                ).apply {
+                    putExtra(AppConstant.IMAGES_JSON, Gson().toJson(imagesAdapter.currentList))
+                })
             }
 
             override fun onDelete(image: Image) {
@@ -77,15 +72,12 @@ class EditNoteActivity : AddImagesActivity() {
             }
         }
     }
+    private val featureAdapter by lazy {
+        FeatureAdapter()
+    }
     private val editNoteViewModel: EditNoteViewModel by viewModels()
     private val note: Note by lazy {
         intent.getSerializableExtra(NOTE) as Note
-    }
-    private val alertDialog by lazy {
-        val builder = AlertDialog.Builder(this)
-        builder.setView(layoutInflater.inflate(R.layout.dialog_loading, null))
-        builder.setCancelable(false)
-        builder.create()
     }
     private val connection by lazy {
         object : ServiceConnection {
@@ -104,7 +96,6 @@ class EditNoteActivity : AddImagesActivity() {
         super.onCreate(savedInstanceState)
         initViews()
         initListeners()
-        initData()
         initObservers()
         editNoteViewModel.getNoteDetails(note.id)
     }
@@ -121,122 +112,39 @@ class EditNoteActivity : AddImagesActivity() {
         unbindService(connection)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_edit_note, menu)
-        menu?.let {
-            this.menu = menu
+    // if (note.isRemoved) {
+    //                    Snackbar.make(this, binding.root, "No permission!", Snackbar.LENGTH_LONG).show()
+    //                } else {
+    //                    val note = getNoteFromUi()
+    //                    note.isArchived = !note.isArchived
+    //                    editNoteViewModel.editNote(note)
+    //                }
 
-            val pinButton = menu.getItem(0)
-            val archiveButton = menu.getItem(1)
+    // val note = intent.getSerializableExtra(NOTE) as Note
+    //                val showConservationIntent =
+    //                    Intent(this@EditNoteActivity, ChatActivity::class.java)
+    //                showConservationIntent.putExtra(AppConstant.ROOM_ID, note.id)
+    //                showConservationIntent.putExtra(NOTE, note)
+    //                startActivity(showConservationIntent)
 
-            setStatusForButtons(pinButton, archiveButton)
-        }
-        return true
+    // if (note.isRemoved) {
+    //                    Snackbar.make(this, binding.root, "No permission!", Snackbar.LENGTH_LONG).show()
+    //                } else {
+    //                    // Save note
+    //                    editNoteViewModel.editNote(getNoteFromUi())
+    //                }
+
+    override fun initListeners() {
+
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_pin -> {
-                if (note.isRemoved) {
-                    Snackbar.make(this, binding.root, "No permission!", Snackbar.LENGTH_LONG).show()
-                } else {
-                    if (item.isChecked) {
-                        item.icon.setTint(resources.getColor(R.color.black, theme))
-                    } else {
-                        item.icon.setTint(resources.getColor(R.color.primary, theme))
-                    }
-                    item.isChecked = !item.isChecked
-                }
-            }
-
-            R.id.action_archive -> {
-                if (note.isRemoved) {
-                    Snackbar.make(this, binding.root, "No permission!", Snackbar.LENGTH_LONG).show()
-                } else {
-                    val note = getNoteFromUi()
-                    note.isArchived = !note.isArchived
-                    editNoteViewModel.editNote(note)
-                }
-            }
-
-            R.id.action_show_conservation -> {
-                val note = intent.getSerializableExtra(NOTE) as Note
-                val showConservationIntent =
-                    Intent(this@EditNoteActivity, ChatActivity::class.java)
-                showConservationIntent.putExtra(AppConstant.ROOM_ID, note.id)
-                showConservationIntent.putExtra(NOTE, note)
-                startActivity(showConservationIntent)
-            }
-
-            R.id.action_save -> {
-                if (note.isRemoved) {
-                    Snackbar.make(this, binding.root, "No permission!", Snackbar.LENGTH_LONG).show()
-                } else {
-                    // Save note
-                    editNoteViewModel.editNote(getNoteFromUi())
-                }
-            }
-
-            else -> {
-                finish()
-            }
-        }
-        return true
-    }
-
-    private fun setStatusForButtons(pinButton: MenuItem, archiveButton: MenuItem) {
-        pinButton.isChecked = note.isPin
-        val pinIcon = if (note.isPin) resources.getColor(
-            R.color.primary,
-            theme
-        ) else resources.getColor(R.color.black, theme)
-        pinButton.icon.setTint(pinIcon)
-
-        val archiveIconResource =
-            if (note.isArchived) {
-                archiveButton.isChecked = true
-                R.drawable.ic_baseline_unarchive_24
-            } else {
-                archiveButton.isChecked = false
-                R.drawable.ic_baseline_archive_24
-            }
-        archiveButton.setIcon(archiveIconResource)
-    }
-
-    private fun initData() {
-        binding.apply {
-            edtNoteTitle.setText(note.title)
-            edtNoteDesc.setText(note.content)
-            tvLastModified.text = Converter.longToDate(note.lastModified)
-        }
-        imagesAdapter.submitList(note.images)
-    }
-
-    private fun initListeners() {
-        binding.btnOpenBottomSheet.setOnClickListener(openBottomSheetDialogListener)
-        binding.btnDeleteNote.setOnClickListener {
-            if (note.isRemoved) {
-                editNoteViewModel.deleteNote(note)
-            } else {
-                note.isRemoved = true
-                editNoteViewModel.editNote(note)
-            }
-        }
-        binding.btnRestore.setOnClickListener {
-            note.isRemoved = false
-            editNoteViewModel.editNote(note)
-        }
-    }
-
-    private fun initObservers() {
+    override fun initObservers() {
         editNoteViewModel.editNoteLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-                    alertDialog.show()
                 }
 
                 is Resource.Success -> {
-                    alertDialog.dismiss()
                     val resultIntent = Intent()
                     resultIntent.putExtra(EDITED_NOTE, resource.data)
                     setResult(RESULT_OK, resultIntent)
@@ -244,10 +152,8 @@ class EditNoteActivity : AddImagesActivity() {
                 }
 
                 is Resource.Error -> {
-                    alertDialog.dismiss()
                     Snackbar.make(
-                        binding.root, resource.t.message.toString(),
-                        Snackbar.LENGTH_LONG
+                        binding.root, resource.t.message.toString(), Snackbar.LENGTH_LONG
                     ).show()
                 }
             }
@@ -256,11 +162,9 @@ class EditNoteActivity : AddImagesActivity() {
         editNoteViewModel.deleteNoteLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-                    alertDialog.show()
                 }
 
                 is Resource.Success -> {
-                    alertDialog.dismiss()
                     val roomId = note.id
 
                     socketService.sendDeleteNoteMessage(roomId)
@@ -272,10 +176,8 @@ class EditNoteActivity : AddImagesActivity() {
                 }
 
                 is Resource.Error -> {
-                    alertDialog.dismiss()
                     Snackbar.make(
-                        binding.root, resource.t.message.toString(),
-                        Snackbar.LENGTH_LONG
+                        binding.root, resource.t.message.toString(), Snackbar.LENGTH_LONG
                     ).show()
                 }
             }
@@ -284,21 +186,17 @@ class EditNoteActivity : AddImagesActivity() {
         editNoteViewModel.noteDetailsLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-                    alertDialog.show()
                 }
 
                 is Resource.Success -> {
-                    alertDialog.dismiss()
                     val note = resource.data
                     intent.putExtra(NOTE, note)
                     bindDataToViews()
                 }
 
                 is Resource.Error -> {
-                    alertDialog.dismiss()
                     Snackbar.make(
-                        binding.root, resource.t.message.toString(),
-                        Snackbar.LENGTH_LONG
+                        binding.root, resource.t.message.toString(), Snackbar.LENGTH_LONG
                     ).show()
                 }
             }
@@ -308,28 +206,31 @@ class EditNoteActivity : AddImagesActivity() {
     private fun bindDataToViews() {
         binding.edtNoteTitle.setText(note.title)
         binding.edtNoteDesc.setText(note.content)
-        binding.tvLastModified.text = Converter.longToDate(note.lastModified)
         imagesAdapter.submitList(note.images)
     }
 
-    private fun initViews() {
+    override fun initViews() {
         setContentView(binding.root)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        CardSnapHelper().attachToRecyclerView(binding.rcvImages)
-        binding.rcvImages.adapter = imagesAdapter
-
-        if (note.isRemoved) {
-            binding.edtNoteTitle.isEnabled = false
-            binding.edtNoteDesc.isEnabled = false
-            binding.btnOpenBottomSheet.visibility = View.INVISIBLE
-            if (note.isOwner()) {
-                binding.btnRestore.visibility = View.VISIBLE
-                binding.btnDeleteNote.visibility = View.VISIBLE
-            }
-        } else if (note.isOwner()) {
-            binding.btnDeleteNote.visibility = View.VISIBLE
+        binding.apply {
+            edtNoteTitle.setText(note.title)
+            edtNoteDesc.setText(note.content)
         }
+
+        PagerSnapHelper().attachToRecyclerView(binding.rvImages)
+        binding.rvImages.adapter = imagesAdapter
+        imagesAdapter.submitList(note.images)
+
+//        if (note.isRemoved) {
+//            binding.edtNoteTitle.isEnabled = false
+//            binding.edtNoteDesc.isEnabled = false
+//            binding.btnOpenBottomSheet.visibility = View.INVISIBLE
+//            if (note.isOwner()) {
+//                binding.btnRestore.visibility = View.VISIBLE
+//                binding.btnDeleteNote.visibility = View.VISIBLE
+//            }
+//        } else if (note.isOwner()) {
+//            binding.btnDeleteNote.visibility = View.VISIBLE
+//        }
     }
 
     private fun getNoteFromUi(): Note {

@@ -5,15 +5,15 @@
     android:id="@+id/refresh_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".ui.viewmembers.ViewMembersActivity">
+    tools:context=".ui.activities.viewmembers.ViewMembersActivity">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rcv_members"
+        android:id="@+id/rvMembers"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="16dp"
         android:paddingBottom="8dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/layout_member" />
+        tools:listitem="@layout/member_item" />
 
 </LinearLayout>
