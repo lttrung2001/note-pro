@@ -21,7 +21,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -38,9 +37,7 @@ class AppProvidesModules {
     @Singleton
     fun providesCurrentUserDatabase(@ApplicationContext context: Context): UserDatabase {
         return Room.databaseBuilder(context, UserDatabase::class.java, USER_DATABASE_NAME)
-            .addMigrations(MIGRATION_1_2)
-            .addMigrations(MIGRATION_2_3)
-            .addMigrations(MIGRATION_3_4)
+            .addMigrations(MIGRATION_1_2).addMigrations(MIGRATION_2_3).addMigrations(MIGRATION_3_4)
             .build()
     }
 
@@ -70,28 +67,20 @@ class AppProvidesModules {
         networksInterceptor: NetworksInterceptor,
         loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor(networksInterceptor)
-            .addInterceptor(authorizationInterceptor)
-            .addInterceptor(loggingInterceptor)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
-            .build()
+        return OkHttpClient.Builder().addInterceptor(networksInterceptor)
+            .addInterceptor(authorizationInterceptor).addInterceptor(loggingInterceptor)
+            .readTimeout(30, TimeUnit.SECONDS).writeTimeout(30, TimeUnit.SECONDS).build()
     }
 
     @Provides
     @Singleton
     @Named("NoTokenOkHttp")
     fun providesWithoutTokenOkHttp(
-        networksInterceptor: NetworksInterceptor,
-        loggingInterceptor: HttpLoggingInterceptor
+        networksInterceptor: NetworksInterceptor, loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor(networksInterceptor)
-            .addInterceptor(loggingInterceptor)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
-            .build()
+        return OkHttpClient.Builder().addInterceptor(networksInterceptor)
+            .addInterceptor(loggingInterceptor).readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS).build()
     }
 
     @Provides
@@ -107,32 +96,19 @@ class AppProvidesModules {
     }
 
     @Provides
-    fun providesRxJava3CallAdapterFactory(): RxJava3CallAdapterFactory {
-        return RxJava3CallAdapterFactory.create()
-    }
-
-    @Provides
     @Singleton
     @Named("TokenRetrofit")
     fun providesTokenRetrofit(
-        gsonConverterFactory: GsonConverterFactory,
-        rxJava3CallAdapterFactory: RxJava3CallAdapterFactory,
-        @Named("TokenOkHttp") okHttp: OkHttpClient
-    ): Retrofit = Retrofit.Builder().baseUrl(BASE_URL)
-        .addConverterFactory(gsonConverterFactory)
-        .addCallAdapterFactory(rxJava3CallAdapterFactory)
+        gsonConverterFactory: GsonConverterFactory, @Named("TokenOkHttp") okHttp: OkHttpClient
+    ): Retrofit = Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(gsonConverterFactory)
         .client(okHttp).build()
 
     @Provides
     @Singleton
     @Named("NoTokenRetrofit")
     fun providesNoTokenRetrofit(
-        gsonConverterFactory: GsonConverterFactory,
-        rxJava3CallAdapterFactory: RxJava3CallAdapterFactory,
-        @Named("NoTokenOkHttp") okHttp: OkHttpClient
-    ): Retrofit = Retrofit.Builder().baseUrl(BASE_URL)
-        .addConverterFactory(gsonConverterFactory)
-        .addCallAdapterFactory(rxJava3CallAdapterFactory)
+        gsonConverterFactory: GsonConverterFactory, @Named("NoTokenOkHttp") okHttp: OkHttpClient
+    ): Retrofit = Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(gsonConverterFactory)
         .client(okHttp).build()
 
     @Provides

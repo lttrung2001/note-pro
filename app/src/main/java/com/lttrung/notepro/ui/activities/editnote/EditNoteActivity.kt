@@ -18,11 +18,11 @@ import com.lttrung.notepro.databinding.ActivityEditNoteBinding
 import com.lttrung.notepro.domain.data.networks.models.Image
 import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.ui.activities.chat.ChatSocketService
-import com.lttrung.notepro.ui.activities.main.MainFeatures
 import com.lttrung.notepro.ui.activities.viewimagedetails.ViewImageDetailsActivity
 import com.lttrung.notepro.ui.adapters.FeatureAdapter
 import com.lttrung.notepro.ui.adapters.ImageAdapter
 import com.lttrung.notepro.ui.base.BaseActivity
+import com.lttrung.notepro.ui.entities.Feature
 import com.lttrung.notepro.utils.AppConstant
 import com.lttrung.notepro.utils.AppConstant.Companion.DELETED_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.EDITED_NOTE
@@ -73,7 +73,11 @@ class EditNoteActivity : BaseActivity() {
         }
     }
     private val featureAdapter by lazy {
-        FeatureAdapter()
+        FeatureAdapter(object: FeatureAdapter.FeatureListener {
+            override fun onClick(item: Feature) {
+
+            }
+        })
     }
     private val editNoteViewModel: EditNoteViewModel by viewModels()
     private val note: Note by lazy {

@@ -8,16 +8,15 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.lttrung.notepro.databinding.FeatureItemBinding
 import com.lttrung.notepro.ui.entities.Feature
 
-class FeatureAdapter (val listener: FeatureListener) : ListAdapter<Feature, FeatureAdapter.FeatureViewHolder>(object :
+class FeatureAdapter (private val listener: FeatureListener) : ListAdapter<Feature, FeatureAdapter.FeatureViewHolder>(object :
     DiffUtil.ItemCallback<Feature>() {
     override fun areItemsTheSame(oldItem: Feature, newItem: Feature): Boolean {
-        return oldItem.id == newItem.id
+        return oldItem.id.name == newItem.id.name
     }
 
     override fun areContentsTheSame(oldItem: Feature, newItem: Feature): Boolean {
         return oldItem == newItem
     }
-
 }) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeatureViewHolder {
         val binding = FeatureItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -25,16 +24,14 @@ class FeatureAdapter (val listener: FeatureListener) : ListAdapter<Feature, Feat
     }
 
     override fun onBindViewHolder(holder: FeatureViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), listener)
     }
 
     class FeatureViewHolder(val binding: FeatureItemBinding) : ViewHolder(binding.root) {
-        init {
-            binding.root.setOnClickListener {
-
+        fun bind(feature: Feature, listener: FeatureListener) {
+            binding.icon.setOnClickListener {
+                listener.onClick(feature)
             }
-        }
-        fun bind(feature: Feature) {
             binding.icon.setImageResource(feature.icon)
         }
     }

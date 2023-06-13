@@ -15,6 +15,7 @@ import com.lttrung.notepro.ui.activities.addnote.AddNoteActivity
 import com.lttrung.notepro.ui.activities.chat.ChatSocketService
 import com.lttrung.notepro.ui.activities.editnote.EditNoteActivity
 import com.lttrung.notepro.ui.activities.notedetails.NoteDetailsActivity
+import com.lttrung.notepro.ui.activities.setting.SettingActivity
 import com.lttrung.notepro.ui.adapters.FeatureAdapter
 import com.lttrung.notepro.ui.adapters.NoteAdapter
 import com.lttrung.notepro.ui.entities.Feature
@@ -43,7 +44,19 @@ class MainActivity : AppCompatActivity() {
         NoteAdapter(noteListener)
     }
     private val featureAdapter by lazy {
-        FeatureAdapter()
+        FeatureAdapter(object : FeatureAdapter.FeatureListener {
+            override fun onClick(item: Feature) {
+                when (item.id) {
+                    FeatureId.INFO -> {
+
+                    }
+
+                    FeatureId.SETTING -> {
+                        startActivity(Intent(this@MainActivity, SettingActivity::class.java))
+                    }
+                }
+            }
+        })
     }
 
     private val noteListener by lazy {
