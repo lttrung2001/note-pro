@@ -56,7 +56,6 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
 
-    reactive()
     daggerHilt()
     retrofit()
     room()
@@ -75,11 +74,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
 }
 
-private void reactive() {
-    dependencies.implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
-    dependencies.implementation 'io.reactivex.rxjava3:rxjava:3.0.0'
-}
-
 private void daggerHilt() {
     dependencies.implementation 'com.google.dagger:hilt-android:2.43.1'
     dependencies.kapt 'com.google.dagger:hilt-android-compiler:2.43.1'
@@ -92,7 +86,6 @@ private void retrofit() {
     dependencies.implementation 'com.squareup.retrofit2:converter-gson:2.7.2'
     dependencies.implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'
     dependencies.implementation 'com.google.code.gson:gson:2.9.0'
-    dependencies.implementation 'com.github.akarnokd:rxjava3-retrofit-adapter:3.0.0'
 }
 
 private void room() {
@@ -122,9 +115,7 @@ private void image() {
 }
 
 private void customUI() {
-    dependencies.implementation 'com.ramotion.cardslider:card-slider:0.3.1'
     dependencies.implementation 'com.github.razir.progressbutton:progressbutton:2.1.0'
-    dependencies.implementation 'it.xabaras.android:recyclerview-swipedecorator:1.4'
 }
 
 private void socketIO() {
