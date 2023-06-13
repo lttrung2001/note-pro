@@ -2,7 +2,6 @@ package com.lttrung.notepro.ui.activities.changeprofile
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
 import androidx.activity.viewModels
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -33,22 +32,6 @@ class ChangeProfileActivity : BaseActivity() {
         initObservers()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_change_profile, menu)
-        return true
-    }
-
-    // val fullName = binding.tvFullName.text?.trim().toString()
-    //                val phoneNumber = binding.tvPhoneNumber.text?.trim().toString()
-    //                val helper = validateInputs(fullName, phoneNumber, ValidationHelper())
-    //                if (!helper.hasError) {
-    //                    intent.putExtra(
-    //                        USER,
-    //                        UserInfo(userInfo.id, userInfo.email, fullName, phoneNumber)
-    //                    )
-    //                    changeProfileViewModel.changeProfile(fullName, phoneNumber)
-    //                }
-
     private fun validateInputs(
         fullName: String,
         phoneNumber: String,
@@ -64,6 +47,7 @@ class ChangeProfileActivity : BaseActivity() {
     }
 
     override fun initViews() {
+        setContentView(binding.root)
         binding.tvId.text = userInfo.id
         binding.tvEmail.text = userInfo.email
         binding.tvFullName.setText(userInfo.fullName)
@@ -71,7 +55,16 @@ class ChangeProfileActivity : BaseActivity() {
     }
 
     override fun initListeners() {
-
+        binding.btnChangeProfile.setOnClickListener {
+            val fullName = binding.tvFullName.text?.trim().toString()
+            val phoneNumber = binding.tvPhoneNumber.text?.trim().toString()
+            val helper = validateInputs(fullName, phoneNumber, ValidationHelper())
+            if (!helper.hasError) {
+                changeProfileViewModel.changeProfile(fullName, phoneNumber)
+            } else {
+                // Handle error
+            }
+        }
     }
 
     override fun initObservers() {

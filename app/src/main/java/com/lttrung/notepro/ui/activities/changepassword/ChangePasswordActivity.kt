@@ -72,6 +72,7 @@ class ChangePasswordActivity : BaseActivity() {
     }
 
     override fun initViews() {
+        setContentView(binding.root)
     }
 
     private fun validateInputs(

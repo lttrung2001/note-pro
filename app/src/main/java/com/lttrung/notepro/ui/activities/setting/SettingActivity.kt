@@ -50,12 +50,6 @@ class SettingActivity : AppCompatActivity() {
         initObservers()
         settingViewModel.getCurrentUserInfo()
     }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        finish()
-        return true
-    }
-
     private fun initObservers() {
         settingViewModel.userLiveData.observe(this) { user ->
             binding.tvName.text = user.fullName
@@ -70,6 +64,5 @@ class SettingActivity : AppCompatActivity() {
 
     private fun initViews() {
         setContentView(binding.root)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 }
