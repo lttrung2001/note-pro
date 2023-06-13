@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.lttrung.notepro.databinding.FeatureItemBinding
 import com.lttrung.notepro.ui.entities.Feature
 
-class FeatureAdapter : ListAdapter<Feature, FeatureAdapter.FeatureViewHolder>(object :
+class FeatureAdapter (val listener: FeatureListener) : ListAdapter<Feature, FeatureAdapter.FeatureViewHolder>(object :
     DiffUtil.ItemCallback<Feature>() {
     override fun areItemsTheSame(oldItem: Feature, newItem: Feature): Boolean {
         return oldItem.id == newItem.id
@@ -31,7 +31,7 @@ class FeatureAdapter : ListAdapter<Feature, FeatureAdapter.FeatureViewHolder>(ob
     class FeatureViewHolder(val binding: FeatureItemBinding) : ViewHolder(binding.root) {
         init {
             binding.root.setOnClickListener {
-                
+
             }
         }
         fun bind(feature: Feature) {
