@@ -55,6 +55,9 @@ class MainActivity : AppCompatActivity() {
                     FeatureId.SETTING -> {
                         startActivity(Intent(this@MainActivity, SettingActivity::class.java))
                     }
+                    else -> {
+
+                    }
                 }
             }
         })

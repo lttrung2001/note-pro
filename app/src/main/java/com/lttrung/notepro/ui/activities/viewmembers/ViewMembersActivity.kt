@@ -33,8 +33,8 @@ class ViewMembersActivity : AppCompatActivity() {
         ActivityShowMembersBinding.inflate(layoutInflater)
     }
     private val getMembersViewModel: ViewMembersViewModel by viewModels()
-    private val memberListener: MemberAdapter.MemberListener by lazy {
-        object : MemberAdapter.MemberListener {
+    private val memberAdapter: MemberAdapter by lazy {
+        MemberAdapter(object : MemberAdapter.MemberListener {
             override fun onClick(member: Member) {
                 if (note.isOwner()) {
                     val editMemberIntent =
@@ -44,10 +44,7 @@ class ViewMembersActivity : AppCompatActivity() {
                     launcher.launch(editMemberIntent)
                 }
             }
-        }
-    }
-    private val memberAdapter by lazy {
-        MemberAdapter(memberListener)
+        })
     }
     private val onScrollListener by lazy {
         object : RecyclerView.OnScrollListener() {
@@ -77,7 +74,6 @@ class ViewMembersActivity : AppCompatActivity() {
     private val note by lazy {
         intent.getSerializableExtra(NOTE) as Note
     }
-    private lateinit var toAddMemberButton: MenuItem
     private lateinit var socketService: ChatSocketService
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -138,7 +134,7 @@ class ViewMembersActivity : AppCompatActivity() {
 
     private fun initViews() {
         setContentView(binding.root)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.rvMembers.adapter = memberAdapter
     }
 
     private val launcher =

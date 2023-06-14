@@ -28,14 +28,12 @@ class ChatViewModel @Inject constructor(
 
     internal fun getCurrentUser() {
         viewModelScope.launch(Dispatchers.IO) {
-            viewModelScope.launch(Dispatchers.IO) {
-                try {
-                    currentUserLiveData.postValue(Resource.Loading())
-                    val changeProfile = userRepositories.getCurrentUser()
-                    currentUserLiveData.postValue(Resource.Success(changeProfile))
-                } catch (ex: Exception) {
-                    currentUserLiveData.postValue(Resource.Error(ex))
-                }
+            try {
+                currentUserLiveData.postValue(Resource.Loading())
+                val changeProfile = userRepositories.getCurrentUser()
+                currentUserLiveData.postValue(Resource.Success(changeProfile))
+            } catch (ex: Exception) {
+                currentUserLiveData.postValue(Resource.Error(ex))
             }
         }
     }

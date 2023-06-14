@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="10dp"
     tools:context=".ui.activities.chat.ChatActivity">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -12,7 +13,6 @@
         android:layout_height="0dp"
         android:layout_above="@id/message_box_container"
         android:layout_alignParentTop="true"
-        android:padding="16dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:stackFromEnd="true"
         tools:itemCount="10"
@@ -25,6 +25,7 @@
         android:layout_alignParentBottom="true">
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/message_box_layout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -42,9 +43,11 @@
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/send_message_button"
             android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_height="0dp"
+            android:layout_alignTop="@id/message_box_layout"
+            android:layout_alignBottom="@id/message_box_layout"
             android:layout_alignParentEnd="true"
-            android:background="@color/white"
+            android:background="@android:color/transparent"
             android:src="@drawable/ic_baseline_send_24"
             android:tint="@color/primary" />
     </RelativeLayout>

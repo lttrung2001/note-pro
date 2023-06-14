@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.lttrung.notepro.databinding.ActivityChatBinding
+import com.lttrung.notepro.domain.data.locals.entities.CurrentUser
 import com.lttrung.notepro.domain.data.networks.models.Message
 import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.domain.data.networks.models.User
@@ -19,8 +20,6 @@ import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGES_JSON
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE_RECEIVED
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.PAGE_LIMIT
-import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
-import com.lttrung.notepro.utils.AppConstant.Companion.USER
 import com.lttrung.notepro.utils.NotificationHelper
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,6 +27,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class ChatActivity : BaseActivity() {
     private lateinit var socketService: ChatSocketService
+    private lateinit var currentUser: CurrentUser
     override val binding by lazy {
         ActivityChatBinding.inflate(layoutInflater)
     }
@@ -42,8 +42,7 @@ class ChatActivity : BaseActivity() {
         object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 val message = intent?.getSerializableExtra(MESSAGE) as Message
-                val room = this@ChatActivity.intent.getStringExtra(ROOM_ID)
-                if (message.room == room) {
+                if (message.room == note.id) {
                     val messages = messageAdapter.currentList.toMutableList()
                     messages.add(message)
                     // Update adapter
@@ -109,9 +108,8 @@ class ChatActivity : BaseActivity() {
                 val binder = service as ChatSocketService.LocalBinder
                 socketService = binder.getService()
                 chatViewModel.messagesLiveData.postValue(Resource.Loading())
-                val roomId = intent.getStringExtra(ROOM_ID)!!
                 socketService.getMessages(
-                    roomId,
+                    note.id,
                     chatViewModel.page,
                     PAGE_LIMIT
                 )
@@ -199,9 +197,8 @@ class ChatActivity : BaseActivity() {
 
                 is Resource.Success -> {
                     binding.sendMessageButton.isClickable = true
-                    val user = resource.data
-                    intent.putExtra(USER, user)
-                    user.id?.let { messageAdapter.userId = it }
+                    currentUser = resource.data
+                    currentUser.id.let { messageAdapter.userId = it ?: "" }
                 }
 
                 is Resource.Error -> {
@@ -212,10 +209,10 @@ class ChatActivity : BaseActivity() {
         chatViewModel.messagesLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-                    binding.messages.removeOnScrollListener(onScrollListener)
                     messageAdapter.showLoading()
-                    binding.messages.smoothScrollToPosition(0)
                     binding.sendMessageButton.isClickable = false
+                    binding.messages.removeOnScrollListener(onScrollListener)
+                    binding.messages.smoothScrollToPosition(0)
                 }
 
                 is Resource.Success -> {
@@ -239,6 +236,7 @@ class ChatActivity : BaseActivity() {
     }
 
     override fun initViews() {
+        setContentView(binding.root)
         binding.messages.adapter = messageAdapter
     }
 
@@ -249,13 +247,12 @@ class ChatActivity : BaseActivity() {
             return
         }
 
-        val uid = messageAdapter.userId
-        val room = intent.getStringExtra(ROOM_ID)!!
+        val uid = currentUser.id ?: ""
 
         val message = Message(
             System.currentTimeMillis().toString(),
             content,
-            room,
+            note.id,
             0L,
             User(uid, "")
         )

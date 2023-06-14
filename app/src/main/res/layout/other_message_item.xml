@@ -27,7 +27,7 @@
         android:id="@+id/message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_other_message"
+        android:background="@drawable/shape_bg_pri_white_corner_small"
         android:paddingHorizontal="16dp"
         android:paddingVertical="8dp"
         android:textSize="16sp"

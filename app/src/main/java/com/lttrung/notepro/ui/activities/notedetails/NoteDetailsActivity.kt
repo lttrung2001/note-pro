@@ -38,7 +38,6 @@ class NoteDetailsActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setContentView(binding.root)
     }
 

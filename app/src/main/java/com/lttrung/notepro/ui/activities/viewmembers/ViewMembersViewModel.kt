@@ -29,7 +29,10 @@ class ViewMembersViewModel @Inject constructor(
                 val pagingMember = memberRepositories.getMembers(noteId, pageIndex, limit)
                 page++
                 val value = membersLiveData.value
-                if (value is Resource.Success) {
+                if (value is Resource.Loading || value is Resource.Error) {
+                    membersLiveData.postValue(Resource.Success(pagingMember))
+                } else {
+                    value as Resource.Success
                     val totalMember = value.data.data.toMutableList()
                     totalMember.addAll(pagingMember.data)
                     membersLiveData.postValue(

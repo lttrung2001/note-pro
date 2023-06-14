@@ -2,13 +2,9 @@ package com.lttrung.notepro.ui.activities.editmember
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import com.github.razir.progressbutton.attachTextChangeAnimator
 import com.github.razir.progressbutton.bindProgressButton
 import com.github.razir.progressbutton.hideProgress
@@ -149,13 +145,19 @@ class EditMemberActivity : BaseActivity() {
     }
 
     override fun initViews() {
+        setContentView(binding.root)
         bindProgressButton(binding.deleteButton)
         binding.deleteButton.attachTextChangeAnimator()
-
-        binding.roleSpinner.setSelection(roleAdapter.getPosition(member.role))
-        binding.tvId.text = member.id
-        binding.tvEmail.text = member.email
-        binding.tvFullName.text = member.fullName
-        binding.tvPhoneNumber.text = member.phoneNumber
+        binding.apply {
+            roleSpinner.setSelection(roleAdapter.getPosition(member.role))
+            tvId.text = member.id
+            tvEmail.text = member.email
+            tvFullName.text = member.fullName
+            tvPhoneNumber.text = member.phoneNumber
+            roleSpinner.apply {
+                adapter = roleAdapter
+                setSelection(roleAdapter.getPosition(member.role))
+            }
+        }
     }
 }
