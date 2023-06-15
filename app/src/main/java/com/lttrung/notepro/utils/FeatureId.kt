@@ -7,5 +7,6 @@ enum class FeatureId {
     GALLERY,
     MEMBERS,
     CHAT,
-    CALL
+    CALL,
+    DELETE
 }

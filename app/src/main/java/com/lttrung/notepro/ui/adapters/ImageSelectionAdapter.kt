@@ -5,10 +5,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
-import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ImageSelectionItemBinding
 import com.lttrung.notepro.domain.data.locals.models.ImageSelectionLocalsModel
+import com.squareup.picasso.Picasso
+import java.io.File
 
 class ImageSelectionAdapter :
     ListAdapter<ImageSelectionLocalsModel, ImageSelectionAdapter.ImageSelectionViewHolder>(
@@ -44,10 +44,7 @@ class ImageSelectionAdapter :
     class ImageSelectionViewHolder(private val binding: ImageSelectionItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(image: ImageSelectionLocalsModel) {
-            binding.img.load(image.url) {
-                crossfade(true)
-                placeholder(R.drawable.me)
-            }
+            Picasso.get().load(File(image.url)).resize(300,400).into(binding.img)
             binding.checkbox.isChecked = false
             binding.checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
                 image.isSelected = isChecked

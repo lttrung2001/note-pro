@@ -18,7 +18,7 @@ class EditNoteViewModel @Inject constructor(
     private val noteRepositories: NoteRepositories
 ) : ViewModel() {
     private val deleteImages by lazy {
-        MutableLiveData<List<Image>>(emptyList())
+        mutableListOf<Image>()
     }
 
     internal val editNoteLiveData by lazy {
@@ -38,7 +38,7 @@ class EditNoteViewModel @Inject constructor(
             try {
                 editNoteLiveData.postValue(Resource.Loading())
                 val editMember =
-                    noteRepositories.editNote(note, deleteImages.value.orEmpty().map { it.id })
+                    noteRepositories.editNote(note, deleteImages.map { it.id })
                 editNoteLiveData.postValue(Resource.Success(editMember))
             } catch (ex: Exception) {
                 editNoteLiveData.postValue(Resource.Error(ex))
@@ -74,9 +74,7 @@ class EditNoteViewModel @Inject constructor(
 
     fun deleteImage(image: Image) {
         if (URLUtil.isNetworkUrl(image.url)) {
-            val deletingImages = deleteImages.value!!.toMutableList()
-            deletingImages.add(image)
-            deleteImages.postValue(deletingImages)
+            deleteImages.add(image)
         }
 
         val value = noteDetailsLiveData.value

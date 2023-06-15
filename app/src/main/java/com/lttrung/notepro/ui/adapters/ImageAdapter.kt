@@ -5,10 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
-import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ImageItemBinding
 import com.lttrung.notepro.domain.data.networks.models.Image
+import com.squareup.picasso.Picasso
 
 class ImageAdapter(private val listener: ImageListener) :
     ListAdapter<Image, ImageAdapter.ImageViewHolder>(ITEM_CALLBACK) {
@@ -44,10 +43,7 @@ class ImageAdapter(private val listener: ImageListener) :
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(image: Image, listener: ImageListener) {
-            binding.img.load(image.url) {
-                crossfade(true)
-                placeholder(R.drawable.me)
-            }
+            Picasso.get().load(image.url).into(binding.img)
             binding.root.setOnClickListener {
                 // Start image details activity
                 listener.onClick(image)

@@ -7,6 +7,18 @@
     android:fitsSystemWindows="true"
     tools:context=".ui.activities.editnote.EditNoteActivity">
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:backgroundTint="@color/primary"
+        android:src="@drawable/ic_baseline_done_24"
+        app:tint="@color/white" />
+
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"

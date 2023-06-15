@@ -8,17 +8,26 @@ import android.os.Bundle
 import android.os.IBinder
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
 import com.google.android.material.snackbar.Snackbar
+import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityAddNoteBinding
 import com.lttrung.notepro.domain.data.networks.models.Image
 import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.ui.activities.chat.ChatSocketService
+import com.lttrung.notepro.ui.adapters.FeatureAdapter
 import com.lttrung.notepro.ui.adapters.ImageAdapter
 import com.lttrung.notepro.ui.base.BaseActivity
+import com.lttrung.notepro.ui.entities.Feature
+import com.lttrung.notepro.utils.AppConstant.Companion.ADD_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
+import com.lttrung.notepro.utils.AppConstant.Companion.NOTE_ACTION_TYPE
 import com.lttrung.notepro.utils.AppConstant.Companion.SELECTED_IMAGES
+import com.lttrung.notepro.utils.FeatureId
 import com.lttrung.notepro.utils.Resource
+import com.lttrung.notepro.utils.openCamera
+import com.lttrung.notepro.utils.openGallery
+import com.lttrung.notepro.utils.requestPermissionToOpenCamera
+import com.lttrung.notepro.utils.requestPermissionToReadGallery
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -51,6 +60,29 @@ class AddNoteActivity : BaseActivity() {
             }
         })
     }
+    private val featureAdapter by lazy {
+        FeatureAdapter(object : FeatureAdapter.FeatureListener {
+            override fun onClick(item: Feature) {
+                when (item.id) {
+                    FeatureId.CAMERA -> {
+                        if (requestPermissionToOpenCamera(this@AddNoteActivity)) {
+                            openCamera(launcher)
+                        }
+                    }
+
+                    FeatureId.GALLERY -> {
+                        if (requestPermissionToReadGallery(this@AddNoteActivity)) {
+                            openGallery(launcher, this@AddNoteActivity)
+                        }
+                    }
+
+                    else -> {
+
+                    }
+                }
+            }
+        })
+    }
     private lateinit var socketService: ChatSocketService
 
     private val connection by lazy {
@@ -68,7 +100,9 @@ class AddNoteActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initViews()
         initObservers()
+        initListeners()
     }
 
     override fun onStart() {
@@ -83,27 +117,34 @@ class AddNoteActivity : BaseActivity() {
         unbindService(connection)
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        val note = Note(
-            String(),
-            binding.edtNoteTitle.text?.trim().toString(),
-            binding.edtNoteDesc.text?.trim().toString(),
-            0L,
-            false,
-            isArchived = false,
-            isRemoved = false,
-            role = String(),
-            images = imagesAdapter.currentList,
+    private fun getFeatures(): List<Feature> {
+        return listOf(
+            Feature(FeatureId.CAMERA, R.drawable.ic_baseline_camera_alt_24),
+            Feature(FeatureId.GALLERY, R.drawable.ic_baseline_photo_album_24)
         )
-        addNoteViewModel.addNote(note)
     }
 
     override fun initViews() {
         setContentView(binding.root)
+        binding.rvFeatures.adapter = featureAdapter
+        featureAdapter.submitList(getFeatures())
     }
 
     override fun initListeners() {
+        binding.fabSave.setOnClickListener {
+            val note = Note(
+                String(),
+                binding.edtNoteTitle.text?.trim().toString(),
+                binding.edtNoteDesc.text?.trim().toString(),
+                0L,
+                false,
+                isArchived = false,
+                isRemoved = false,
+                role = String(),
+                images = imagesAdapter.currentList,
+            )
+            addNoteViewModel.addNote(note)
+        }
     }
 
     override fun initObservers() {
@@ -116,6 +157,7 @@ class AddNoteActivity : BaseActivity() {
                     val resultIntent = Intent()
                     val note = resource.data
                     resultIntent.putExtra(NOTE, note)
+                    resultIntent.putExtra(NOTE_ACTION_TYPE, ADD_NOTE)
                     setResult(RESULT_OK, resultIntent)
 
                     socketService.sendAddNoteMessage(note.id)
@@ -124,7 +166,8 @@ class AddNoteActivity : BaseActivity() {
                 }
 
                 is Resource.Error -> {
-//                    Snackbar.make(binding.root, resource.t.message.toString(), LENGTH_LONG).show()
+                    Snackbar.make(binding.root, resource.t.message.toString(), Snackbar.LENGTH_LONG)
+                        .show()
                 }
             }
         }

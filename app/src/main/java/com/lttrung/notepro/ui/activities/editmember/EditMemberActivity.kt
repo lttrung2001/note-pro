@@ -147,8 +147,8 @@ class EditMemberActivity : BaseActivity() {
     override fun initViews() {
         setContentView(binding.root)
         bindProgressButton(binding.deleteButton)
-        binding.deleteButton.attachTextChangeAnimator()
         binding.apply {
+            deleteButton.attachTextChangeAnimator()
             roleSpinner.setSelection(roleAdapter.getPosition(member.role))
             tvId.text = member.id
             tvEmail.text = member.email

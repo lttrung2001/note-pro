@@ -3,9 +3,8 @@ package com.lttrung.notepro.utils
 class AppConstant {
     companion object {
         const val NOTE = "com.lttrung.notepro.NOTE"
+        const val NOTE_ACTION_TYPE = "com.lttrung.notepro.NOTE_ACTION_TYPE"
         const val POSITION = "com.lttrung.notepro.POSITION"
-        const val EDITED_NOTE = "com.lttrung.notepro.EDITED_NOTE"
-        const val DELETED_NOTE = "com.lttrung.notepro.DELETED_NOTE"
         const val SELECTED_IMAGES = "com.lttrung.notepro.SELECTED_IMAGES"
         const val USER = "com.lttrung.notepro.USER"
         const val MEMBER = "com.lttrung.notepro.MEMBER"
@@ -39,5 +38,10 @@ class AppConstant {
 
 
         const val PAGE_LIMIT = 20
+
+
+        const val ADD_NOTE = 1
+        const val EDIT_NOTE = 2
+        const val DELETE_NOTE = 3
     }
 }

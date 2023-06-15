@@ -5,15 +5,11 @@ import android.app.Service
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.IBinder
-import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.PagerSnapHelper
-import androidx.recyclerview.widget.SnapHelper
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.lttrung.notepro.R
@@ -22,7 +18,6 @@ import com.lttrung.notepro.domain.data.networks.models.Image
 import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.ui.activities.chat.ChatActivity
 import com.lttrung.notepro.ui.activities.chat.ChatSocketService
-import com.lttrung.notepro.ui.activities.viewgallery.ViewGalleryActivity
 import com.lttrung.notepro.ui.activities.viewimagedetails.ViewImageDetailsActivity
 import com.lttrung.notepro.ui.activities.viewmembers.ViewMembersActivity
 import com.lttrung.notepro.ui.adapters.FeatureAdapter
@@ -30,12 +25,17 @@ import com.lttrung.notepro.ui.adapters.ImageAdapter
 import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.ui.entities.Feature
 import com.lttrung.notepro.utils.AppConstant
-import com.lttrung.notepro.utils.AppConstant.Companion.DELETED_NOTE
-import com.lttrung.notepro.utils.AppConstant.Companion.EDITED_NOTE
+import com.lttrung.notepro.utils.AppConstant.Companion.DELETE_NOTE
+import com.lttrung.notepro.utils.AppConstant.Companion.EDIT_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
+import com.lttrung.notepro.utils.AppConstant.Companion.NOTE_ACTION_TYPE
 import com.lttrung.notepro.utils.AppConstant.Companion.SELECTED_IMAGES
 import com.lttrung.notepro.utils.FeatureId
 import com.lttrung.notepro.utils.Resource
+import com.lttrung.notepro.utils.openCamera
+import com.lttrung.notepro.utils.openGallery
+import com.lttrung.notepro.utils.requestPermissionToOpenCamera
+import com.lttrung.notepro.utils.requestPermissionToReadGallery
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -79,14 +79,14 @@ class EditNoteActivity : BaseActivity() {
             override fun onClick(item: Feature) {
                 when (item.id) {
                     FeatureId.CAMERA -> {
-                        if (requestPermissionToOpenCamera()) {
-                            openCamera()
+                        if (requestPermissionToOpenCamera(this@EditNoteActivity)) {
+                            openCamera(launcher)
                         }
                     }
 
                     FeatureId.GALLERY -> {
-                        if (requestPermissionToReadGallery()) {
-                            openGallery()
+                        if (requestPermissionToReadGallery(this@EditNoteActivity)) {
+                            openGallery(launcher, this@EditNoteActivity)
                         }
                     }
 
@@ -108,6 +108,10 @@ class EditNoteActivity : BaseActivity() {
 
                     FeatureId.CALL -> {
 
+                    }
+
+                    FeatureId.DELETE -> {
+                        editNoteViewModel.deleteNote(getNoteFromUi())
                     }
 
                     else -> {
@@ -162,56 +166,12 @@ class EditNoteActivity : BaseActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == AppConstant.CAMERA_REQUEST && permissions.contains(Manifest.permission.CAMERA)) {
-            openCamera()
+            openCamera(launcher)
         } else if (requestCode == AppConstant.READ_EXTERNAL_STORAGE_REQUEST && permissions.contains(
                 Manifest.permission.READ_EXTERNAL_STORAGE
             )
         ) {
-            openGallery()
-        }
-    }
-
-    private fun openGallery() {
-        val galleryIntent = Intent(this@EditNoteActivity, ViewGalleryActivity::class.java)
-        launcher.launch(galleryIntent)
-    }
-
-    private fun openCamera() {
-        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        launcher.launch(cameraIntent)
-    }
-
-    private fun requestPermissionToReadGallery(): Boolean {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                AppConstant.READ_EXTERNAL_STORAGE_REQUEST
-            )
-            return false
-        } else {
-            return true
-        }
-    }
-
-    private fun requestPermissionToOpenCamera(): Boolean {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.CAMERA
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.CAMERA),
-                AppConstant.CAMERA_REQUEST
-            )
-            return false
-        } else {
-            return true
+            openGallery(launcher, this@EditNoteActivity)
         }
     }
 
@@ -221,34 +181,20 @@ class EditNoteActivity : BaseActivity() {
             Feature(FeatureId.GALLERY, R.drawable.ic_baseline_photo_album_24),
             Feature(FeatureId.MEMBERS, R.drawable.ic_baseline_groups_24),
             Feature(FeatureId.CHAT, R.drawable.ic_baseline_message_24),
-            Feature(FeatureId.CALL, R.drawable.ic_baseline_call_24)
+            Feature(FeatureId.CALL, R.drawable.ic_baseline_call_24),
+            Feature(FeatureId.DELETE, R.drawable.ic_baseline_delete_outline_24)
         )
     }
 
-    // if (note.isRemoved) {
-    //                    Snackbar.make(this, binding.root, "No permission!", Snackbar.LENGTH_LONG).show()
-    //                } else {
-    //                    val note = getNoteFromUi()
-    //                    note.isArchived = !note.isArchived
-    //                    editNoteViewModel.editNote(note)
-    //                }
-
-    // val note = intent.getSerializableExtra(NOTE) as Note
-    //                val showConservationIntent =
-    //                    Intent(this@EditNoteActivity, ChatActivity::class.java)
-    //                showConservationIntent.putExtra(AppConstant.ROOM_ID, note.id)
-    //                showConservationIntent.putExtra(NOTE, note)
-    //                startActivity(showConservationIntent)
-
-    // if (note.isRemoved) {
-    //                    Snackbar.make(this, binding.root, "No permission!", Snackbar.LENGTH_LONG).show()
-    //                } else {
-    //                    // Save note
-    //                    editNoteViewModel.editNote(getNoteFromUi())
-    //                }
-
     override fun initListeners() {
-
+        binding.fabSave.setOnClickListener {
+            if (note.isRemoved) {
+                Snackbar.make(this, binding.root, "No permission!", Snackbar.LENGTH_LONG).show()
+            } else {
+                // Save note
+                editNoteViewModel.editNote(getNoteFromUi())
+            }
+        }
     }
 
     override fun initObservers() {
@@ -259,7 +205,8 @@ class EditNoteActivity : BaseActivity() {
 
                 is Resource.Success -> {
                     val resultIntent = Intent()
-                    resultIntent.putExtra(EDITED_NOTE, resource.data)
+                    resultIntent.putExtra(NOTE, resource.data)
+                    resultIntent.putExtra(NOTE_ACTION_TYPE, EDIT_NOTE)
                     setResult(RESULT_OK, resultIntent)
                     finish()
                 }
@@ -283,7 +230,8 @@ class EditNoteActivity : BaseActivity() {
                     socketService.sendDeleteNoteMessage(roomId)
 
                     val resultIntent = Intent()
-                    resultIntent.putExtra(DELETED_NOTE, note)
+                    resultIntent.putExtra(NOTE, note)
+                    resultIntent.putExtra(NOTE_ACTION_TYPE, DELETE_NOTE)
                     setResult(RESULT_OK, resultIntent)
                     finish()
                 }
@@ -327,26 +275,13 @@ class EditNoteActivity : BaseActivity() {
         binding.apply {
             edtNoteTitle.setText(note.title)
             edtNoteDesc.setText(note.content)
+            rvImages.adapter = imagesAdapter
+            rvFeatures.adapter = featureAdapter
         }
 
         PagerSnapHelper().attachToRecyclerView(binding.rvImages)
-        binding.rvImages.adapter = imagesAdapter
         imagesAdapter.submitList(note.images)
-
-        binding.rvFeatures.adapter = featureAdapter
         featureAdapter.submitList(getFeatures())
-
-//        if (note.isRemoved) {
-//            binding.edtNoteTitle.isEnabled = false
-//            binding.edtNoteDesc.isEnabled = false
-//            binding.btnOpenBottomSheet.visibility = View.INVISIBLE
-//            if (note.isOwner()) {
-//                binding.btnRestore.visibility = View.VISIBLE
-//                binding.btnDeleteNote.visibility = View.VISIBLE
-//            }
-//        } else if (note.isOwner()) {
-//            binding.btnDeleteNote.visibility = View.VISIBLE
-//        }
     }
 
     private fun getNoteFromUi(): Note {

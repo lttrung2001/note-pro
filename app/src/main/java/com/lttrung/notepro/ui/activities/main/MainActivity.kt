@@ -1,6 +1,5 @@
 package com.lttrung.notepro.ui.activities.main
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -20,7 +19,11 @@ import com.lttrung.notepro.ui.activities.viewprofile.ViewProfileActivity
 import com.lttrung.notepro.ui.adapters.FeatureAdapter
 import com.lttrung.notepro.ui.adapters.NoteAdapter
 import com.lttrung.notepro.ui.entities.Feature
+import com.lttrung.notepro.utils.AppConstant.Companion.ADD_NOTE
+import com.lttrung.notepro.utils.AppConstant.Companion.DELETE_NOTE
+import com.lttrung.notepro.utils.AppConstant.Companion.EDIT_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
+import com.lttrung.notepro.utils.AppConstant.Companion.NOTE_ACTION_TYPE
 import com.lttrung.notepro.utils.FeatureId
 import com.lttrung.notepro.utils.Resource
 import com.lttrung.notepro.utils.ServiceUtils
@@ -32,8 +35,32 @@ class MainActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val resultIntent = result.data
-                resultIntent?.let { _ ->
+                resultIntent?.let { i ->
+                    val note = i.getSerializableExtra(NOTE) as Note
+                    when (i.getIntExtra(NOTE_ACTION_TYPE, 0)) {
+                        ADD_NOTE -> {
+                            noteAdapter.submitList(noteAdapter.currentList.toMutableList().apply {
+                                add(0, note)
+                            })
+                        }
 
+                        EDIT_NOTE -> {
+                            noteAdapter.submitList(noteAdapter.currentList.toMutableList().apply {
+                                removeIf { it.id == note.id }
+                                add(0, note)
+                            })
+                        }
+
+                        DELETE_NOTE -> {
+                            noteAdapter.submitList(noteAdapter.currentList.toMutableList().apply {
+                                removeIf { it.id == note.id }
+                            })
+                        }
+
+                        else -> {
+
+                        }
+                    }
                 }
             }
         }
@@ -41,7 +68,7 @@ class MainActivity : AppCompatActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
     private val mainViewModel: MainViewModel by viewModels()
-    private val noteAdapter by lazy {
+    private val noteAdapter: NoteAdapter by lazy {
         NoteAdapter(noteListener)
     }
     private val featureAdapter by lazy {
@@ -55,6 +82,7 @@ class MainActivity : AppCompatActivity() {
                     FeatureId.SETTING -> {
                         startActivity(Intent(this@MainActivity, SettingActivity::class.java))
                     }
+
                     else -> {
 
                     }
@@ -63,7 +91,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private val noteListener by lazy {
+    private val noteListener: NoteAdapter.NoteListener by lazy {
         object : NoteAdapter.NoteListener {
             override fun onClick(note: Note) {
                 if (note.hasEditPermission()) {
