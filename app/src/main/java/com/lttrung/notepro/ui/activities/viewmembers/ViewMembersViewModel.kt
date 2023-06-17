@@ -22,6 +22,10 @@ class ViewMembersViewModel @Inject constructor(
         MutableLiveData<Resource<Paging<Member>>>()
     }
 
+    internal val addMemberLiveData by lazy {
+        MutableLiveData<Resource<Member>>()
+    }
+
     internal fun getMembers(noteId: String, pageIndex: Int, limit: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -47,6 +51,18 @@ class ViewMembersViewModel @Inject constructor(
                 }
             } catch (ex: Exception) {
                 membersLiveData.postValue(Resource.Error(ex))
+            }
+        }
+    }
+
+    internal fun addMember(noteId: String, email: String, role: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                addMemberLiveData.postValue(Resource.Loading())
+                val addMember = memberRepositories.addMember(noteId, email, role)
+                addMemberLiveData.postValue(Resource.Success(addMember))
+            } catch (ex: Exception) {
+                addMemberLiveData.postValue(Resource.Error(ex))
             }
         }
     }

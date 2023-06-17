@@ -13,8 +13,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:layout_marginEnd="@dimen/fab_margin"
         android:backgroundTint="@color/primary"
         android:src="@drawable/ic_baseline_done_24"
         app:tint="@color/white" />

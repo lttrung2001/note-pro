@@ -6,19 +6,20 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import android.view.MenuItem
+import android.view.WindowManager.LayoutParams
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import com.lttrung.notepro.databinding.ActivityShowMembersBinding
+import com.lttrung.notepro.databinding.ActivityViewMembersBinding
 import com.lttrung.notepro.domain.data.networks.models.Member
 import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.domain.data.networks.models.Paging
 import com.lttrung.notepro.ui.activities.chat.ChatSocketService
 import com.lttrung.notepro.ui.activities.editmember.EditMemberActivity
 import com.lttrung.notepro.ui.adapters.MemberAdapter
+import com.lttrung.notepro.ui.dialogs.AddMemberDialog
 import com.lttrung.notepro.utils.AppConstant
 import com.lttrung.notepro.utils.AppConstant.Companion.MEMBER
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
@@ -30,7 +31,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class ViewMembersActivity : AppCompatActivity() {
     private val binding by lazy {
-        ActivityShowMembersBinding.inflate(layoutInflater)
+        ActivityViewMembersBinding.inflate(layoutInflater)
     }
     private val getMembersViewModel: ViewMembersViewModel by viewModels()
     private val memberAdapter: MemberAdapter by lazy {
@@ -60,6 +61,9 @@ class ViewMembersActivity : AppCompatActivity() {
             }
         }
     }
+
+    private lateinit var addMemberDialog: AddMemberDialog
+
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             val binder = service as ChatSocketService.LocalBinder
@@ -99,6 +103,18 @@ class ViewMembersActivity : AppCompatActivity() {
     }
 
     private fun initListeners() {
+        binding.fabAddMember.setOnClickListener {
+            addMemberDialog = AddMemberDialog(this@ViewMembersActivity) { email, role ->
+                getMembersViewModel.addMember(note.id, email, role)
+            }
+            if (!addMemberDialog.isShowing) {
+                addMemberDialog.show()
+                addMemberDialog.window?.setLayout(
+                    LayoutParams.MATCH_PARENT,
+                    LayoutParams.WRAP_CONTENT
+                )
+            }
+        }
     }
 
     private fun initObservers() {
@@ -127,6 +143,41 @@ class ViewMembersActivity : AppCompatActivity() {
                         Snackbar.LENGTH_LONG
                     ).show()
                     binding.rvMembers.removeOnScrollListener(onScrollListener)
+                }
+            }
+        }
+
+        getMembersViewModel.addMemberLiveData.observe(this) { resource ->
+            when (resource) {
+                is Resource.Loading -> {
+                }
+
+                is Resource.Success -> {
+                    val value = getMembersViewModel.membersLiveData.value
+                    if (value is Resource.Success) {
+                        val paging = value.data
+                        val members = paging.data.toMutableList().apply {
+                            val newMember = resource.data
+                            find { it.id == newMember.id } ?: add(newMember)
+                        }
+                        getMembersViewModel.membersLiveData.postValue(
+                            Resource.Success(
+                                Paging(
+                                    paging.hasPreviousPage,
+                                    paging.hasNextPage,
+                                    members
+                                )
+                            )
+                        )
+                        addMemberDialog.dismiss()
+                    }
+                }
+
+                is Resource.Error -> {
+                    Snackbar.make(
+                        binding.root, resource.t.message.toString(),
+                        Snackbar.LENGTH_LONG
+                    ).show()
                 }
             }
         }
