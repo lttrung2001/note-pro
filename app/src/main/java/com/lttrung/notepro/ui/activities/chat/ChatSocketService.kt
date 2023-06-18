@@ -118,7 +118,7 @@ class ChatSocketService : Service() {
     /*
         This function use to start login page if faces some errors
      */
-    private fun requireLogin() {
+    private fun switchToLoginScreen() {
         scope.launch(Dispatchers.IO) {
             userLocals.logout()
         }
@@ -157,20 +157,10 @@ class ChatSocketService : Service() {
                 }
 
                 is Resource.Error -> {
-                    pushErrorNotification(resource)
                     stopSelf()
                 }
             }
         }
-    }
-
-    private fun pushErrorNotification(resource: Resource.Error<String>) {
-        NotificationHelper.pushNotification(
-            this,
-            CHAT_LISTENER_CHANNEL_ID,
-            "Error while connecting chat server",
-            resource.t.message.toString()
-        )
     }
 
     private fun startNotification() {
@@ -203,7 +193,7 @@ class ChatSocketService : Service() {
     private fun createSocket(accessToken: String): Socket {
         return IO.socket(BASE_URL, IO.Options.builder().setReconnection(true).setAuth(buildMap {
             if (accessToken.isEmpty()) {
-                requireLogin()
+                switchToLoginScreen()
             }
             this["token"] = accessToken
         }).build())
@@ -214,6 +204,37 @@ class ChatSocketService : Service() {
         socket.on(Socket.EVENT_CONNECT_ERROR) {
             stopSelf()
         }
+        listenChatEvent(socket)
+        listenLoadMessagesEvent(socket)
+        listenCallEvent(socket)
+    }
+
+    private fun listenCallEvent(socket: Socket) {
+        socket.on("call") { args ->
+            val roomId = args[0] as String
+            val userJson = args[1]
+            val user = gson.fromJson(userJson.toString(), User::class.java)
+            baseContext.startActivity(Intent(
+                this@ChatSocketService, IncomingCallActivity::class.java
+            ).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                putExtra(ROOM_ID, roomId)
+                putExtra(USER, user)
+            })
+        }
+    }
+
+    private fun listenLoadMessagesEvent(socket: Socket) {
+        socket.on("load_messages") { args ->
+            // Using broadcast
+            val olderMessagesJson = args[0].toString()
+            val loadMessagesReceivedIntent = Intent(LOAD_MESSAGES_RECEIVED)
+            loadMessagesReceivedIntent.putExtra(MESSAGES_JSON, olderMessagesJson)
+            sendBroadcast(loadMessagesReceivedIntent)
+        }
+    }
+
+    private fun listenChatEvent(socket: Socket) {
         socket.on("chat") { args ->
             val message = gson.fromJson(args[0].toString(), Message::class.java)
             val process = ActivityManager.RunningAppProcessInfo()
@@ -229,25 +250,6 @@ class ChatSocketService : Service() {
                 messageReceivedIntent.putExtra(MESSAGE, message)
                 sendBroadcast(messageReceivedIntent)
             }
-        }
-        socket.on("load_messages") { args ->
-            // Using broadcast
-            val olderMessagesJson = args[0].toString()
-            val loadMessagesReceivedIntent = Intent(LOAD_MESSAGES_RECEIVED)
-            loadMessagesReceivedIntent.putExtra(MESSAGES_JSON, olderMessagesJson)
-            sendBroadcast(loadMessagesReceivedIntent)
-        }
-        socket.on("call") { args ->
-            val roomId = args[0] as String
-            val userJson = args[1]
-            val user = gson.fromJson(userJson.toString(), User::class.java)
-            baseContext.startActivity(Intent(
-                this@ChatSocketService, IncomingCallActivity::class.java
-            ).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                putExtra(ROOM_ID, roomId)
-                putExtra(USER, user)
-            })
         }
     }
 }
