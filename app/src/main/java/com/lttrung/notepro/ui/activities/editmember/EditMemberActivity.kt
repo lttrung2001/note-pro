@@ -51,27 +51,23 @@ class EditMemberActivity : BaseActivity() {
         editMemberViewModel.getMemberDetails(note.id, member.id)
     }
 
-    // R.id.action_save -> {
-    //                val member = Member(
-    //                    binding.tvId.text.toString(),
-    //                    binding.tvEmail.text.toString(),
-    //                    binding.tvFullName.text.toString(),
-    //                    binding.roleSpinner.selectedItem.toString(),
-    //                    binding.tvPhoneNumber.text.toString()
-    //                )
-    //                editMemberViewModel.editMember(note.id, member)
-    //            } else -> {
-    //                finish()
-    //            }
-
     override fun initObservers() {
         editMemberViewModel.editMemberLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-
+                    binding.btnEditMember.apply {
+                        isClickable = false
+                        showProgress {
+                            buttonTextRes = R.string.loading
+                        }
+                    }
                 }
 
                 is Resource.Success -> {
+                    binding.btnDeleteMember.apply {
+                        isClickable = true
+                        hideProgress(R.string.remove)
+                    }
                     val resultIntent = Intent()
                     resultIntent.putExtra(EDITED_MEMBER, resource.data)
                     setResult(RESULT_OK, resultIntent)
@@ -79,6 +75,10 @@ class EditMemberActivity : BaseActivity() {
                 }
 
                 is Resource.Error -> {
+                    binding.btnDeleteMember.apply {
+                        isClickable = true
+                        hideProgress(R.string.remove)
+                    }
                     Toast.makeText(this, resource.t.message.toString(), Toast.LENGTH_LONG).show()
                 }
             }
@@ -87,15 +87,19 @@ class EditMemberActivity : BaseActivity() {
         editMemberViewModel.deleteMemberLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-                    binding.btnDeleteMember.isClickable = false
-                    binding.btnDeleteMember.showProgress {
-                        buttonTextRes = R.string.loading
+                    binding.btnDeleteMember.apply {
+                        isClickable = false
+                        showProgress {
+                            buttonTextRes = R.string.loading
+                        }
                     }
                 }
 
                 is Resource.Success -> {
-                    binding.btnDeleteMember.isClickable = true
-                    binding.btnDeleteMember.hideProgress(R.string.remove)
+                    binding.btnDeleteMember.apply {
+                        isClickable = true
+                        hideProgress(R.string.remove)
+                    }
                     val resultIntent = Intent()
                     resultIntent.putExtra(DELETED_MEMBER, member)
                     setResult(RESULT_OK, resultIntent)
@@ -103,8 +107,10 @@ class EditMemberActivity : BaseActivity() {
                 }
 
                 is Resource.Error -> {
-                    binding.btnDeleteMember.isClickable = true
-                    binding.btnDeleteMember.hideProgress(R.string.remove)
+                    binding.btnDeleteMember.apply {
+                        isClickable = true
+                        hideProgress(R.string.remove)
+                    }
                     Toast.makeText(this, resource.t.message.toString(), Toast.LENGTH_LONG).show()
                 }
             }
@@ -113,17 +119,26 @@ class EditMemberActivity : BaseActivity() {
         editMemberViewModel.memberDetailsLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
-                    binding.btnDeleteMember.isClickable = false
+                    binding.apply {
+                        btnDeleteMember.isClickable = false
+                        btnEditMember.isClickable = false
+                    }
                 }
 
                 is Resource.Success -> {
-                    binding.btnDeleteMember.isClickable = true
+                    binding.apply {
+                        btnDeleteMember.isClickable = true
+                        btnEditMember.isClickable = true
+                    }
                     val member = resource.data
                     bindMemberDataToViews(member)
                 }
 
                 is Resource.Error -> {
-                    binding.btnDeleteMember.isClickable = true
+                    binding.apply {
+                        btnDeleteMember.isClickable = true
+                        btnEditMember.isClickable = true
+                    }
                     Toast.makeText(this, resource.t.message.toString(), Toast.LENGTH_LONG).show()
                 }
             }
@@ -138,17 +153,35 @@ class EditMemberActivity : BaseActivity() {
         binding.roleSpinner.setSelection(roleAdapter.getPosition(member.role))
     }
 
+    private fun getMemberDataFromUi(): Member {
+        return Member(
+            binding.tvId.text.toString(),
+            binding.tvEmail.text.toString(),
+            binding.tvFullName.text.toString(),
+            binding.roleSpinner.selectedItem.toString(),
+            binding.tvPhoneNumber.text.toString()
+        )
+    }
+
     override fun initListeners() {
-        binding.btnDeleteMember.setOnClickListener {
-            editMemberViewModel.deleteMember(note.id, member.id)
+        binding.apply {
+            btnDeleteMember.setOnClickListener {
+                editMemberViewModel.deleteMember(note.id, member.id)
+            }
+            btnEditMember.setOnClickListener {
+                val member = getMemberDataFromUi()
+                editMemberViewModel.editMember(note.id, member)
+            }
         }
     }
 
     override fun initViews() {
         setContentView(binding.root)
         bindProgressButton(binding.btnDeleteMember)
+        bindProgressButton(binding.btnEditMember)
         binding.apply {
             btnDeleteMember.attachTextChangeAnimator()
+            btnEditMember.attachTextChangeAnimator()
             roleSpinner.setSelection(roleAdapter.getPosition(member.role))
             tvId.text = member.id
             tvEmail.text = member.email
