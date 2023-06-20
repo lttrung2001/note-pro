@@ -4,13 +4,12 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.PagerSnapHelper
-import com.google.gson.Gson
 import com.lttrung.notepro.databinding.ActivityViewImageDetailsBinding
-import com.lttrung.notepro.domain.data.networks.models.Image
 import com.lttrung.notepro.domain.data.networks.models.ImageDetails
 import com.lttrung.notepro.domain.data.networks.models.User
 import com.lttrung.notepro.ui.adapters.ImageDetailsAdapter
-import com.lttrung.notepro.utils.AppConstant.Companion.IMAGES_JSON
+import com.lttrung.notepro.ui.entities.ListImage
+import com.lttrung.notepro.utils.AppConstant.Companion.LIST_IMAGE
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -20,9 +19,10 @@ class ViewImageDetailsActivity : AppCompatActivity() {
     }
     private val imageDetailsAdapter by lazy {
         val adapter = ImageDetailsAdapter()
-        val images =
-            Gson().fromJson(intent.getStringExtra(IMAGES_JSON), Array<Image>::class.java).toList()
-                .map {
+        val images = intent.getSerializableExtra(LIST_IMAGE) as ListImage?
+        images?.let { listImage ->
+            adapter.submitList(
+                listImage.list.map {
                     ImageDetails(
                         it.id,
                         it.name,
@@ -30,8 +30,8 @@ class ViewImageDetailsActivity : AppCompatActivity() {
                         it.uploadTime,
                         User(it.uploadBy, "Undefined")
                     )
-                }
-        adapter.submitList(images)
+                })
+        }
         adapter
     }
 

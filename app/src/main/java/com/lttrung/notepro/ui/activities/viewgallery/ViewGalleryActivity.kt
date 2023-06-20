@@ -10,6 +10,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityViewGalleryBinding
 import com.lttrung.notepro.ui.adapters.ImageSelectionAdapter
+import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.PAGE_LIMIT
 import com.lttrung.notepro.utils.AppConstant.Companion.SELECTED_IMAGES
 import com.lttrung.notepro.utils.Resource
@@ -17,8 +18,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.io.Serializable
 
 @AndroidEntryPoint
-class ViewGalleryActivity : AppCompatActivity() {
-    private val binding by lazy {
+class ViewGalleryActivity : BaseActivity() {
+    override val binding by lazy {
         ActivityViewGalleryBinding.inflate(layoutInflater)
     }
     private val viewModel: ViewGalleryViewModel by viewModels()
@@ -29,10 +30,23 @@ class ViewGalleryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         initViews()
         initObservers()
+        initListeners()
         viewModel.getImages(this, imageSelectionAdapter.itemCount / PAGE_LIMIT, PAGE_LIMIT)
     }
 
-    private fun initObservers() {
+    override fun initListeners() {
+        binding.btnSave.setOnClickListener {
+            val selectedImages = imageSelectionAdapter.currentList.filter { image ->
+                image.isSelected
+            }
+            val resultIntent = Intent()
+            resultIntent.putExtra(SELECTED_IMAGES, selectedImages as Serializable)
+            setResult(RESULT_OK, resultIntent)
+            finish()
+        }
+    }
+
+    override fun initObservers() {
         viewModel.imagesLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
@@ -56,23 +70,9 @@ class ViewGalleryActivity : AppCompatActivity() {
         }
     }
 
-    private fun initViews() {
+    override fun initViews() {
         setContentView(binding.root)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        binding.rcvImages.adapter = imageSelectionAdapter
+        binding.rvImages.adapter = imageSelectionAdapter
     }
-
-    // R.id.action_select_images -> {
-    //                val selectedImages = imageSelectionAdapter.currentList.filter { image ->
-    //                    image.isSelected
-    //                }
-    //                val resultIntent = Intent()
-    //                resultIntent.putExtra(SELECTED_IMAGES, selectedImages as Serializable)
-    //                setResult(RESULT_OK, resultIntent)
-    //                finish()
-    //            }
-    //            else -> {
-    //                onBackPressed()
-    //            }
 }

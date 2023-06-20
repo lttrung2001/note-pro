@@ -130,4 +130,6 @@
     <string name="editor">Editor</string>
     <string name="viewer">Viewer</string>
     <string name="invite">Invite</string>
+    <string name="btn_continue_text">Continue</string>
+    <string name="default_name">Me</string>
 </resources>

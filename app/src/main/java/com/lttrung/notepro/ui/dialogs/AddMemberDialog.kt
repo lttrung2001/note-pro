@@ -26,15 +26,15 @@ class AddMemberDialog(
             val email = binding.edtAddMemberEmail.text?.trim().toString()
             val role = when (binding.rgRole.checkedRadioButtonId) {
                 binding.rdEditor.id -> {
-                    binding.rdEditor.text.toString().lowercase()
+                    "editor"
                 }
 
                 binding.rdViewer.id -> {
-                    binding.rdViewer.text.toString().lowercase()
+                    "viewer"
                 }
 
                 else -> {
-                    context.getString(R.string.viewer).lowercase()
+                    "viewer"
                 }
             }
             addMember(email, role)

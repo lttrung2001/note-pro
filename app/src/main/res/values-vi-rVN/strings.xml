@@ -77,4 +77,9 @@
     <string name="h_m_nay">Hôm nay</string>
     <string name="details">Chi tiết</string>
     <string name="image_name">Tên ảnh</string>
+    <string name="editor">Người chỉnh sửa</string>
+    <string name="viewer">Người chỉ xem</string>
+    <string name="invite">Mời</string>
+    <string name="btn_continue_text">Tiếp tục</string>
+    <string name="default_name">Tôi</string>
 </resources>

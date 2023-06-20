@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
+import android.webkit.URLUtil
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -23,7 +24,9 @@ import com.lttrung.notepro.ui.activities.viewmembers.ViewMembersActivity
 import com.lttrung.notepro.ui.adapters.FeatureAdapter
 import com.lttrung.notepro.ui.adapters.ImageAdapter
 import com.lttrung.notepro.ui.base.BaseActivity
+import com.lttrung.notepro.ui.common.StartSnapHelper
 import com.lttrung.notepro.ui.entities.Feature
+import com.lttrung.notepro.ui.entities.ListImage
 import com.lttrung.notepro.utils.AppConstant
 import com.lttrung.notepro.utils.AppConstant.Companion.DELETE_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.EDIT_NOTE
@@ -31,12 +34,14 @@ import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE_ACTION_TYPE
 import com.lttrung.notepro.utils.AppConstant.Companion.SELECTED_IMAGES
 import com.lttrung.notepro.utils.FeatureId
+import com.lttrung.notepro.utils.JitsiHelper
 import com.lttrung.notepro.utils.Resource
 import com.lttrung.notepro.utils.openCamera
 import com.lttrung.notepro.utils.openGallery
 import com.lttrung.notepro.utils.requestPermissionToOpenCamera
 import com.lttrung.notepro.utils.requestPermissionToReadGallery
 import dagger.hilt.android.AndroidEntryPoint
+import org.jitsi.meet.sdk.JitsiMeetActivity
 
 @AndroidEntryPoint
 class EditNoteActivity : BaseActivity() {
@@ -46,9 +51,10 @@ class EditNoteActivity : BaseActivity() {
                 val resultIntent = result.data
                 resultIntent?.let {
                     val images = it.getSerializableExtra(SELECTED_IMAGES) as List<Image>
-                    val tempList = imagesAdapter.currentList.toMutableList()
+                    val tempList = note.images.toMutableList()
                     tempList.addAll(images)
-                    imagesAdapter.submitList(tempList)
+                    note.images = tempList
+                    editNoteViewModel.noteDetailsLiveData.postValue(Resource.Success(note))
                 }
             }
         }
@@ -65,12 +71,12 @@ class EditNoteActivity : BaseActivity() {
                 startActivity(Intent(
                     this@EditNoteActivity, ViewImageDetailsActivity::class.java
                 ).apply {
-                    putExtra(AppConstant.IMAGES_JSON, Gson().toJson(imagesAdapter.currentList))
+                    putExtra(AppConstant.LIST_IMAGE, ListImage(imagesAdapter.currentList))
                 })
             }
 
             override fun onDelete(image: Image) {
-                editNoteViewModel.deleteImage(image)
+                editNoteViewModel.deleteImage(note, image)
             }
         })
     }
@@ -107,7 +113,7 @@ class EditNoteActivity : BaseActivity() {
                     }
 
                     FeatureId.CALL -> {
-
+                        editNoteViewModel.getCurrentUser()
                     }
 
                     FeatureId.DELETE -> {
@@ -262,6 +268,15 @@ class EditNoteActivity : BaseActivity() {
                 }
             }
         }
+
+        editNoteViewModel.currentUserLiveData.observe(this@EditNoteActivity) { currentUser ->
+            if (currentUser != null) {
+                val roomId = note.id
+                socketService.call(note.id)
+                val options = JitsiHelper.createOptions(roomId, currentUser)
+                JitsiMeetActivity.launch(this, options)
+            }
+        }
     }
 
     private fun bindDataToViews() {
@@ -279,7 +294,8 @@ class EditNoteActivity : BaseActivity() {
             rvFeatures.adapter = featureAdapter
         }
 
-        PagerSnapHelper().attachToRecyclerView(binding.rvImages)
+        StartSnapHelper().attachToRecyclerView(binding.rvImages)
+        StartSnapHelper().attachToRecyclerView(binding.rvFeatures)
         imagesAdapter.submitList(note.images)
         featureAdapter.submitList(getFeatures())
     }

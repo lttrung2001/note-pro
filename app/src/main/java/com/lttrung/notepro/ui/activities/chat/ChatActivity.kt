@@ -147,28 +147,6 @@ class ChatActivity : BaseActivity() {
         unbindService(connection)
     }
 
-    // R.id.action_show_members -> {
-    //                val viewMembersIntent =
-    //                    Intent(this@ChatActivity, ViewMembersActivity::class.java).apply {
-    //                        putExtra(NOTE, note)
-    //                    }
-    //                startActivity(viewMembersIntent)
-    //            }
-    //
-    //            R.id.action_call -> {
-    //                val currentUser = intent.getSerializableExtra(USER) as CurrentUser?
-    //                if (currentUser != null) {
-    //                    val roomId = note.id
-    //                    socketService.call(roomId)
-    //                    val options = JitsiHelper.createOptions(roomId, currentUser)
-    //                    JitsiMeetActivity.launch(this, options)
-    //                }
-    //            }
-    //
-    //            else -> {
-    //                finish()
-    //            }
-
     private fun removeLoadingIfNeeded() {
         if (chatViewModel.messagesLiveData.value is Resource.Loading) {
             messageAdapter.removeLoadingElement()

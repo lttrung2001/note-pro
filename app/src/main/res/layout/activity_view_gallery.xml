@@ -4,13 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.viewgallery.ViewGalleryActivity">
+    android:orientation="vertical"
+    tools:context=".ui.activities.viewgallery.ViewGalleryActivity">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rcv_images"
+        android:id="@+id/rvImages"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="3"
         tools:listitem="@layout/image_item" />
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:text="@string/btn_continue_text"
+        android:textSize="16sp" />
 </LinearLayout>

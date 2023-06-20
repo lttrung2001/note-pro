@@ -93,7 +93,9 @@ class MemberAdapter(
             binding.tvRole.text = member.role
             binding.tvEmail.text = member.email
             binding.tvPhoneNumber.text = member.phoneNumber
-            binding.root.setOnClickListener { listener.onClick(member) }
+            if (member.role != "owner") {
+                binding.root.setOnClickListener { listener.onClick(member) }
+            }
         }
     }
 }

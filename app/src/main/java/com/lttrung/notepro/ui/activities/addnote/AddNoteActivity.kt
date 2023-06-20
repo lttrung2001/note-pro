@@ -14,10 +14,13 @@ import com.lttrung.notepro.databinding.ActivityAddNoteBinding
 import com.lttrung.notepro.domain.data.networks.models.Image
 import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.ui.activities.chat.ChatSocketService
+import com.lttrung.notepro.ui.activities.viewimagedetails.ViewImageDetailsActivity
 import com.lttrung.notepro.ui.adapters.FeatureAdapter
 import com.lttrung.notepro.ui.adapters.ImageAdapter
 import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.ui.entities.Feature
+import com.lttrung.notepro.ui.entities.ListImage
+import com.lttrung.notepro.utils.AppConstant
 import com.lttrung.notepro.utils.AppConstant.Companion.ADD_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE_ACTION_TYPE
@@ -51,6 +54,11 @@ class AddNoteActivity : BaseActivity() {
         ImageAdapter(object : ImageAdapter.ImageListener {
             override fun onClick(image: Image) {
                 // Start image details activity
+                startActivity(Intent(
+                    this@AddNoteActivity, ViewImageDetailsActivity::class.java
+                ).apply {
+                    putExtra(AppConstant.LIST_IMAGE, ListImage(imagesAdapter.currentList))
+                })
             }
 
             override fun onDelete(image: Image) {
@@ -126,7 +134,10 @@ class AddNoteActivity : BaseActivity() {
 
     override fun initViews() {
         setContentView(binding.root)
-        binding.rvFeatures.adapter = featureAdapter
+        binding.apply {
+            rvImages.adapter = imagesAdapter
+            rvFeatures.adapter = featureAdapter
+        }
         featureAdapter.submitList(getFeatures())
     }
 

@@ -4,9 +4,11 @@ import android.webkit.URLUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lttrung.notepro.domain.data.locals.entities.CurrentUser
 import com.lttrung.notepro.domain.data.networks.models.Image
 import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.domain.repositories.NoteRepositories
+import com.lttrung.notepro.domain.repositories.UserRepositories
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -15,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditNoteViewModel @Inject constructor(
-    private val noteRepositories: NoteRepositories
+    private val noteRepositories: NoteRepositories,
+    private val userRepositories: UserRepositories
 ) : ViewModel() {
     private val deleteImages by lazy {
         mutableListOf<Image>()
@@ -31,6 +34,10 @@ class EditNoteViewModel @Inject constructor(
 
     internal val noteDetailsLiveData by lazy {
         MutableLiveData<Resource<Note>>()
+    }
+
+    internal val currentUserLiveData by lazy {
+        MutableLiveData<CurrentUser>()
     }
 
     internal fun editNote(note: Note) {
@@ -72,18 +79,21 @@ class EditNoteViewModel @Inject constructor(
         }
     }
 
-    fun deleteImage(image: Image) {
+    fun deleteImage(note: Note, image: Image) {
         if (URLUtil.isNetworkUrl(image.url)) {
             deleteImages.add(image)
         }
 
-        val value = noteDetailsLiveData.value
-        if (value is Resource.Success) {
-            val note = value.data
-            val images = note.images.toMutableList()
-            images.remove(image)
-            note.images = images
-            noteDetailsLiveData.postValue(Resource.Success(note))
+        val images = note.images.toMutableList()
+        images.remove(image)
+        note.images = images
+        noteDetailsLiveData.postValue(Resource.Success(note))
+    }
+
+    fun getCurrentUser() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val user = userRepositories.getCurrentUser()
+            currentUserLiveData.postValue(user)
         }
     }
 }
