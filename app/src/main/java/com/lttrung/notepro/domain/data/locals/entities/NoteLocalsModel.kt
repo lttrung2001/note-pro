@@ -12,8 +12,6 @@ data class NoteLocalsModel(
     val content: String,
     val lastModified: Long,
     val isPin: Boolean,
-    val isArchived: Boolean,
-    val isRemoved: Boolean,
     val role: String,
 ) {
     fun toNoteNetworksModel(): Note {
@@ -23,8 +21,6 @@ data class NoteLocalsModel(
             content,
             lastModified,
             isPin,
-            isArchived,
-            isRemoved,
             role
         )
     }

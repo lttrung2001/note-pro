@@ -43,11 +43,6 @@ class EditMemberActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        initViews()
-        initListeners()
-        initObservers()
-
         editMemberViewModel.getMemberDetails(note.id, member.id)
     }
 
@@ -176,7 +171,6 @@ class EditMemberActivity : BaseActivity() {
     }
 
     override fun initViews() {
-        setContentView(binding.root)
         bindProgressButton(binding.btnDeleteMember)
         bindProgressButton(binding.btnEditMember)
         binding.apply {

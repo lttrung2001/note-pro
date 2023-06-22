@@ -40,8 +40,6 @@ class NoteRetrofitServiceImpl @Inject constructor(
             @Part("title") title: RequestBody,
             @Part("content") content: RequestBody,
             @Part("isPin") isPin: Boolean,
-            @Part("isArchived") isArchived: Boolean,
-            @Part("isRemoved") isRemoved: Boolean,
             @Part("deleteImageIds") ids: RequestBody,
             @Part images: List<MultipartBody.Part>?
         ): Response<ResponseEntity<Note>>
@@ -85,7 +83,7 @@ class NoteRetrofitServiceImpl @Inject constructor(
             note.id,
             note.title.toRequestBody(MultipartBody.FORM),
             note.content.toRequestBody(MultipartBody.FORM),
-            note.isPin, note.isArchived, note.isRemoved,
+            note.isPin,
             gson.toJson(deleteImageIds).toRequestBody(MultipartBody.FORM),
             newImages
         )

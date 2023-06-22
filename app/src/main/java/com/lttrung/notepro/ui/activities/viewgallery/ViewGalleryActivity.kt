@@ -28,9 +28,6 @@ class ViewGalleryActivity : BaseActivity() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initViews()
-        initObservers()
-        initListeners()
         viewModel.getImages(this, imageSelectionAdapter.itemCount / PAGE_LIMIT, PAGE_LIMIT)
     }
 
@@ -71,8 +68,6 @@ class ViewGalleryActivity : BaseActivity() {
     }
 
     override fun initViews() {
-        setContentView(binding.root)
-
         binding.rvImages.adapter = imageSelectionAdapter
     }
 }

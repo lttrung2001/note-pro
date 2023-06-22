@@ -5,12 +5,12 @@ import android.content.SharedPreferences
 import androidx.room.Room
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.lttrung.notepro.domain.data.locals.dao.CurrentUserDao
-import com.lttrung.notepro.domain.data.locals.dao.NoteDao
 import com.lttrung.notepro.domain.data.locals.UserDatabase
 import com.lttrung.notepro.domain.data.locals.UserDatabase.Companion.MIGRATION_1_2
 import com.lttrung.notepro.domain.data.locals.UserDatabase.Companion.MIGRATION_2_3
 import com.lttrung.notepro.domain.data.locals.UserDatabase.Companion.MIGRATION_3_4
+import com.lttrung.notepro.domain.data.locals.dao.CurrentUserDao
+import com.lttrung.notepro.domain.data.locals.dao.NoteDao
 import com.lttrung.notepro.domain.data.networks.interceptors.AuthorizationInterceptor
 import com.lttrung.notepro.domain.data.networks.interceptors.NetworksInterceptor
 import com.lttrung.notepro.utils.AppConstant.Companion.DEFAULT_PREFERENCES_NAME
@@ -37,7 +37,9 @@ class AppProvidesModules {
     @Singleton
     fun providesCurrentUserDatabase(@ApplicationContext context: Context): UserDatabase {
         return Room.databaseBuilder(context, UserDatabase::class.java, USER_DATABASE_NAME)
-            .addMigrations(MIGRATION_1_2).addMigrations(MIGRATION_2_3).addMigrations(MIGRATION_3_4)
+            .addMigrations(MIGRATION_1_2)
+            .addMigrations(MIGRATION_2_3)
+            .addMigrations(MIGRATION_3_4)
             .build()
     }
 

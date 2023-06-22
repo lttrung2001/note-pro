@@ -26,10 +26,6 @@ class ChangeProfileActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        initViews()
-        initListeners()
-        initObservers()
     }
 
     private fun validateInputs(
@@ -47,7 +43,6 @@ class ChangeProfileActivity : BaseActivity() {
     }
 
     override fun initViews() {
-        setContentView(binding.root)
         binding.tvId.text = userInfo.id
         binding.tvEmail.text = userInfo.email
         binding.tvFullName.setText(userInfo.fullName)

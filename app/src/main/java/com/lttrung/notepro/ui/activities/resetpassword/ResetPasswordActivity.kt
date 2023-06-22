@@ -11,23 +11,20 @@ import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityResetPasswordBinding
 import com.lttrung.notepro.ui.activities.login.LoginActivity
+import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.utils.Resource
 import com.lttrung.notepro.utils.ValidationHelper
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ResetPasswordActivity : AppCompatActivity() {
-    private val binding by lazy {
+class ResetPasswordActivity : BaseActivity() {
+    override val binding by lazy {
         ActivityResetPasswordBinding.inflate(layoutInflater)
     }
     private val viewModel: ResetPasswordViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        initViews()
-        initListeners()
-        initObservers()
     }
 
     private fun validateInputs(
@@ -45,7 +42,7 @@ class ResetPasswordActivity : AppCompatActivity() {
         return validationHelper
     }
 
-    private fun initObservers() {
+    override fun initObservers() {
         viewModel.resetPasswordLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
@@ -78,7 +75,7 @@ class ResetPasswordActivity : AppCompatActivity() {
         }
     }
 
-    private fun initListeners() {
+    override fun initListeners() {
         binding.btnResetPassword.setOnClickListener {
             val code = binding.edtCode.text?.trim().toString()
             val password = binding.edtPassword.text?.trim().toString()
@@ -89,7 +86,7 @@ class ResetPasswordActivity : AppCompatActivity() {
         }
     }
 
-    private fun initViews() {
+    override fun initViews() {
         setContentView(binding.root)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }

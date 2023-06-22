@@ -108,9 +108,6 @@ class AddNoteActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initViews()
-        initObservers()
-        initListeners()
     }
 
     override fun onStart() {
@@ -133,7 +130,6 @@ class AddNoteActivity : BaseActivity() {
     }
 
     override fun initViews() {
-        setContentView(binding.root)
         binding.apply {
             rvImages.adapter = imagesAdapter
             rvFeatures.adapter = featureAdapter
@@ -149,8 +145,6 @@ class AddNoteActivity : BaseActivity() {
                 binding.edtNoteDesc.text?.trim().toString(),
                 0L,
                 false,
-                isArchived = false,
-                isRemoved = false,
                 role = String(),
                 images = imagesAdapter.currentList,
             )

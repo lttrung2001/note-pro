@@ -11,25 +11,22 @@ import com.github.razir.progressbutton.showProgress
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityForgotPasswordBinding
 import com.lttrung.notepro.ui.activities.resetpassword.ResetPasswordActivity
+import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ForgotPasswordActivity : AppCompatActivity() {
-    private val binding by lazy {
+class ForgotPasswordActivity : BaseActivity() {
+    override val binding by lazy {
         ActivityForgotPasswordBinding.inflate(layoutInflater)
     }
     private val viewModel: ForgotPasswordViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        initViews()
-        initListeners()
-        initObservers()
     }
 
-    private fun initObservers() {
+    override fun initObservers() {
         viewModel.forgotPasswordLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
@@ -59,7 +56,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
         }
     }
 
-    private fun initListeners() {
+    override fun initListeners() {
         binding.btnSendInstructions.setOnClickListener {
             val email = binding.edtEmail.text?.trim().toString()
             if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
@@ -70,8 +67,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
         }
     }
 
-    private fun initViews() {
-        setContentView(binding.root)
+    override fun initViews() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 }

@@ -22,10 +22,6 @@ class ViewProfileActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        initViews()
-        initObservers()
-        initListeners()
         viewProfileViewModel.getProfile()
     }
 
@@ -53,7 +49,7 @@ class ViewProfileActivity : BaseActivity() {
     }
 
     override fun initViews() {
-        setContentView(binding.root)
+
     }
 
     override fun initListeners() {

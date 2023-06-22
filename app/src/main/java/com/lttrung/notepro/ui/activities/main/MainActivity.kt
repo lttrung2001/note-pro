@@ -18,6 +18,7 @@ import com.lttrung.notepro.ui.activities.setting.SettingActivity
 import com.lttrung.notepro.ui.activities.viewprofile.ViewProfileActivity
 import com.lttrung.notepro.ui.adapters.FeatureAdapter
 import com.lttrung.notepro.ui.adapters.NoteAdapter
+import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.ui.entities.Feature
 import com.lttrung.notepro.utils.AppConstant.Companion.ADD_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.DELETE_NOTE
@@ -30,7 +31,7 @@ import com.lttrung.notepro.utils.ServiceUtils
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
     private val launcher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
@@ -64,7 +65,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-    private val binding by lazy {
+    override val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
     private val mainViewModel: MainViewModel by viewModels()
@@ -117,9 +118,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initViews()
-        initListeners()
-        initObservers()
     }
 
     private fun getMainFeatures(): List<Feature> {
@@ -129,7 +127,7 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    private fun initObservers() {
+    override fun initObservers() {
         mainViewModel.notesLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
@@ -151,12 +149,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initListeners() {
+    override fun initListeners() {
         binding.fab.setOnClickListener(fabOnClickListener)
     }
 
-    private fun initViews() {
-        setContentView(binding.root)
+    override fun initViews() {
         binding.rvFeatures.adapter = featureAdapter
         binding.rvNotes.adapter = noteAdapter
 

@@ -12,30 +12,28 @@ import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityRegisterBinding
+import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.utils.Resource
 import com.lttrung.notepro.utils.ValidationHelper
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class RegisterActivity : AppCompatActivity() {
-    private val binding by lazy {
+class RegisterActivity : BaseActivity() {
+    override val binding by lazy {
         ActivityRegisterBinding.inflate(layoutInflater)
     }
     private val viewModel: RegisterViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        initViews()
-        setupListener()
-        setupObserver()
     }
 
-    private fun initViews() {
-        setContentView(binding.root)
+    override fun initViews() {
+        bindProgressButton(binding.btnRegister)
+        binding.btnRegister.attachTextChangeAnimator()
     }
 
-    private fun setupObserver() {
+    override fun initObservers() {
         viewModel.registerLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
@@ -61,10 +59,7 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupListener() {
-        bindProgressButton(binding.btnRegister)
-        binding.btnRegister.attachTextChangeAnimator()
-
+    override fun initListeners() {
         binding.btnToLogin.setOnClickListener {
             finish()
         }

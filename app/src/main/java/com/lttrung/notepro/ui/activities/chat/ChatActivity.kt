@@ -123,9 +123,6 @@ class ChatActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initViews()
-        initListeners()
-        initObservers()
         chatViewModel.getCurrentUser()
     }
 
@@ -214,7 +211,6 @@ class ChatActivity : BaseActivity() {
     }
 
     override fun initViews() {
-        setContentView(binding.root)
         binding.messages.adapter = messageAdapter
     }
 

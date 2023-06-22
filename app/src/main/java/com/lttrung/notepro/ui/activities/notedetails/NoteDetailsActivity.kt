@@ -11,14 +11,15 @@ import com.lttrung.notepro.domain.data.networks.models.Image
 import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.ui.activities.viewimagedetails.ViewImageDetailsActivity
 import com.lttrung.notepro.ui.adapters.ImageAdapter
+import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.IMAGES_JSON
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class NoteDetailsActivity : AppCompatActivity() {
-    private val binding: ActivityNoteDetailsBinding by lazy {
+class NoteDetailsActivity : BaseActivity() {
+    override val binding: ActivityNoteDetailsBinding by lazy {
         ActivityNoteDetailsBinding.inflate(layoutInflater)
     }
     private val imagesAdapter: ImageAdapter by lazy {
@@ -31,17 +32,20 @@ class NoteDetailsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        initViews()
-        initData()
-        initObservers()
     }
 
-    private fun initViews() {
-        setContentView(binding.root)
+    override fun initViews() {
+        binding.edtNoteTitle.setText(note.title)
+        binding.edtNoteDesc.setText(note.content)
+
+        noteDetailsViewModel.getNoteDetails(note)
     }
 
-    private fun initObservers() {
+    override fun initListeners() {
+
+    }
+
+    override fun initObservers() {
         noteDetailsViewModel.noteDetailsLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
@@ -64,13 +68,6 @@ class NoteDetailsActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    private fun initData() {
-        binding.edtNoteTitle.setText(note.title)
-        binding.edtNoteDesc.setText(note.content)
-
-        noteDetailsViewModel.getNoteDetails(note)
     }
 
     // R.id.action_pin -> {

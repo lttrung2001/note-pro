@@ -8,13 +8,14 @@ import com.lttrung.notepro.databinding.ActivityViewImageDetailsBinding
 import com.lttrung.notepro.domain.data.networks.models.ImageDetails
 import com.lttrung.notepro.domain.data.networks.models.User
 import com.lttrung.notepro.ui.adapters.ImageDetailsAdapter
+import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.ui.entities.ListImage
 import com.lttrung.notepro.utils.AppConstant.Companion.LIST_IMAGE
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ViewImageDetailsActivity : AppCompatActivity() {
-    private val binding by lazy {
+class ViewImageDetailsActivity : BaseActivity() {
+    override val binding by lazy {
         ActivityViewImageDetailsBinding.inflate(layoutInflater)
     }
     private val imageDetailsAdapter by lazy {
@@ -37,22 +38,20 @@ class ViewImageDetailsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initViews()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        finish()
-        return true
-    }
-
-    private fun initViews() {
-        setContentView(binding.root)
-
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
+    override fun initViews() {
         binding.images.let {
             it.adapter = imageDetailsAdapter
             PagerSnapHelper().attachToRecyclerView(it)
         }
+    }
+
+    override fun initListeners() {
+
+    }
+
+    override fun initObservers() {
+
     }
 }

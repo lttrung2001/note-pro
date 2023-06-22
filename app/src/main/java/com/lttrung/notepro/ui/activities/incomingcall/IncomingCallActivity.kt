@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.lttrung.notepro.databinding.ActivityIncomingCallBinding
 import com.lttrung.notepro.domain.data.networks.models.User
+import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.MISSED_CALL_CHANNEL_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.USER
@@ -18,10 +19,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.jitsi.meet.sdk.JitsiMeetActivity
 
 @AndroidEntryPoint
-class IncomingCallActivity : AppCompatActivity() {
-    private val binding by lazy {
+class IncomingCallActivity : BaseActivity() {
+    override val binding by lazy {
         ActivityIncomingCallBinding.inflate(layoutInflater)
     }
+
     private val incomingCallViewModel: IncomingCallViewModel by viewModels()
     private val countDownTimer by lazy {
         object: CountDownTimer(30 * 1000, 1000) {
@@ -51,13 +53,9 @@ class IncomingCallActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-        setupViews()
-        setListeners()
-        setObservers()
     }
 
-    private fun setupViews() {
+    override fun initViews() {
         val incomingUser = intent.getSerializableExtra(USER) as User?
         incomingUser?.let { user ->
             binding.fullName.text = user.fullName
@@ -67,7 +65,21 @@ class IncomingCallActivity : AppCompatActivity() {
         }
     }
 
-    private fun setObservers() {
+    override fun initListeners() {
+        binding.apply {
+            buttonCallEnd.setOnClickListener {
+                ringtone.stop()
+                countDownTimer.cancel()
+                finish()
+            }
+            buttonAcceptCall.setOnClickListener {
+                ringtone.stop()
+                incomingCallViewModel.getCurrentUser()
+            }
+        }
+    }
+
+    override fun initObservers() {
         incomingCallViewModel.currentUserLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
@@ -84,18 +96,6 @@ class IncomingCallActivity : AppCompatActivity() {
                 is Resource.Error -> {
                 }
             }
-        }
-    }
-
-    private fun setListeners() {
-        binding.buttonCallEnd.setOnClickListener {
-            ringtone.stop()
-            countDownTimer.cancel()
-            finish()
-        }
-        binding.buttonAcceptCall.setOnClickListener {
-            ringtone.stop()
-            incomingCallViewModel.getCurrentUser()
         }
     }
 }

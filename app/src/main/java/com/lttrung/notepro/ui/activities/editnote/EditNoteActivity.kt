@@ -147,9 +147,6 @@ class EditNoteActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initViews()
-        initListeners()
-        initObservers()
         editNoteViewModel.getNoteDetails(note.id)
     }
 
@@ -194,12 +191,8 @@ class EditNoteActivity : BaseActivity() {
 
     override fun initListeners() {
         binding.fabSave.setOnClickListener {
-            if (note.isRemoved) {
-                Snackbar.make(this, binding.root, "No permission!", Snackbar.LENGTH_LONG).show()
-            } else {
-                // Save note
-                editNoteViewModel.editNote(getNoteFromUi())
-            }
+            // Save note
+            editNoteViewModel.editNote(getNoteFromUi())
         }
     }
 
@@ -286,7 +279,6 @@ class EditNoteActivity : BaseActivity() {
     }
 
     override fun initViews() {
-        setContentView(binding.root)
         binding.apply {
             edtNoteTitle.setText(note.title)
             edtNoteDesc.setText(note.content)
@@ -306,8 +298,6 @@ class EditNoteActivity : BaseActivity() {
             binding.edtNoteTitle.text!!.trim().toString(),
             binding.edtNoteDesc.text!!.trim().toString(),
             note.lastModified,
-            false,
-            false,
             false,
             role = note.role,
             images = imagesAdapter.currentList

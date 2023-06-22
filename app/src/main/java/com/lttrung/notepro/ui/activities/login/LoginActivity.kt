@@ -16,25 +16,24 @@ import com.lttrung.notepro.databinding.ActivityLoginBinding
 import com.lttrung.notepro.ui.activities.forgotpassword.ForgotPasswordActivity
 import com.lttrung.notepro.ui.activities.main.MainActivity
 import com.lttrung.notepro.ui.activities.register.RegisterActivity
+import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.utils.Resource
 import com.lttrung.notepro.utils.ValidationHelper
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class LoginActivity : AppCompatActivity() {
-    private val binding by lazy {
+class LoginActivity : BaseActivity() {
+    override val binding by lazy {
         ActivityLoginBinding.inflate(layoutInflater)
     }
+
     private val viewModel: LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-        initListeners()
-        initObservers()
     }
 
-    private fun initObservers() {
+    override fun initObservers() {
         viewModel.refreshTokenLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
@@ -65,7 +64,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun initListeners() {
+    override fun initListeners() {
         binding.btnToForgotPassword.setOnClickListener {
             startActivity(Intent(this, ForgotPasswordActivity::class.java))
         }
@@ -93,6 +92,10 @@ class LoginActivity : AppCompatActivity() {
 
         bindProgressButton(binding.btnLogin)
         binding.btnLogin.attachTextChangeAnimator()
+    }
+
+    override fun initViews() {
+
     }
 
     private fun switchToMain() {

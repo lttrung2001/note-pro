@@ -19,6 +19,7 @@ import com.lttrung.notepro.domain.data.networks.models.Paging
 import com.lttrung.notepro.ui.activities.chat.ChatSocketService
 import com.lttrung.notepro.ui.activities.editmember.EditMemberActivity
 import com.lttrung.notepro.ui.adapters.MemberAdapter
+import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.ui.dialogs.AddMemberDialog
 import com.lttrung.notepro.utils.AppConstant
 import com.lttrung.notepro.utils.AppConstant.Companion.MEMBER
@@ -29,8 +30,8 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class ViewMembersActivity : AppCompatActivity() {
-    private val binding by lazy {
+class ViewMembersActivity : BaseActivity() {
+    override val binding by lazy {
         ActivityViewMembersBinding.inflate(layoutInflater)
     }
     private val getMembersViewModel: ViewMembersViewModel by viewModels()
@@ -102,7 +103,7 @@ class ViewMembersActivity : AppCompatActivity() {
         unbindService(connection)
     }
 
-    private fun initListeners() {
+    override fun initListeners() {
         binding.fabAddMember.setOnClickListener {
             addMemberDialog = AddMemberDialog(this@ViewMembersActivity) { email, role ->
                 getMembersViewModel.addMember(note.id, email, role)
@@ -117,7 +118,7 @@ class ViewMembersActivity : AppCompatActivity() {
         }
     }
 
-    private fun initObservers() {
+    override fun initObservers() {
         getMembersViewModel.membersLiveData.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> {
@@ -183,8 +184,7 @@ class ViewMembersActivity : AppCompatActivity() {
         }
     }
 
-    private fun initViews() {
-        setContentView(binding.root)
+    override fun initViews() {
         binding.rvMembers.adapter = memberAdapter
     }
 

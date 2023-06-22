@@ -23,9 +23,6 @@ class ChangePasswordActivity : BaseActivity() {
     private val changePasswordViewModel: ChangePasswordViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initViews()
-        initListeners()
-        initObservers()
     }
 
     override fun initObservers() {
@@ -72,7 +69,7 @@ class ChangePasswordActivity : BaseActivity() {
     }
 
     override fun initViews() {
-        setContentView(binding.root)
+
     }
 
     private fun validateInputs(

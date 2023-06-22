@@ -10,11 +10,12 @@ import com.lttrung.notepro.databinding.ActivitySettingBinding
 import com.lttrung.notepro.ui.activities.changepassword.ChangePasswordActivity
 import com.lttrung.notepro.ui.activities.login.LoginActivity
 import com.lttrung.notepro.ui.activities.viewprofile.ViewProfileActivity
+import com.lttrung.notepro.ui.base.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SettingActivity : AppCompatActivity() {
-    private val binding by lazy {
+class SettingActivity : BaseActivity() {
+    override val binding by lazy {
         ActivitySettingBinding.inflate(layoutInflater)
     }
     private val settingViewModel: SettingViewModel by viewModels()
@@ -44,25 +45,23 @@ class SettingActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        initViews()
-        initListeners()
-        initObservers()
         settingViewModel.getCurrentUserInfo()
     }
-    private fun initObservers() {
+    override fun initObservers() {
         settingViewModel.userLiveData.observe(this) { user ->
             binding.tvName.text = user.fullName
         }
     }
 
-    private fun initListeners() {
-        binding.btnViewProfile.setOnClickListener(viewProfileListener)
-        binding.btnChangePassword.setOnClickListener(changePasswordListener)
-        binding.btnLogout.setOnClickListener(logoutOnClickListener)
+    override fun initListeners() {
+        binding.apply {
+            btnViewProfile.setOnClickListener(viewProfileListener)
+            btnChangePassword.setOnClickListener(changePasswordListener)
+            btnLogout.setOnClickListener(logoutOnClickListener)
+        }
     }
 
-    private fun initViews() {
-        setContentView(binding.root)
+    override fun initViews() {
+
     }
 }
