@@ -46,74 +46,91 @@
 
         <activity
             android:name=".ui.activities.incomingcall.IncomingCallActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false" />
         <activity
             android:name=".ui.activities.viewimagedetails.ViewImageDetailsActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false"
             android:label="@string/images" />
 
         <service
             android:name=".ui.activities.chat.ChatSocketService"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:enabled="true"
             android:exported="false" />
 
         <activity
             android:name=".ui.activities.chat.ChatActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false"
             android:label="Conservation" />
         <activity
             android:name=".ui.activities.editmember.EditMemberActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false"
             android:label="Edit member" />
         <activity
             android:name=".ui.activities.viewgallery.ViewGalleryActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false"
             android:label="Gallery" />
         <activity
             android:name=".ui.activities.changeprofile.ChangeProfileActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false"
             android:label="Edit profile" />
         <activity
             android:name=".ui.activities.resetpassword.ResetPasswordActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="true"
             android:label="Reset password" />
         <activity
             android:name=".ui.activities.forgotpassword.ForgotPasswordActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false"
             android:label="Forgot password" />
         <activity
             android:name=".ui.activities.viewprofile.ViewProfileActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false"
             android:label="@string/your_info" />
         <activity
             android:name=".ui.activities.editnote.EditNoteActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false"
             android:label="@string/edit_note" />
         <activity
             android:name=".ui.activities.notedetails.NoteDetailsActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false"
             android:label="@string/note_details" />
         <activity
             android:name=".ui.activities.register.RegisterActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false" />
         <activity
             android:name=".ui.activities.login.LoginActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="true" />
         <activity
             android:name=".ui.activities.viewmembers.ViewMembersActivity"
-            android:configChanges="orientation"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false"
             android:label="@string/members" />
         <activity
             android:name=".ui.activities.addnote.AddNoteActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false"
             android:label="@string/add_note" />
         <activity
             android:name=".ui.activities.setting.SettingActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false"
             android:label="@string/action_settings" />
         <activity
             android:name=".ui.activities.main.MainActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -123,6 +140,7 @@
         </activity>
         <activity
             android:name=".ui.activities.changepassword.ChangePasswordActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="false"
             android:label="@string/change_password" />
     </application>
