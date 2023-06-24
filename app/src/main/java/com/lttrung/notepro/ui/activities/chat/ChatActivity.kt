@@ -1,11 +1,15 @@
 package com.lttrung.notepro.ui.activities.chat
 
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
 import com.lttrung.notepro.databinding.ActivityChatBinding
 import com.lttrung.notepro.domain.data.locals.entities.CurrentUser
 import com.lttrung.notepro.domain.data.networks.models.Message
@@ -14,14 +18,11 @@ import com.lttrung.notepro.domain.data.networks.models.User
 import com.lttrung.notepro.ui.adapters.MessageAdapter
 import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_CHANNEL_ID
-import com.lttrung.notepro.utils.AppConstant.Companion.LOAD_MESSAGES_RECEIVED
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE
-import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGES_JSON
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE_RECEIVED
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.PAGE_LIMIT
 import com.lttrung.notepro.utils.NotificationHelper
-import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -122,14 +123,12 @@ class ChatActivity : BaseActivity() {
         super.initObservers()
         viewModel.currentUserLiveData.observe(this) { user ->
             currentUser = user
-            currentUser.id?.let {
-                finish()
-            }
+            currentUser.id ?: finish()
             messageAdapter.userId = currentUser.id!!
             viewModel.getMessages(note.id, viewModel.page, PAGE_LIMIT)
         }
         viewModel.messagesLiveData.observe(this) { messages ->
-                    messageAdapter.submitList(messages)
+            messageAdapter.submitList(messages)
         }
     }
 

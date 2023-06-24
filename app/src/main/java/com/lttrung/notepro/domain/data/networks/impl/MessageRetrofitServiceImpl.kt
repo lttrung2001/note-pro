@@ -17,14 +17,14 @@ class MessageRetrofitServiceImpl @Inject constructor(
 
     interface Service {
         @GET("$PATH/get-messages")
-        fun fetchMessages(
+        suspend fun fetchMessages(
             @Query("roomId") roomId: String,
             @Query("pageIndex") pageIndex: Int,
             @Query("limit") limit: Int
         ): Response<ResponseEntity<List<Message>>>
     }
 
-    override fun fetchMessages(
+    override suspend fun fetchMessages(
         roomId: String,
         pageIndex: Int,
         limit: Int

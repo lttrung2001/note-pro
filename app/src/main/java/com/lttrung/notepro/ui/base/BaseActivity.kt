@@ -30,7 +30,7 @@ abstract class BaseActivity : AppCompatActivity() {
                 if (!loadingDialog.isShowing)
                     loadingDialog.show()
             } else {
-                loadingDialog.hide()
+                loadingDialog.dismiss()
             }
         }
         viewModel.throwableLiveData.observe(this@BaseActivity) {

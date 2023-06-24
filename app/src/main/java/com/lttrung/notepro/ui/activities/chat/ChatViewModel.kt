@@ -14,6 +14,7 @@ class ChatViewModel @Inject constructor(
     private val userRepositories: UserRepositories,
     private val messageRepositories: MessageRepositories
 ) : BaseViewModel() {
+
     internal val currentUserLiveData by lazy {
         MutableLiveData<CurrentUser>()
     }
@@ -34,6 +35,7 @@ class ChatViewModel @Inject constructor(
     internal fun getMessages(roomId: String, pageIndex: Int, limit: Int) {
         launch {
             val preMessages = messageRepositories.getMessages(roomId, pageIndex, limit)
+            page++
             val messages = messagesLiveData.value.orEmpty().toMutableList().apply {
                 addAll(0, preMessages)
             }
