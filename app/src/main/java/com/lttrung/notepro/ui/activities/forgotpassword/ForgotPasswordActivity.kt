@@ -20,43 +20,21 @@ class ForgotPasswordActivity : BaseActivity() {
     override val binding by lazy {
         ActivityForgotPasswordBinding.inflate(layoutInflater)
     }
-    private val viewModel: ForgotPasswordViewModel by viewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    override val viewModel: ForgotPasswordViewModel by viewModels()
 
     override fun initObservers() {
-        viewModel.forgotPasswordLiveData.observe(this) { resource ->
-            when (resource) {
-                is Resource.Loading -> {
-                    binding.btnSendInstructions.showProgress {
-                        buttonTextRes = R.string.loading
-                        progressColor = Color.WHITE
-                    }
-                    binding.btnSendInstructions.isClickable = false
-                }
-
-                is Resource.Success -> {
-                    binding.btnSendInstructions.hideProgress(R.string.send_instructions)
-                    binding.btnSendInstructions.isClickable = true
-                    val resetPasswordIntent =
-                        Intent(this@ForgotPasswordActivity, ResetPasswordActivity::class.java)
-                    resetPasswordIntent.flags =
-                        Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                    startActivity(resetPasswordIntent)
-                }
-
-                is Resource.Error -> {
-                    binding.btnSendInstructions.hideProgress(R.string.send_instructions)
-                    binding.btnSendInstructions.isClickable = true
-                    binding.emailLayout.error = resource.t.message.toString()
-                }
-            }
+        super.initObservers()
+        viewModel.forgotPasswordLiveData.observe(this) {
+            val resetPasswordIntent =
+                Intent(this@ForgotPasswordActivity, ResetPasswordActivity::class.java)
+            resetPasswordIntent.flags =
+                Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(resetPasswordIntent)
         }
     }
 
     override fun initListeners() {
+        super.initListeners()
         binding.btnSendInstructions.setOnClickListener {
             val email = binding.edtEmail.text?.trim().toString()
             if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
@@ -65,9 +43,5 @@ class ForgotPasswordActivity : BaseActivity() {
                 viewModel.forgotPassword(email)
             }
         }
-    }
-
-    override fun initViews() {
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 }

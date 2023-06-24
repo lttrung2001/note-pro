@@ -2,6 +2,7 @@ package com.lttrung.notepro.di
 
 import com.lttrung.notepro.domain.data.networks.impl.LoginRetrofitServiceImpl
 import com.lttrung.notepro.domain.data.networks.impl.MemberRetrofitServiceImpl
+import com.lttrung.notepro.domain.data.networks.impl.MessageRetrofitServiceImpl
 import com.lttrung.notepro.domain.data.networks.impl.NoteRetrofitServiceImpl
 import com.lttrung.notepro.domain.data.networks.impl.UserRetrofitServiceImpl
 import dagger.Module
@@ -34,4 +35,9 @@ class ServiceModules {
     @Singleton
     fun providesUserService(@Named("TokenRetrofit") retrofit: Retrofit): UserRetrofitServiceImpl.Service =
         retrofit.create(UserRetrofitServiceImpl.Service::class.java)
+
+    @Provides
+    @Singleton
+    fun providesMessageService(@Named("TokenRetrofit") retrofit: Retrofit): MessageRetrofitServiceImpl.Service =
+        retrofit.create(MessageRetrofitServiceImpl.Service::class.java)
 }

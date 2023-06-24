@@ -7,12 +7,8 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import android.webkit.URLUtil
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.recyclerview.widget.PagerSnapHelper
-import com.google.android.material.snackbar.Snackbar
-import com.google.gson.Gson
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityEditNoteBinding
 import com.lttrung.notepro.domain.data.networks.models.Image
@@ -35,7 +31,6 @@ import com.lttrung.notepro.utils.AppConstant.Companion.NOTE_ACTION_TYPE
 import com.lttrung.notepro.utils.AppConstant.Companion.SELECTED_IMAGES
 import com.lttrung.notepro.utils.FeatureId
 import com.lttrung.notepro.utils.JitsiHelper
-import com.lttrung.notepro.utils.Resource
 import com.lttrung.notepro.utils.openCamera
 import com.lttrung.notepro.utils.openGallery
 import com.lttrung.notepro.utils.requestPermissionToOpenCamera
@@ -54,7 +49,7 @@ class EditNoteActivity : BaseActivity() {
                     val tempList = note.images.toMutableList()
                     tempList.addAll(images)
                     note.images = tempList
-                    editNoteViewModel.noteDetailsLiveData.postValue(Resource.Success(note))
+                    viewModel.noteDetailsLiveData.postValue(note)
                 }
             }
         }
@@ -76,7 +71,7 @@ class EditNoteActivity : BaseActivity() {
             }
 
             override fun onDelete(image: Image) {
-                editNoteViewModel.deleteImage(note, image)
+                viewModel.deleteImage(note, image)
             }
         })
     }
@@ -113,11 +108,11 @@ class EditNoteActivity : BaseActivity() {
                     }
 
                     FeatureId.CALL -> {
-                        editNoteViewModel.getCurrentUser()
+                        viewModel.getCurrentUser()
                     }
 
                     FeatureId.DELETE -> {
-                        editNoteViewModel.deleteNote(getNoteFromUi())
+                        viewModel.deleteNote(getNoteFromUi())
                     }
 
                     else -> {
@@ -128,7 +123,7 @@ class EditNoteActivity : BaseActivity() {
         })
     }
 
-    private val editNoteViewModel: EditNoteViewModel by viewModels()
+    override val viewModel: EditNoteViewModel by viewModels()
     private val note: Note by lazy {
         intent.getSerializableExtra(NOTE) as Note
     }
@@ -147,7 +142,7 @@ class EditNoteActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        editNoteViewModel.getNoteDetails(note.id)
+        viewModel.getNoteDetails(note.id)
     }
 
     override fun onStart() {
@@ -190,83 +185,42 @@ class EditNoteActivity : BaseActivity() {
     }
 
     override fun initListeners() {
+        super.initListeners()
         binding.fabSave.setOnClickListener {
             // Save note
-            editNoteViewModel.editNote(getNoteFromUi())
+            viewModel.editNote(getNoteFromUi())
         }
     }
 
     override fun initObservers() {
-        editNoteViewModel.editNoteLiveData.observe(this) { resource ->
-            when (resource) {
-                is Resource.Loading -> {
-                }
-
-                is Resource.Success -> {
-                    val resultIntent = Intent()
-                    resultIntent.putExtra(NOTE, resource.data)
-                    resultIntent.putExtra(NOTE_ACTION_TYPE, EDIT_NOTE)
-                    setResult(RESULT_OK, resultIntent)
-                    finish()
-                }
-
-                is Resource.Error -> {
-                    Snackbar.make(
-                        binding.root, resource.t.message.toString(), Snackbar.LENGTH_LONG
-                    ).show()
-                }
-            }
+        super.initObservers()
+        viewModel.editNoteLiveData.observe(this) { editNote ->
+            val resultIntent = Intent()
+            resultIntent.putExtra(NOTE, editNote)
+            resultIntent.putExtra(NOTE_ACTION_TYPE, EDIT_NOTE)
+            setResult(RESULT_OK, resultIntent)
+            finish()
         }
 
-        editNoteViewModel.deleteNoteLiveData.observe(this) { resource ->
-            when (resource) {
-                is Resource.Loading -> {
-                }
+        viewModel.deleteNoteLiveData.observe(this) {
+            socketService.sendDeleteNoteMessage(note.id)
 
-                is Resource.Success -> {
-                    val roomId = note.id
-
-                    socketService.sendDeleteNoteMessage(roomId)
-
-                    val resultIntent = Intent()
-                    resultIntent.putExtra(NOTE, note)
-                    resultIntent.putExtra(NOTE_ACTION_TYPE, DELETE_NOTE)
-                    setResult(RESULT_OK, resultIntent)
-                    finish()
-                }
-
-                is Resource.Error -> {
-                    Snackbar.make(
-                        binding.root, resource.t.message.toString(), Snackbar.LENGTH_LONG
-                    ).show()
-                }
-            }
+            val resultIntent = Intent()
+            resultIntent.putExtra(NOTE, note)
+            resultIntent.putExtra(NOTE_ACTION_TYPE, DELETE_NOTE)
+            setResult(RESULT_OK, resultIntent)
+            finish()
         }
 
-        editNoteViewModel.noteDetailsLiveData.observe(this) { resource ->
-            when (resource) {
-                is Resource.Loading -> {
-                }
-
-                is Resource.Success -> {
-                    val note = resource.data
-                    intent.putExtra(NOTE, note)
-                    bindDataToViews()
-                }
-
-                is Resource.Error -> {
-                    Snackbar.make(
-                        binding.root, resource.t.message.toString(), Snackbar.LENGTH_LONG
-                    ).show()
-                }
-            }
+        viewModel.noteDetailsLiveData.observe(this) { noteDetails ->
+            intent.putExtra(NOTE, noteDetails)
+            bindDataToViews()
         }
 
-        editNoteViewModel.currentUserLiveData.observe(this@EditNoteActivity) { currentUser ->
+        viewModel.currentUserLiveData.observe(this@EditNoteActivity) { currentUser ->
             if (currentUser != null) {
-                val roomId = note.id
                 socketService.call(note.id)
-                val options = JitsiHelper.createOptions(roomId, currentUser)
+                val options = JitsiHelper.createOptions(note.id, currentUser)
                 JitsiMeetActivity.launch(this, options)
             }
         }
@@ -279,6 +233,7 @@ class EditNoteActivity : BaseActivity() {
     }
 
     override fun initViews() {
+        super.initViews()
         binding.apply {
             edtNoteTitle.setText(note.title)
             edtNoteDesc.setText(note.content)

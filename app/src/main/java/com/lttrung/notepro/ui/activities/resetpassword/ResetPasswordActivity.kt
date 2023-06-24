@@ -21,11 +21,7 @@ class ResetPasswordActivity : BaseActivity() {
     override val binding by lazy {
         ActivityResetPasswordBinding.inflate(layoutInflater)
     }
-    private val viewModel: ResetPasswordViewModel by viewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    override val viewModel: ResetPasswordViewModel by viewModels()
 
     private fun validateInputs(
         code: String,
@@ -43,39 +39,18 @@ class ResetPasswordActivity : BaseActivity() {
     }
 
     override fun initObservers() {
+        super.initObservers()
         viewModel.resetPasswordLiveData.observe(this) { resource ->
-            when (resource) {
-                is Resource.Loading -> {
-                    binding.btnResetPassword.isClickable = false
-                    binding.btnResetPassword.showProgress {
-                        buttonTextRes = R.string.loading
-                        progressColor = Color.WHITE
-                    }
-                }
-
-                is Resource.Success -> {
-                    binding.btnResetPassword.hideProgress(R.string.reset_password)
-                    binding.btnResetPassword.isClickable = true
-                    val loginIntent =
-                        Intent(this@ResetPasswordActivity, LoginActivity::class.java)
-                    loginIntent.flags =
-                        Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                    startActivity(loginIntent)
-                }
-
-                is Resource.Error -> {
-                    binding.btnResetPassword.hideProgress(R.string.reset_password)
-                    binding.btnResetPassword.isClickable = true
-                    Snackbar.make(
-                        binding.root, resource.t.message.toString(),
-                        Snackbar.LENGTH_LONG
-                    ).show()
-                }
-            }
+            val loginIntent =
+                Intent(this@ResetPasswordActivity, LoginActivity::class.java)
+            loginIntent.flags =
+                Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(loginIntent)
         }
     }
 
     override fun initListeners() {
+        super.initListeners()
         binding.btnResetPassword.setOnClickListener {
             val code = binding.edtCode.text?.trim().toString()
             val password = binding.edtPassword.text?.trim().toString()
@@ -84,10 +59,5 @@ class ResetPasswordActivity : BaseActivity() {
                 viewModel.resetPassword(code, password)
             }
         }
-    }
-
-    override fun initViews() {
-        setContentView(binding.root)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 }

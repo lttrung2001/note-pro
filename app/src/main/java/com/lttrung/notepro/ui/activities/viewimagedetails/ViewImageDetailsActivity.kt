@@ -36,22 +36,11 @@ class ViewImageDetailsActivity : BaseActivity() {
         adapter
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun initViews() {
+        super.initViews()
         binding.images.let {
             it.adapter = imageDetailsAdapter
             PagerSnapHelper().attachToRecyclerView(it)
         }
-    }
-
-    override fun initListeners() {
-
-    }
-
-    override fun initObservers() {
-
     }
 }

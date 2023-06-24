@@ -25,34 +25,11 @@ class MessageAdapter : ListAdapter<Message, ViewHolder>(CALLBACK) {
             }
 
         }
-
-        private const val LOADING = 1
         private const val MY_MESSAGE = 2
         private const val OTHER_MESSAGE = 3
     }
 
     var userId = ""
-
-    fun showLoading() {
-        val messages = currentList.toMutableList()
-        messages.add(0, Message("", "", "", 0L, User("", "")))
-        submitList(messages)
-    }
-
-    fun hideLoading(list: MutableList<Message>?) {
-        list?.remove(list.find {
-            it.id == ""
-        })
-        submitList(list)
-    }
-
-    fun removeLoadingElement() {
-        val messages = currentList.toMutableList()
-        messages.remove(currentList.find {
-            it.id == ""
-        })
-        submitList(messages)
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return when (viewType) {
@@ -66,7 +43,7 @@ class MessageAdapter : ListAdapter<Message, ViewHolder>(CALLBACK) {
                 MyMessageViewHolder(binding)
             }
 
-            OTHER_MESSAGE -> {
+            else -> {
                 val binding =
                     OtherMessageItemBinding.inflate(
                         LayoutInflater.from(parent.context),
@@ -74,12 +51,6 @@ class MessageAdapter : ListAdapter<Message, ViewHolder>(CALLBACK) {
                         false
                     )
                 OtherMessageViewHolder(binding)
-            }
-
-            else -> {
-                val binding =
-                    LoadingItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                LoadingViewHolder(binding)
             }
         }
     }
@@ -98,14 +69,9 @@ class MessageAdapter : ListAdapter<Message, ViewHolder>(CALLBACK) {
     override fun getItemViewType(position: Int): Int {
         val message = getItem(position)
         return when (message.user.id) {
-            "" -> {
-                LOADING
-            }
-
             userId -> {
                 MY_MESSAGE
             }
-
             else -> {
                 OTHER_MESSAGE
             }
@@ -113,7 +79,7 @@ class MessageAdapter : ListAdapter<Message, ViewHolder>(CALLBACK) {
     }
 
     class MyMessageViewHolder(private val binding: MyMessageItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+        ViewHolder(binding.root) {
         fun bind(message: Message) {
             binding.message.text = message.content
         }

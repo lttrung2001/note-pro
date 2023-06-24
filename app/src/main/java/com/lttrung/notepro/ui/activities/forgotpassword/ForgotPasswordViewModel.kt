@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lttrung.notepro.domain.repositories.LoginRepositories
+import com.lttrung.notepro.ui.base.BaseViewModel
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -13,20 +14,15 @@ import javax.inject.Inject
 @HiltViewModel
 class ForgotPasswordViewModel @Inject constructor(
     private val loginRepositories: LoginRepositories
-) : ViewModel() {
+) : BaseViewModel() {
     internal val forgotPasswordLiveData by lazy {
-        MutableLiveData<Resource<Unit>>()
+        MutableLiveData<Unit>()
     }
 
     internal fun forgotPassword(email: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                forgotPasswordLiveData.postValue(Resource.Loading())
-                val forgotPassword = loginRepositories.forgotPassword(email)
-                forgotPasswordLiveData.postValue(Resource.Success(forgotPassword))
-            } catch (ex: Exception) {
-                forgotPasswordLiveData.postValue(Resource.Error(ex))
-            }
+        launch {
+            val forgotPassword = loginRepositories.forgotPassword(email)
+            forgotPasswordLiveData.postValue(forgotPassword)
         }
     }
 }

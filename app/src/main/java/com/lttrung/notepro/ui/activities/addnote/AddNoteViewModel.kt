@@ -1,33 +1,24 @@
 package com.lttrung.notepro.ui.activities.addnote
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.domain.repositories.NoteRepositories
-import com.lttrung.notepro.utils.Resource
+import com.lttrung.notepro.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AddNoteViewModel @Inject constructor(
     private val noteRepositories: NoteRepositories
-) : ViewModel() {
+) : BaseViewModel() {
     internal val addNoteLiveData by lazy {
-        MutableLiveData<Resource<Note>>()
+        MutableLiveData<Note>()
     }
+
     internal fun addNote(note: Note) {
-        viewModelScope.launch(Dispatchers.IO) {
-            addNoteLiveData.postValue(Resource.Loading())
-            try {
-                addNoteLiveData.postValue(Resource.Loading())
-                val refreshToken = noteRepositories.addNote(note)
-                addNoteLiveData.postValue(Resource.Success(refreshToken))
-            } catch (ex: Exception) {
-                addNoteLiveData.postValue(Resource.Error(ex))
-            }
+        launch {
+            val addNote = noteRepositories.addNote(note)
+            addNoteLiveData.postValue(addNote)
         }
     }
 }

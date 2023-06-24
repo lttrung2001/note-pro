@@ -16,11 +16,8 @@ import com.lttrung.notepro.exceptions.InvalidTokenException
 import com.lttrung.notepro.ui.activities.incomingcall.IncomingCallActivity
 import com.lttrung.notepro.ui.activities.login.LoginActivity
 import com.lttrung.notepro.utils.AppConstant
-import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_LISTENER_CHANNEL_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_LISTENER_NOTIFICATION_ID
-import com.lttrung.notepro.utils.AppConstant.Companion.LOAD_MESSAGES_RECEIVED
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE
-import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGES_JSON
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE_RECEIVED
 import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.USER
@@ -99,12 +96,6 @@ class ChatSocketService : Service() {
     internal fun sendRemoveMemberMessage(roomId: String, email: String) {
         scope.launch {
             messageRepositories.sendRemoveMemberMessage(socket, roomId, email)
-        }
-    }
-
-    internal fun getMessages(roomId: String, pageIndex: Int, limit: Int) {
-        scope.launch {
-            messageRepositories.getMessages(socket, roomId, pageIndex, limit)
         }
     }
 
@@ -205,7 +196,6 @@ class ChatSocketService : Service() {
             stopSelf()
         }
         listenChatEvent(socket)
-        listenLoadMessagesEvent(socket)
         listenCallEvent(socket)
     }
 
@@ -221,16 +211,6 @@ class ChatSocketService : Service() {
                 putExtra(ROOM_ID, roomId)
                 putExtra(USER, user)
             })
-        }
-    }
-
-    private fun listenLoadMessagesEvent(socket: Socket) {
-        socket.on("load_messages") { args ->
-            // Using broadcast
-            val olderMessagesJson = args[0].toString()
-            val loadMessagesReceivedIntent = Intent(LOAD_MESSAGES_RECEIVED)
-            loadMessagesReceivedIntent.putExtra(MESSAGES_JSON, olderMessagesJson)
-            sendBroadcast(loadMessagesReceivedIntent)
         }
     }
 

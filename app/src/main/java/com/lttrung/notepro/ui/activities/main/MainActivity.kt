@@ -5,8 +5,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityMainBinding
 import com.lttrung.notepro.domain.data.networks.models.Note
@@ -26,7 +24,6 @@ import com.lttrung.notepro.utils.AppConstant.Companion.EDIT_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE_ACTION_TYPE
 import com.lttrung.notepro.utils.FeatureId
-import com.lttrung.notepro.utils.Resource
 import com.lttrung.notepro.utils.ServiceUtils
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -68,7 +65,7 @@ class MainActivity : BaseActivity() {
     override val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
-    private val mainViewModel: MainViewModel by viewModels()
+    override val viewModel: MainViewModel by viewModels()
     private val noteAdapter: NoteAdapter by lazy {
         NoteAdapter(noteListener)
     }
@@ -116,10 +113,6 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     private fun getMainFeatures(): List<Feature> {
         return listOf(
             Feature(FeatureId.SETTING, R.drawable.ic_baseline_settings_24),
@@ -128,32 +121,22 @@ class MainActivity : BaseActivity() {
     }
 
     override fun initObservers() {
-        mainViewModel.notesLiveData.observe(this) { resource ->
-            when (resource) {
-                is Resource.Loading -> {
-                }
-
-                is Resource.Success -> {
-                    noteAdapter.submitList(resource.data)
-                    if (!ServiceUtils.isServiceRunning(this, ChatSocketService::class.java)) {
-                        startService(Intent(this, ChatSocketService::class.java))
-                    }
-                }
-
-                is Resource.Error -> {
-                    Snackbar.make(
-                        binding.root, resource.t.message.toString(), Snackbar.LENGTH_LONG
-                    ).show()
-                }
+        super.initObservers()
+        viewModel.notesLiveData.observe(this) { notes ->
+            noteAdapter.submitList(notes)
+            if (!ServiceUtils.isServiceRunning(this, ChatSocketService::class.java)) {
+                startService(Intent(this, ChatSocketService::class.java))
             }
         }
     }
 
     override fun initListeners() {
+        super.initListeners()
         binding.fab.setOnClickListener(fabOnClickListener)
     }
 
     override fun initViews() {
+        super.initViews()
         binding.rvFeatures.adapter = featureAdapter
         binding.rvNotes.adapter = noteAdapter
 

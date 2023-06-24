@@ -1,17 +1,9 @@
 package com.lttrung.notepro.ui.activities.changepassword
 
-import android.graphics.Color
-import android.os.Bundle
 import androidx.activity.viewModels
-import com.github.razir.progressbutton.attachTextChangeAnimator
-import com.github.razir.progressbutton.bindProgressButton
-import com.github.razir.progressbutton.hideProgress
-import com.github.razir.progressbutton.showProgress
-import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityChangePasswordBinding
 import com.lttrung.notepro.ui.base.BaseActivity
-import com.lttrung.notepro.utils.Resource
 import com.lttrung.notepro.utils.ValidationHelper
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -20,42 +12,17 @@ class ChangePasswordActivity : BaseActivity() {
     override val binding by lazy {
         ActivityChangePasswordBinding.inflate(layoutInflater)
     }
-    private val changePasswordViewModel: ChangePasswordViewModel by viewModels()
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    override val viewModel: ChangePasswordViewModel by viewModels()
 
     override fun initObservers() {
-        changePasswordViewModel.changePasswordLiveData.observe(this) { resource ->
-            when (resource) {
-                is Resource.Loading -> {
-                    binding.btnChangePassword.isClickable = false
-                    binding.btnChangePassword.showProgress {
-                        buttonTextRes = R.string.loading
-                        progressColor = Color.WHITE
-                    }
-                }
-
-                is Resource.Success -> {
-                    binding.btnChangePassword.isClickable = true
-                    binding.btnChangePassword.hideProgress(R.string.change_password)
-                    finish()
-                }
-
-                is Resource.Error -> {
-                    binding.btnChangePassword.isClickable = true
-                    binding.btnChangePassword.hideProgress(R.string.change_password)
-                    Snackbar.make(
-                        binding.root, resource.t.message.toString(), Snackbar.LENGTH_LONG
-                    ).show()
-                }
-            }
+        super.initObservers()
+        viewModel.changePasswordLiveData.observe(this) { resource ->
+            finish()
         }
     }
 
     override fun initListeners() {
-        bindProgressButton(binding.btnChangePassword)
-        binding.btnChangePassword.attachTextChangeAnimator()
+        super.initListeners()
         binding.btnChangePassword.setOnClickListener {
             val oldPassword = binding.currentPassword.text?.trim().toString()
             val newPassword = binding.newPassword.text?.trim().toString()
@@ -63,13 +30,9 @@ class ChangePasswordActivity : BaseActivity() {
             val helper =
                 validateInputs(oldPassword, newPassword, confirmPassword, ValidationHelper())
             if (!helper.hasError) {
-                changePasswordViewModel.changePassword(oldPassword, newPassword)
+                viewModel.changePassword(oldPassword, newPassword)
             }
         }
-    }
-
-    override fun initViews() {
-
     }
 
     private fun validateInputs(

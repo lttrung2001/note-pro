@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lttrung.notepro.domain.repositories.LoginRepositories
+import com.lttrung.notepro.ui.base.BaseViewModel
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -13,16 +14,15 @@ import javax.inject.Inject
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val loginRepositories: LoginRepositories
-) : ViewModel() {
+) : BaseViewModel() {
     internal val registerLiveData by lazy {
-        MutableLiveData<Resource<Unit>>()
+        MutableLiveData<Unit>()
     }
 
     internal fun register(email: String, password: String, fullName: String, phoneNumber: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            registerLiveData.postValue(Resource.Loading())
+        launch {
             val register = loginRepositories.register(email, password, fullName, phoneNumber)
-            registerLiveData.postValue(Resource.Success(register))
+            registerLiveData.postValue(register)
         }
     }
 }

@@ -2,10 +2,8 @@ package com.lttrung.notepro.ui.activities.setting
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import com.lttrung.notepro.databinding.ActivitySettingBinding
 import com.lttrung.notepro.ui.activities.changepassword.ChangePasswordActivity
 import com.lttrung.notepro.ui.activities.login.LoginActivity
@@ -18,7 +16,7 @@ class SettingActivity : BaseActivity() {
     override val binding by lazy {
         ActivitySettingBinding.inflate(layoutInflater)
     }
-    private val settingViewModel: SettingViewModel by viewModels()
+    override val viewModel: SettingViewModel by viewModels()
 
     private val viewProfileListener by lazy {
         View.OnClickListener {
@@ -36,7 +34,7 @@ class SettingActivity : BaseActivity() {
 
     private val logoutOnClickListener by lazy {
         View.OnClickListener {
-            settingViewModel.logout()
+            viewModel.logout()
             val logoutIntent = Intent(this, LoginActivity::class.java)
             logoutIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(logoutIntent)
@@ -45,23 +43,22 @@ class SettingActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        settingViewModel.getCurrentUserInfo()
+        viewModel.getCurrentUserInfo()
     }
+
     override fun initObservers() {
-        settingViewModel.userLiveData.observe(this) { user ->
+        super.initObservers()
+        viewModel.userLiveData.observe(this) { user ->
             binding.tvName.text = user.fullName
         }
     }
 
     override fun initListeners() {
+        super.initListeners()
         binding.apply {
             btnViewProfile.setOnClickListener(viewProfileListener)
             btnChangePassword.setOnClickListener(changePasswordListener)
             btnLogout.setOnClickListener(logoutOnClickListener)
         }
-    }
-
-    override fun initViews() {
-
     }
 }

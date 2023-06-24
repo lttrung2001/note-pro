@@ -31,7 +31,7 @@ class ChatActivity : BaseActivity() {
     override val binding by lazy {
         ActivityChatBinding.inflate(layoutInflater)
     }
-    private val chatViewModel: ChatViewModel by viewModels()
+    override val viewModel: ChatViewModel by viewModels()
     private val messageAdapter by lazy {
         MessageAdapter()
     }
@@ -43,14 +43,14 @@ class ChatActivity : BaseActivity() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 val message = intent?.getSerializableExtra(MESSAGE) as Message
                 if (message.room == note.id) {
-                    val messages = messageAdapter.currentList.toMutableList()
+                    val messages = viewModel.messagesLiveData.value.orEmpty().toMutableList()
                     messages.add(message)
                     // Update adapter
                     messageAdapter.submitList(messages)
                     // Scroll to new message
                     binding.messages.smoothScrollToPosition(messages.size - 1)
                     // Update live data
-                    chatViewModel.messagesLiveData.postValue(Resource.Success(messages))
+                    viewModel.messagesLiveData.postValue(messages)
                 } else {
                     NotificationHelper.pushNotification(
                         this@ChatActivity,
@@ -62,40 +62,13 @@ class ChatActivity : BaseActivity() {
         }
     }
 
-    private val loadMessagesReceiver by lazy {
-        object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                val messagesJson = intent?.getStringExtra(MESSAGES_JSON)
-                // Parse JsonArray to Array
-                val olderMessages =
-                    Gson().fromJson(messagesJson, Array<Message>::class.java).toList()
-                // Update scroll listener
-                if (olderMessages.isEmpty()) {
-                    binding.messages.removeOnScrollListener(onScrollListener)
-                } else {
-                    binding.messages.addOnScrollListener(onScrollListener)
-                }
-                val messages = messageAdapter.currentList.toMutableList()
-                messages.addAll(0, olderMessages)
-                // Update live data
-                chatViewModel.messagesLiveData.postValue(Resource.Success(messages))
-                chatViewModel.page += 1
-            }
-        }
-    }
-
     private val onScrollListener by lazy {
         object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
-                if (chatViewModel.messagesLiveData.value !is Resource.Loading) {
+                if (viewModel.isLoading.value == false) {
                     if (!recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                        chatViewModel.messagesLiveData.postValue(Resource.Loading())
-                        socketService.getMessages(
-                            note.id,
-                            chatViewModel.page,
-                            PAGE_LIMIT
-                        )
+                        // Load message here...
                     }
                 }
             }
@@ -107,12 +80,6 @@ class ChatActivity : BaseActivity() {
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
                 val binder = service as ChatSocketService.LocalBinder
                 socketService = binder.getService()
-                chatViewModel.messagesLiveData.postValue(Resource.Loading())
-                socketService.getMessages(
-                    note.id,
-                    chatViewModel.page,
-                    PAGE_LIMIT
-                )
             }
 
             override fun onServiceDisconnected(p0: ComponentName?) {
@@ -123,7 +90,7 @@ class ChatActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        chatViewModel.getCurrentUser()
+        viewModel.getCurrentUser()
     }
 
     override fun onStart() {
@@ -136,18 +103,8 @@ class ChatActivity : BaseActivity() {
     override fun onStop() {
         super.onStop()
 
-        removeLoadingIfNeeded()
-
         unregisterReceiver(messageReceiver)
-        unregisterReceiver(loadMessagesReceiver)
-
         unbindService(connection)
-    }
-
-    private fun removeLoadingIfNeeded() {
-        if (chatViewModel.messagesLiveData.value is Resource.Loading) {
-            messageAdapter.removeLoadingElement()
-        }
     }
 
     private fun bindService() {
@@ -159,58 +116,33 @@ class ChatActivity : BaseActivity() {
     private fun registerReceivers() {
         val messageReceivedIntentFilter = IntentFilter(MESSAGE_RECEIVED)
         registerReceiver(messageReceiver, messageReceivedIntentFilter)
-        val loadMessagesIntentFilter = IntentFilter(LOAD_MESSAGES_RECEIVED)
-        registerReceiver(loadMessagesReceiver, loadMessagesIntentFilter)
     }
 
     override fun initObservers() {
-        chatViewModel.currentUserLiveData.observe(this) { resource ->
-            when (resource) {
-                is Resource.Loading -> {
-                    binding.sendMessageButton.isClickable = false
-                }
-
-                is Resource.Success -> {
-                    binding.sendMessageButton.isClickable = true
-                    currentUser = resource.data
-                    currentUser.id.let { messageAdapter.userId = it ?: "" }
-                }
-
-                is Resource.Error -> {
-                    binding.sendMessageButton.isClickable = true
-                }
+        super.initObservers()
+        viewModel.currentUserLiveData.observe(this) { user ->
+            currentUser = user
+            currentUser.id?.let {
+                finish()
             }
+            messageAdapter.userId = currentUser.id!!
+            viewModel.getMessages(note.id, viewModel.page, PAGE_LIMIT)
         }
-        chatViewModel.messagesLiveData.observe(this) { resource ->
-            when (resource) {
-                is Resource.Loading -> {
-                    messageAdapter.showLoading()
-                    binding.sendMessageButton.isClickable = false
-                    binding.messages.removeOnScrollListener(onScrollListener)
-                    binding.messages.smoothScrollToPosition(0)
-                }
-
-                is Resource.Success -> {
-                    messageAdapter.hideLoading(resource.data.toMutableList())
-                    binding.sendMessageButton.isClickable = true
-                }
-
-                is Resource.Error -> {
-                    messageAdapter.removeLoadingElement()
-                    binding.sendMessageButton.isClickable = true
-                }
-            }
+        viewModel.messagesLiveData.observe(this) { messages ->
+                    messageAdapter.submitList(messages)
         }
     }
 
     override fun initListeners() {
+        super.initListeners()
+        binding.messages.addOnScrollListener(onScrollListener)
         binding.sendMessageButton.setOnClickListener {
             sendMessage()
         }
-
     }
 
     override fun initViews() {
+        super.initViews()
         binding.messages.adapter = messageAdapter
     }
 

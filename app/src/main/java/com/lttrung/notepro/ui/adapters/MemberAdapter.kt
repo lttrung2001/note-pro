@@ -24,9 +24,6 @@ class MemberAdapter(
                 return oldItem == newItem
             }
         }
-
-        private const val LOADING = 1
-        private const val MEMBER = 2
     }
 
     private var hasPreviousPage = false
@@ -42,44 +39,15 @@ class MemberAdapter(
         return Paging(hasPreviousPage, hasNextPage, currentList)
     }
 
-    fun showLoading() {
-        val members = currentList.toMutableList()
-        members.add(Member("", "", "", "", ""))
-        submitList(members)
-    }
-
-    fun hideLoading() {
-        val members = currentList.toMutableList()
-        members.removeAt(members.size - 1)
-        submitList(members)
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        if (viewType == MEMBER) {
-            val binding =
-                MemberItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            return MemberViewHolder(binding)
-        } else {
-            val binding =
-                LoadingItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            return LoadingViewHolder(binding)
-        }
+        val binding =
+            MemberItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return MemberViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val member = getItem(position)
-        if (getItemViewType(position) == MEMBER) {
-            holder as MemberViewHolder
-            holder.bind(member, listener)
-        }
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return if (getItem(position).id == "") {
-            LOADING
-        } else {
-            MEMBER
-        }
+        (holder as MemberViewHolder).bind(member, listener)
     }
 
     interface MemberListener {
@@ -87,7 +55,7 @@ class MemberAdapter(
     }
 
     class MemberViewHolder(val binding: MemberItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+        ViewHolder(binding.root) {
         fun bind(member: Member, listener: MemberListener) {
             binding.tvFullName.text = member.fullName
             binding.tvRole.text = member.role

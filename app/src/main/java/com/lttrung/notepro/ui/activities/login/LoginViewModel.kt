@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lttrung.notepro.domain.repositories.LoginRepositories
+import com.lttrung.notepro.ui.base.BaseViewModel
 import com.lttrung.notepro.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -13,20 +14,15 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginRepositories: LoginRepositories
-) : ViewModel() {
+) : BaseViewModel() {
     internal val refreshTokenLiveData by lazy {
-        MutableLiveData<Resource<String>>()
+        MutableLiveData<String>()
     }
 
     internal fun login(email: String, password: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                refreshTokenLiveData.postValue(Resource.Loading())
-                val refreshToken = loginRepositories.login(email, password)
-                refreshTokenLiveData.postValue(Resource.Success(refreshToken))
-            } catch (ex: Exception) {
-                refreshTokenLiveData.postValue(Resource.Error(ex))
-            }
+        launch {
+            val refreshToken = loginRepositories.login(email, password)
+            refreshTokenLiveData.postValue(refreshToken)
         }
     }
 }

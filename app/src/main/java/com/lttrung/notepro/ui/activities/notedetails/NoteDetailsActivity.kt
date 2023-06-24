@@ -12,6 +12,8 @@ import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.ui.activities.viewimagedetails.ViewImageDetailsActivity
 import com.lttrung.notepro.ui.adapters.ImageAdapter
 import com.lttrung.notepro.ui.base.BaseActivity
+import com.lttrung.notepro.ui.entities.ListImage
+import com.lttrung.notepro.utils.AppConstant
 import com.lttrung.notepro.utils.AppConstant.Companion.IMAGES_JSON
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.Resource
@@ -25,48 +27,26 @@ class NoteDetailsActivity : BaseActivity() {
     private val imagesAdapter: ImageAdapter by lazy {
         ImageAdapter(imageListener)
     }
-    private val noteDetailsViewModel: NoteDetailsViewModel by viewModels()
+    override val viewModel: NoteDetailsViewModel by viewModels()
     private val note: Note by lazy {
         intent.getSerializableExtra(NOTE) as Note
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun initViews() {
+        super.initViews()
         binding.edtNoteTitle.setText(note.title)
         binding.edtNoteDesc.setText(note.content)
 
-        noteDetailsViewModel.getNoteDetails(note)
-    }
-
-    override fun initListeners() {
-
+        viewModel.getNoteDetails(note)
     }
 
     override fun initObservers() {
-        noteDetailsViewModel.noteDetailsLiveData.observe(this) { resource ->
-            when (resource) {
-                is Resource.Loading -> {
-
-                }
-
-                is Resource.Success -> {
-                    val note = resource.data
-                    intent.putExtra(NOTE, note)
-                    binding.edtNoteTitle.setText(note.title)
-                    binding.edtNoteDesc.setText(note.content)
-                    imagesAdapter.submitList(note.images)
-                }
-
-                is Resource.Error -> {
-                    Snackbar.make(
-                        binding.root, resource.t.message.toString(),
-                        Snackbar.LENGTH_LONG
-                    ).show()
-                }
-            }
+        super.initObservers()
+        viewModel.noteDetailsLiveData.observe(this) { note ->
+            intent.putExtra(NOTE, note)
+            binding.edtNoteTitle.setText(note.title)
+            binding.edtNoteDesc.setText(note.content)
+            imagesAdapter.submitList(note.images)
         }
     }
 
@@ -87,7 +67,7 @@ class NoteDetailsActivity : BaseActivity() {
     //            }
     //            else -> {
     //                note.isPin = false
-    //                noteDetailsViewModel.editNote(note)
+    //                viewModel.editNote(note)
     //                val resultIntent = Intent()
     //                resultIntent.putExtra(EDITED_NOTE, note)
     //                setResult(RESULT_OK, resultIntent)
@@ -98,14 +78,11 @@ class NoteDetailsActivity : BaseActivity() {
         object : ImageAdapter.ImageListener {
             override fun onClick(image: Image) {
                 // Start image details activity
-                startActivity(
-                    Intent(
-                        this@NoteDetailsActivity,
-                        ViewImageDetailsActivity::class.java
-                    ).apply {
-                        putExtra(IMAGES_JSON, Gson().toJson(imagesAdapter.currentList))
-                    }
-                )
+                startActivity(Intent(
+                    this@NoteDetailsActivity, ViewImageDetailsActivity::class.java
+                ).apply {
+                    putExtra(AppConstant.LIST_IMAGE, ListImage(imagesAdapter.currentList))
+                })
             }
 
             override fun onDelete(image: Image) {
