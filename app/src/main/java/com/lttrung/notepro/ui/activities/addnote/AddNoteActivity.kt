@@ -1,9 +1,11 @@
 package com.lttrung.notepro.ui.activities.addnote
 
+import android.Manifest
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.IBinder
 import androidx.activity.result.contract.ActivityResultContracts
@@ -114,6 +116,21 @@ class AddNoteActivity : BaseActivity() {
     override fun onStop() {
         super.onStop()
         unbindService(connection)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (requestCode == AppConstant.CAMERA_REQUEST) {
+                openCamera(launcher)
+            } else if (requestCode == AppConstant.READ_EXTERNAL_STORAGE_REQUEST) {
+                openGallery(launcher, this@AddNoteActivity)
+            }
+        }
     }
 
     private fun getFeatures(): List<Feature> {

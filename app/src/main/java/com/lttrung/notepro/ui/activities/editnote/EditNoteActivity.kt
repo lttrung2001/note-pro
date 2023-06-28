@@ -5,6 +5,7 @@ import android.app.Service
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.IBinder
 import androidx.activity.result.contract.ActivityResultContracts
@@ -163,13 +164,12 @@ class EditNoteActivity : BaseActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == AppConstant.CAMERA_REQUEST && permissions.contains(Manifest.permission.CAMERA)) {
-            openCamera(launcher)
-        } else if (requestCode == AppConstant.READ_EXTERNAL_STORAGE_REQUEST && permissions.contains(
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            )
-        ) {
-            openGallery(launcher, this@EditNoteActivity)
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (requestCode == AppConstant.CAMERA_REQUEST) {
+                openCamera(launcher)
+            } else if (requestCode == AppConstant.READ_EXTERNAL_STORAGE_REQUEST) {
+                openGallery(launcher, this@EditNoteActivity)
+            }
         }
     }
 
