@@ -2,9 +2,11 @@ package com.lttrung.notepro.ui.activities.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityMainBinding
 import com.lttrung.notepro.domain.data.networks.models.Note
@@ -26,6 +28,7 @@ import com.lttrung.notepro.utils.AppConstant.Companion.NOTE_ACTION_TYPE
 import com.lttrung.notepro.utils.FeatureId
 import com.lttrung.notepro.utils.ServiceUtils
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity() {
@@ -37,22 +40,25 @@ class MainActivity : BaseActivity() {
                     val note = i.getSerializableExtra(NOTE) as Note
                     when (i.getIntExtra(NOTE_ACTION_TYPE, 0)) {
                         ADD_NOTE -> {
-                            noteAdapter.submitList(noteAdapter.currentList.toMutableList().apply {
-                                add(0, note)
-                            })
+                            viewModel.notesLiveData.postValue(
+                                noteAdapter.currentList.toMutableList().apply {
+                                    add(0, note)
+                                })
                         }
 
                         EDIT_NOTE -> {
-                            noteAdapter.submitList(noteAdapter.currentList.toMutableList().apply {
-                                removeIf { it.id == note.id }
-                                add(0, note)
-                            })
+                            viewModel.notesLiveData.postValue(
+                                noteAdapter.currentList.toMutableList().apply {
+                                    removeIf { it.id == note.id }
+                                    add(0, note)
+                                })
                         }
 
                         DELETE_NOTE -> {
-                            noteAdapter.submitList(noteAdapter.currentList.toMutableList().apply {
-                                removeIf { it.id == note.id }
-                            })
+                            viewModel.notesLiveData.postValue(
+                                noteAdapter.currentList.toMutableList().apply {
+                                    removeIf { it.id == note.id }
+                                })
                         }
 
                         else -> {
@@ -123,7 +129,19 @@ class MainActivity : BaseActivity() {
     override fun initObservers() {
         super.initObservers()
         viewModel.notesLiveData.observe(this) { notes ->
-            noteAdapter.submitList(notes)
+            val notesTemp = notes.toMutableList()
+            notesTemp.removeAll { it.id == "" }
+            // Fix sort
+            notesTemp.sortBy { !it.isPin }
+            val firstNormalNoteIdx = notesTemp.indexOfFirst { !it.isPin }
+            Snackbar.make(this@MainActivity, binding.root, firstNormalNoteIdx.toString(), Snackbar.LENGTH_LONG).show()
+            if (firstNormalNoteIdx != -1) {
+                notesTemp.add(firstNormalNoteIdx, Note("", getString(R.string.unpin)))
+                if (firstNormalNoteIdx > 0) {
+                    notesTemp.add(0, Note("", getString(R.string.pinned)))
+                }
+            }
+            noteAdapter.submitList(notesTemp)
             if (!ServiceUtils.isServiceRunning(this, ChatSocketService::class.java)) {
                 startService(Intent(this, ChatSocketService::class.java))
             }
