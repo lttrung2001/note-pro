@@ -12,9 +12,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        tools:itemCount="4"
         android:orientation="horizontal"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:itemCount="4"
         tools:listitem="@layout/feature_item" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -27,8 +27,7 @@
         android:orientation="vertical"
         android:overScrollMode="never"
         android:paddingStart="10dp"
-        app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
-        app:spanCount="2"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:ignore="RtlSymmetry"
         tools:itemCount="100"
         tools:listitem="@layout/note_item" />
