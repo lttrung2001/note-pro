@@ -44,5 +44,8 @@ class AppConstant {
         const val ADD_NOTE = 1
         const val EDIT_NOTE = 2
         const val DELETE_NOTE = 3
+
+        const val TITLE_ITEM = 1
+        const val NOTE_ITEM = 2
     }
 }
