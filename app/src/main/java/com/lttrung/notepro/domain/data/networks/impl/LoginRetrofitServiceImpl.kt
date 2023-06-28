@@ -21,7 +21,7 @@ class LoginRetrofitServiceImpl @Inject constructor(private val service: Service)
 
         @FormUrlEncoded
         @POST("$PATH/register")
-        fun register(
+        suspend fun register(
             @Field("email") email: String,
             @Field("password") password: String,
             @Field("fullName") fullName: String,
@@ -30,11 +30,11 @@ class LoginRetrofitServiceImpl @Inject constructor(private val service: Service)
 
         @FormUrlEncoded
         @POST("$PATH/forget-password")
-        fun forgotPassword(@Field("email") email: String): Response<ResponseEntity<Unit>>
+        suspend fun forgotPassword(@Field("email") email: String): Response<ResponseEntity<Unit>>
 
         @FormUrlEncoded
         @POST("$PATH/reset-password")
-        fun resetPassword(
+        suspend fun resetPassword(
             @Field("codeVerify") code: String,
             @Field("newPassword") password: String
         ): Response<ResponseEntity<Unit>>
