@@ -6,10 +6,10 @@ import java.io.Serializable
 data class Note(
     val id: String,
     val title: String,
-    val content: String,
-    val lastModified: Long,
-    var isPin: Boolean,
-    val role: String,
+    val content: String = "",
+    val lastModified: Long = 0,
+    var isPin: Boolean = false,
+    val role: String = "viewer",
     var images: List<Image> = emptyList()
 ) : Serializable {
     fun hasEditPermission(): Boolean {
