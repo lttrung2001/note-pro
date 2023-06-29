@@ -151,17 +151,23 @@ class AddNoteActivity : BaseActivity() {
 
     override fun initListeners() {
         super.initListeners()
-        binding.fabSave.setOnClickListener {
+        binding.btnSave.setOnClickListener {
             val note = Note(
                 String(),
                 binding.edtNoteTitle.text?.trim().toString(),
                 binding.edtNoteDesc.text?.trim().toString(),
                 0L,
-                false,
+                binding.btnPin.isSelected,
                 role = String(),
                 images = imagesAdapter.currentList,
             )
             viewModel.addNote(note)
+        }
+        binding.btnPin.apply {
+            setOnClickListener {
+                isSelected = !isSelected
+                updatePinButtonStatus(isSelected)
+            }
         }
     }
 
@@ -176,5 +182,12 @@ class AddNoteActivity : BaseActivity() {
             socketService.sendAddNoteMessage(note.id)
             finish()
         }
+    }
+
+    private fun updatePinButtonStatus(isPin: Boolean) {
+        val isPinDrawable =
+            if (isPin) R.drawable.ic_baseline_push_pinned_24
+            else R.drawable.ic_baseline_push_pin_24
+        binding.btnPin.setImageResource(isPinDrawable)
     }
 }

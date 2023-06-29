@@ -186,9 +186,15 @@ class EditNoteActivity : BaseActivity() {
 
     override fun initListeners() {
         super.initListeners()
-        binding.fabSave.setOnClickListener {
+        binding.btnSave.setOnClickListener {
             // Save note
             viewModel.editNote(getNoteFromUi())
+        }
+        binding.btnPin.apply {
+            setOnClickListener {
+                isSelected = !isSelected
+                updatePinButtonStatus(isSelected)
+            }
         }
     }
 
@@ -227,8 +233,12 @@ class EditNoteActivity : BaseActivity() {
     }
 
     private fun bindDataToViews() {
-        binding.edtNoteTitle.setText(note.title)
-        binding.edtNoteDesc.setText(note.content)
+
+        binding.apply {
+            edtNoteTitle.setText(note.title)
+            edtNoteDesc.setText(note.content)
+        }
+        updatePinButtonStatus(note.isPin)
         imagesAdapter.submitList(note.images)
     }
 
@@ -239,6 +249,8 @@ class EditNoteActivity : BaseActivity() {
             edtNoteDesc.setText(note.content)
             rvImages.adapter = imagesAdapter
             rvFeatures.adapter = featureAdapter
+            btnPin.isSelected = note.isPin
+            updatePinButtonStatus(btnPin.isSelected)
         }
 
         StartSnapHelper().attachToRecyclerView(binding.rvImages)
@@ -253,9 +265,16 @@ class EditNoteActivity : BaseActivity() {
             binding.edtNoteTitle.text!!.trim().toString(),
             binding.edtNoteDesc.text!!.trim().toString(),
             note.lastModified,
-            false,
+            binding.btnPin.isSelected,
             role = note.role,
             images = imagesAdapter.currentList
         )
+    }
+
+    private fun updatePinButtonStatus(isPin: Boolean) {
+        val isPinDrawable =
+            if (isPin) R.drawable.ic_baseline_push_pinned_24
+            else R.drawable.ic_baseline_push_pin_24
+        binding.btnPin.setImageResource(isPinDrawable)
     }
 }

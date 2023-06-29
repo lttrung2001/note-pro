@@ -40,23 +40,23 @@ class MainActivity : BaseActivity() {
                     val note = i.getSerializableExtra(NOTE) as Note
                     when (i.getIntExtra(NOTE_ACTION_TYPE, 0)) {
                         ADD_NOTE -> {
-                            viewModel.notesLiveData.postValue(
-                                noteAdapter.currentList.toMutableList().apply {
+                            viewModel.notesLiveData.postValue(noteAdapter.currentList.toMutableList()
+                                .apply {
                                     add(0, note)
                                 })
                         }
 
                         EDIT_NOTE -> {
-                            viewModel.notesLiveData.postValue(
-                                noteAdapter.currentList.toMutableList().apply {
+                            viewModel.notesLiveData.postValue(noteAdapter.currentList.toMutableList()
+                                .apply {
                                     removeIf { it.id == note.id }
                                     add(0, note)
                                 })
                         }
 
                         DELETE_NOTE -> {
-                            viewModel.notesLiveData.postValue(
-                                noteAdapter.currentList.toMutableList().apply {
+                            viewModel.notesLiveData.postValue(noteAdapter.currentList.toMutableList()
+                                .apply {
                                     removeIf { it.id == note.id }
                                 })
                         }
@@ -134,7 +134,6 @@ class MainActivity : BaseActivity() {
             // Fix sort
             notesTemp.sortBy { !it.isPin }
             val firstNormalNoteIdx = notesTemp.indexOfFirst { !it.isPin }
-            Snackbar.make(this@MainActivity, binding.root, firstNormalNoteIdx.toString(), Snackbar.LENGTH_LONG).show()
             if (firstNormalNoteIdx != -1) {
                 notesTemp.add(firstNormalNoteIdx, Note("", getString(R.string.unpin)))
                 if (firstNormalNoteIdx > 0) {

@@ -7,24 +7,37 @@
     android:fitsSystemWindows="true"
     tools:context=".ui.activities.addnote.AddNoteActivity">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_save"
+    <LinearLayout
+        android:id="@+id/actionBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="@dimen/fab_margin"
-        android:layout_marginEnd="@dimen/fab_margin"
-        android:backgroundTint="@color/primary"
-        android:src="@drawable/ic_baseline_done_24"
-        app:tint="@color/white" />
+        android:padding="10dp">
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btnPin"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_baseline_push_pin_24" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btnSave"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@android:color/transparent"
+            android:backgroundTint="@color/primary"
+            android:src="@drawable/ic_baseline_done_24"
+            app:tint="@color/primary" />
+    </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_above="@id/featureContainer"
-        android:layout_alignParentTop="true"
+        android:layout_below="@id/actionBar"
 
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 

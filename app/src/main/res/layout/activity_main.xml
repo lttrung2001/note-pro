@@ -8,21 +8,11 @@
     tools:context=".ui.activities.main.MainActivity">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvFeatures"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:orientation="horizontal"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:itemCount="4"
-        tools:listitem="@layout/feature_item" />
-
-    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvNotes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/rvFeatures"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@id/bottomBar"
+        android:layout_alignParentTop="true"
         android:nestedScrollingEnabled="true"
         android:orientation="vertical"
         android:overScrollMode="never"
@@ -32,18 +22,35 @@
         tools:itemCount="100"
         tools:listitem="@layout/note_item" />
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/primary"
-        android:text="@string/create_note"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        app:icon="@android:drawable/ic_input_add"
-        app:iconTint="@color/white" />
+        android:orientation="horizontal">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvFeatures"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="10"
+            tools:listitem="@layout/feature_item" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/fab_margin"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/primary"
+            android:text="@string/create_note"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:icon="@android:drawable/ic_input_add"
+            app:iconTint="@color/white" />
+    </LinearLayout>
 </RelativeLayout>
