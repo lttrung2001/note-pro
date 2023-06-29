@@ -133,4 +133,5 @@
     <string name="invite">Invite</string>
     <string name="btn_continue_text">Continue</string>
     <string name="default_name">Me</string>
+    <string name="send">Send</string>
 </resources>

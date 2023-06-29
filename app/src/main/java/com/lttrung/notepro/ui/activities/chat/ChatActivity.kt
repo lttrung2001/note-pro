@@ -8,21 +8,27 @@ import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.lttrung.notepro.databinding.ActivityChatBinding
 import com.lttrung.notepro.domain.data.locals.entities.CurrentUser
+import com.lttrung.notepro.domain.data.networks.models.Image
 import com.lttrung.notepro.domain.data.networks.models.Message
 import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.domain.data.networks.models.User
 import com.lttrung.notepro.ui.adapters.MessageAdapter
 import com.lttrung.notepro.ui.base.BaseActivity
+import com.lttrung.notepro.ui.fragments.BottomSheetGallery
+import com.lttrung.notepro.utils.AppConstant
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_CHANNEL_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE_RECEIVED
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.PAGE_LIMIT
 import com.lttrung.notepro.utils.NotificationHelper
+import com.lttrung.notepro.utils.openCamera
+import com.lttrung.notepro.utils.requestPermissionToOpenCamera
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -33,6 +39,13 @@ class ChatActivity : BaseActivity() {
         ActivityChatBinding.inflate(layoutInflater)
     }
     override val viewModel: ChatViewModel by viewModels()
+    private val launcher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                // If camera
+                // If choose from gallery
+            }
+        }
     private val messageAdapter by lazy {
         MessageAdapter()
     }
@@ -54,9 +67,7 @@ class ChatActivity : BaseActivity() {
                     viewModel.messagesLiveData.postValue(messages)
                 } else {
                     NotificationHelper.pushNotification(
-                        this@ChatActivity,
-                        CHAT_CHANNEL_ID,
-                        message
+                        this@ChatActivity, CHAT_CHANNEL_ID, message
                     )
                 }
             }
@@ -88,6 +99,7 @@ class ChatActivity : BaseActivity() {
             }
         }
     }
+    private var bottomGallery: BottomSheetGallery? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -134,9 +146,20 @@ class ChatActivity : BaseActivity() {
 
     override fun initListeners() {
         super.initListeners()
-        binding.messages.addOnScrollListener(onScrollListener)
-        binding.sendMessageButton.setOnClickListener {
-            sendMessage()
+        binding.apply {
+            messages.addOnScrollListener(onScrollListener)
+            sendMessageButton.setOnClickListener {
+                sendMessage()
+            }
+            btnOpenCamera.setOnClickListener {
+                if (requestPermissionToOpenCamera(this@ChatActivity)) {
+                    openCamera(launcher)
+                }
+            }
+            btnBottomSheetGallery.setOnClickListener {
+                bottomGallery = BottomSheetGallery()
+                bottomGallery?.show(supportFragmentManager, bottomGallery?.tag)
+            }
         }
     }
 
@@ -155,11 +178,7 @@ class ChatActivity : BaseActivity() {
         val uid = currentUser.id ?: ""
 
         val message = Message(
-            System.currentTimeMillis().toString(),
-            content,
-            note.id,
-            0L,
-            User(uid, "")
+            System.currentTimeMillis().toString(), content, note.id, 0L, User(uid, "")
         )
         socketService.sendMessage(message)
 
