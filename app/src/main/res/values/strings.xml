@@ -134,4 +134,10 @@
     <string name="btn_continue_text">Continue</string>
     <string name="default_name">Me</string>
     <string name="send">Send</string>
+
+    <string name="agree" translatable="false">Agree</string>
+    <string name="cancel" translatable="false">Cancel</string>
+    <string name="notification" translatable="false">Notification</string>
+    <string name="notice" translatable="false">Notice</string>
+    <string name="ask_send_image" translatable="false">Send this image?</string>
 </resources>

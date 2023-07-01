@@ -35,6 +35,7 @@ import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
+import okhttp3.internal.wait
 import javax.inject.Inject
 
 
@@ -55,6 +56,7 @@ class ChatSocketService : Service() {
     @Inject
     lateinit var gson: Gson
     private lateinit var socket: Socket
+    private var isRunning = false
 
     private val scope = CoroutineScope(Dispatchers.IO)
     private val binder by lazy {
@@ -120,12 +122,15 @@ class ChatSocketService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        initObservers()
-        val refreshToken = userLocals.getRefreshToken()
-        if (refreshToken.isEmpty()) {
-            accessTokenLiveData.postValue(Resource.Error(InvalidTokenException()))
-        } else {
-            callGetAccessTokenApi(refreshToken)
+        if (!isRunning) {
+            isRunning = true
+            initObservers()
+            val refreshToken = userLocals.getRefreshToken()
+            if (refreshToken.isEmpty()) {
+                accessTokenLiveData.postValue(Resource.Error(InvalidTokenException()))
+            } else {
+                callGetAccessTokenApi(refreshToken)
+            }
         }
     }
 

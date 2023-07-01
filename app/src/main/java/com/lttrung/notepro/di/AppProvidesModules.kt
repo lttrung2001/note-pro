@@ -3,6 +3,8 @@ package com.lttrung.notepro.di
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.lttrung.notepro.domain.data.locals.UserDatabase
@@ -118,4 +120,8 @@ class AppProvidesModules {
     fun providesSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
         return context.getSharedPreferences(DEFAULT_PREFERENCES_NAME, Context.MODE_PRIVATE)
     }
+
+    @Provides
+    @Singleton
+    fun providesStorageRef(): StorageReference = FirebaseStorage.getInstance().reference
 }

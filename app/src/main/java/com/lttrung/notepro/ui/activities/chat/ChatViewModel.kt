@@ -2,6 +2,8 @@ package com.lttrung.notepro.ui.activities.chat
 
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
+import com.google.android.gms.tasks.Task
+import com.google.firebase.storage.UploadTask
 import com.lttrung.notepro.domain.data.locals.entities.CurrentUser
 import com.lttrung.notepro.domain.data.locals.models.ImageSelectionLocalsModel
 import com.lttrung.notepro.domain.data.networks.models.Image
@@ -34,6 +36,10 @@ class ChatViewModel @Inject constructor(
         MutableLiveData<Paging<ImageSelectionLocalsModel>>()
     }
 
+    val uploadLiveData by lazy {
+        MutableLiveData<String>()
+    }
+
     internal fun getCurrentUser() {
         launch {
             val changeProfile = userRepositories.getCurrentUser()
@@ -63,6 +69,12 @@ class ChatViewModel @Inject constructor(
                 })
             imagesLiveData.postValue(newPaging)
             imagePage++
+        }
+    }
+
+    fun saveUploadResult(uri: String) {
+        launch {
+            uploadLiveData.postValue(uri)
         }
     }
 }

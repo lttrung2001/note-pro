@@ -47,5 +47,9 @@ class AppConstant {
 
         const val TITLE_ITEM = 1
         const val NOTE_ITEM = 2
+
+        const val MESSAGE_CONTENT_TYPE_TEXT = "text"
+        const val MESSAGE_CONTENT_TYPE_IMAGE = "image"
+        const val MESSAGE_CONTENT_TYPE_VIDEO = "video"
     }
 }

@@ -5,6 +5,7 @@ import java.io.Serializable
 data class Message(
     val id: String,
     val content: String,
+    val contentType: String,
     val room: String,
     val time: Long,
     val user: User

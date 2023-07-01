@@ -4,14 +4,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.lttrung.notepro.R
-import com.lttrung.notepro.databinding.LoadingItemBinding
 import com.lttrung.notepro.databinding.MyMessageItemBinding
 import com.lttrung.notepro.databinding.OtherMessageItemBinding
 import com.lttrung.notepro.domain.data.networks.models.Message
-import com.lttrung.notepro.domain.data.networks.models.User
+import com.lttrung.notepro.utils.AppConstant
+import com.lttrung.notepro.utils.remove
+import com.lttrung.notepro.utils.show
+import com.squareup.picasso.Picasso
 
 class MessageAdapter : ListAdapter<Message, ViewHolder>(CALLBACK) {
     companion object {
@@ -72,6 +73,7 @@ class MessageAdapter : ListAdapter<Message, ViewHolder>(CALLBACK) {
             userId -> {
                 MY_MESSAGE
             }
+
             else -> {
                 OTHER_MESSAGE
             }
@@ -80,18 +82,42 @@ class MessageAdapter : ListAdapter<Message, ViewHolder>(CALLBACK) {
 
     class MyMessageViewHolder(private val binding: MyMessageItemBinding) :
         ViewHolder(binding.root) {
-        fun bind(message: Message) {
-            binding.message.text = message.content
+        fun bind(msg: Message) {
+            when (msg.contentType) {
+                AppConstant.MESSAGE_CONTENT_TYPE_TEXT -> {
+                    binding.message.text = msg.content
+                }
+
+                AppConstant.MESSAGE_CONTENT_TYPE_IMAGE -> {
+                    binding.apply {
+                        message.remove()
+                        image.show()
+                        Picasso.get().load(msg.content).resize(160, 200).into(image)
+                    }
+                }
+            }
         }
     }
 
     class OtherMessageViewHolder(
         private val binding: OtherMessageItemBinding
     ) : ViewHolder(binding.root) {
-        fun bind(message: Message) {
-            binding.imgAvt.setImageResource(R.drawable.me)
-            binding.name.text = message.user.fullName
-            binding.message.text = message.content
+        fun bind(msg: Message) {
+            binding.apply {
+                imgAvt.setImageResource(R.drawable.me)
+                name.text = msg.user.fullName
+                when (msg.contentType) {
+                    AppConstant.MESSAGE_CONTENT_TYPE_TEXT -> {
+                        message.text = msg.content
+                    }
+
+                    AppConstant.MESSAGE_CONTENT_TYPE_IMAGE -> {
+                        message.remove()
+                        contentImage.show()
+                        Picasso.get().load(msg.content).resize(160, 200).into(contentImage)
+                    }
+                }
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.lttrung.notepro.ui.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -30,6 +31,8 @@ class ImageSelectionAdapter :
 
         }
     }
+    private var isSelectSingleImage = false
+    private var itemListener: ItemListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageSelectionViewHolder {
         val binding =
@@ -41,17 +44,38 @@ class ImageSelectionAdapter :
         holder.bind(getItem(position))
     }
 
-    class ImageSelectionViewHolder(private val binding: ImageSelectionItemBinding) :
+    fun setIsSelectSingleImage(b: Boolean): ImageSelectionAdapter {
+        isSelectSingleImage = b
+        return this
+    }
+
+    fun setItemListener(itemListener: ItemListener): ImageSelectionAdapter {
+        this.itemListener = itemListener
+        return this
+    }
+
+    interface ItemListener {
+        fun onClick(image: ImageSelectionLocalsModel)
+    }
+
+    inner class ImageSelectionViewHolder(private val binding: ImageSelectionItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(image: ImageSelectionLocalsModel) {
             Picasso.get().load(File(image.url)).resize(300,400).into(binding.img)
-            binding.checkbox.isChecked = false
-            binding.checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
-                image.isSelected = isChecked
-            }
-            binding.root.setOnClickListener {
-                image.isSelected = !image.isSelected
+            if (!isSelectSingleImage) {
                 binding.checkbox.isChecked = image.isSelected
+                binding.checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
+                    image.isSelected = isChecked
+                }
+                binding.root.setOnClickListener {
+                    image.isSelected = !image.isSelected
+                    binding.checkbox.isChecked = image.isSelected
+                }
+            } else {
+                binding.checkbox.visibility = View.GONE
+                binding.root.setOnClickListener {
+                    itemListener?.onClick(image)
+                }
             }
         }
     }

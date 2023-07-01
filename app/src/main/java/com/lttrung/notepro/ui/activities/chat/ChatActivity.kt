@@ -11,9 +11,9 @@ import android.os.IBinder
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.databinding.ActivityChatBinding
 import com.lttrung.notepro.domain.data.locals.entities.CurrentUser
-import com.lttrung.notepro.domain.data.networks.models.Image
 import com.lttrung.notepro.domain.data.networks.models.Message
 import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.domain.data.networks.models.User
@@ -34,7 +34,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class ChatActivity : BaseActivity() {
     private lateinit var socketService: ChatSocketService
-    private lateinit var currentUser: CurrentUser
     override val binding by lazy {
         ActivityChatBinding.inflate(layoutInflater)
     }
@@ -57,12 +56,9 @@ class ChatActivity : BaseActivity() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 val message = intent?.getSerializableExtra(MESSAGE) as Message
                 if (message.room == note.id) {
-                    val messages = viewModel.messagesLiveData.value.orEmpty().toMutableList()
-                    messages.add(message)
-                    // Update adapter
-                    messageAdapter.submitList(messages)
-                    // Scroll to new message
-                    binding.messages.smoothScrollToPosition(messages.size - 1)
+                    val messages = messageAdapter.currentList.toMutableList().apply {
+                        add(message)
+                    }
                     // Update live data
                     viewModel.messagesLiveData.postValue(messages)
                 } else {
@@ -81,6 +77,8 @@ class ChatActivity : BaseActivity() {
                 if (viewModel.isLoading.value == false) {
                     if (!recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
                         // Load message here...
+                        viewModel.isLoading.postValue(true)
+                        viewModel.getMessages(note.id, viewModel.page, PAGE_LIMIT)
                     }
                 }
             }
@@ -133,14 +131,43 @@ class ChatActivity : BaseActivity() {
 
     override fun initObservers() {
         super.initObservers()
-        viewModel.currentUserLiveData.observe(this) { user ->
-            currentUser = user
-            currentUser.id ?: finish()
-            messageAdapter.userId = currentUser.id!!
-            viewModel.getMessages(note.id, viewModel.page, PAGE_LIMIT)
-        }
+        observeCurrentUserData()
+        observeGetMessagesData()
+        observeUploadResultData()
+    }
+
+    private fun observeGetMessagesData() {
         viewModel.messagesLiveData.observe(this) { messages ->
+            viewModel.isLoading.postValue(false)
             messageAdapter.submitList(messages)
+            if (messages.isEmpty()) {
+                binding.messages.removeOnScrollListener(onScrollListener)
+            }
+        }
+    }
+
+    private fun observeUploadResultData() {
+        viewModel.uploadLiveData.observe(this@ChatActivity) { uri ->
+            val message = Message(
+                System.currentTimeMillis().toString(),
+                uri,
+                AppConstant.MESSAGE_CONTENT_TYPE_IMAGE,
+                note.id,
+                0L,
+                User(messageAdapter.userId, "")
+            )
+            viewModel.messagesLiveData.postValue(messageAdapter.currentList.toMutableList().apply {
+                add(message)
+            })
+            socketService.sendMessage(message)
+        }
+    }
+
+    private fun observeCurrentUserData() {
+        viewModel.currentUserLiveData.observe(this) { user ->
+            user.id ?: finish()
+            messageAdapter.userId = user.id!!
+            viewModel.getMessages(note.id, viewModel.page, PAGE_LIMIT)
         }
     }
 
@@ -165,7 +192,14 @@ class ChatActivity : BaseActivity() {
 
     override fun initViews() {
         super.initViews()
-        binding.messages.adapter = messageAdapter
+        initMessageRecyclerView()
+    }
+
+    private fun initMessageRecyclerView() {
+        binding.messages.apply {
+            adapter = messageAdapter
+            setItemViewCacheSize(100)
+        }
     }
 
     private fun sendMessage() {
@@ -175,17 +209,22 @@ class ChatActivity : BaseActivity() {
             return
         }
 
-        val uid = currentUser.id ?: ""
+        val uid = messageAdapter.userId
 
         val message = Message(
-            System.currentTimeMillis().toString(), content, note.id, 0L, User(uid, "")
+            System.currentTimeMillis().toString(),
+            content,
+            AppConstant.MESSAGE_CONTENT_TYPE_TEXT,
+            note.id,
+            0L,
+            User(uid, "")
         )
         socketService.sendMessage(message)
 
-        val messages = messageAdapter.currentList.toMutableList()
-        messages.add(message)
-        messageAdapter.submitList(messages)
+        val messages = messageAdapter.currentList.toMutableList().apply {
+            add(message)
+        }
+        viewModel.messagesLiveData.postValue(messages)
         binding.messageBox.setText("")
-        binding.messages.smoothScrollToPosition(messages.size - 1)
     }
 }
