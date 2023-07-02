@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_margin="16dp"
     android:orientation="vertical">
 
@@ -31,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Thành Trung"
+            tools:text="Thành Trung"
             android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@id/img_upload_time"
             app:layout_constraintLeft_toRightOf="@id/user_image"

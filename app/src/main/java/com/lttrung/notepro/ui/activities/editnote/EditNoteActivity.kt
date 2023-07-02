@@ -1,6 +1,5 @@
 package com.lttrung.notepro.ui.activities.editnote
 
-import android.Manifest
 import android.app.Service
 import android.content.ComponentName
 import android.content.Intent
@@ -22,6 +21,7 @@ import com.lttrung.notepro.ui.adapters.FeatureAdapter
 import com.lttrung.notepro.ui.adapters.ImageAdapter
 import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.ui.common.StartSnapHelper
+import com.lttrung.notepro.ui.dialogs.builders.DialogBuilder
 import com.lttrung.notepro.ui.entities.Feature
 import com.lttrung.notepro.ui.entities.ListImage
 import com.lttrung.notepro.utils.AppConstant
@@ -31,13 +31,11 @@ import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE_ACTION_TYPE
 import com.lttrung.notepro.utils.AppConstant.Companion.SELECTED_IMAGES
 import com.lttrung.notepro.utils.FeatureId
-import com.lttrung.notepro.utils.JitsiHelper
 import com.lttrung.notepro.utils.openCamera
 import com.lttrung.notepro.utils.openGallery
 import com.lttrung.notepro.utils.requestPermissionToOpenCamera
 import com.lttrung.notepro.utils.requestPermissionToReadGallery
 import dagger.hilt.android.AndroidEntryPoint
-import org.jitsi.meet.sdk.JitsiMeetActivity
 
 @AndroidEntryPoint
 class EditNoteActivity : BaseActivity() {
@@ -108,12 +106,16 @@ class EditNoteActivity : BaseActivity() {
                         startActivity(chatIntent)
                     }
 
-                    FeatureId.CALL -> {
-                        viewModel.getCurrentUser()
-                    }
-
                     FeatureId.DELETE -> {
-                        viewModel.deleteNote(getNoteFromUi())
+                        DialogBuilder(this@EditNoteActivity)
+                            .setNotice(R.string.ask_for_delete_note)
+                            .addButtonRight {
+                                viewModel.deleteNote(getNoteFromUi())
+                            }
+                            .addButtonLeft(R.string.cancel)
+                            .setCanTouchOutside(false)
+                            .build()
+                            .show()
                     }
 
                     else -> {
@@ -179,7 +181,6 @@ class EditNoteActivity : BaseActivity() {
             Feature(FeatureId.GALLERY, R.drawable.ic_baseline_photo_album_24),
             Feature(FeatureId.MEMBERS, R.drawable.ic_baseline_groups_24),
             Feature(FeatureId.CHAT, R.drawable.ic_baseline_message_24),
-            Feature(FeatureId.CALL, R.drawable.ic_baseline_call_24),
             Feature(FeatureId.DELETE, R.drawable.ic_baseline_delete_outline_24)
         )
     }
@@ -222,14 +223,6 @@ class EditNoteActivity : BaseActivity() {
             intent.putExtra(NOTE, noteDetails)
             bindDataToViews()
         }
-
-        viewModel.currentUserLiveData.observe(this@EditNoteActivity) { currentUser ->
-            if (currentUser != null) {
-                socketService.call(note.id)
-                val options = JitsiHelper.createOptions(note.id, currentUser)
-                JitsiMeetActivity.launch(this, options)
-            }
-        }
     }
 
     private fun bindDataToViews() {
@@ -254,7 +247,6 @@ class EditNoteActivity : BaseActivity() {
         }
 
         StartSnapHelper().attachToRecyclerView(binding.rvImages)
-        StartSnapHelper().attachToRecyclerView(binding.rvFeatures)
         imagesAdapter.submitList(note.images)
         featureAdapter.submitList(getFeatures())
     }

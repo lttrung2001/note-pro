@@ -5,14 +5,14 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import com.lttrung.notepro.domain.data.locals.models.ImageSelectionLocalsModel
+import com.lttrung.notepro.domain.data.locals.models.MediaSelectionLocalsModel
 import com.lttrung.notepro.domain.data.networks.models.Paging
 
 object MediaUtils {
     fun findImages(
         context: Context, page: Int, limit: Int
-    ): Paging<ImageSelectionLocalsModel> {
-        val imageList: ArrayList<ImageSelectionLocalsModel> = ArrayList()
+    ): Paging<MediaSelectionLocalsModel> {
+        val imageList: ArrayList<MediaSelectionLocalsModel> = ArrayList()
         val columns = arrayOf(
             MediaStore.Images.Media.DISPLAY_NAME,
             MediaStore.Images.Media.DATA,
@@ -56,12 +56,13 @@ object MediaUtils {
                 val dataColumnIndex =
                     cs.getColumnIndex(MediaStore.Images.Media.DATA)
                 imageList.add(
-                    ImageSelectionLocalsModel(
+                    MediaSelectionLocalsModel(
                         cs.getInt(idColumnIndex).toString(),
                         cs.getString(nameColumnIndex),
                         cs.getString(dataColumnIndex),
                         System.currentTimeMillis(),
                         "",
+                        AppConstant.MESSAGE_CONTENT_TYPE_IMAGE,
                         false
                     )
                 )

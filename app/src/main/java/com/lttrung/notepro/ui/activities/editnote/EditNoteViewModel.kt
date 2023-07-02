@@ -2,7 +2,6 @@ package com.lttrung.notepro.ui.activities.editnote
 
 import android.webkit.URLUtil
 import androidx.lifecycle.MutableLiveData
-import com.lttrung.notepro.domain.data.locals.entities.CurrentUser
 import com.lttrung.notepro.domain.data.networks.models.Image
 import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.domain.repositories.NoteRepositories
@@ -29,10 +28,6 @@ class EditNoteViewModel @Inject constructor(
 
     internal val noteDetailsLiveData by lazy {
         MutableLiveData<Note>()
-    }
-
-    internal val currentUserLiveData by lazy {
-        MutableLiveData<CurrentUser>()
     }
 
     internal fun editNote(note: Note) {
@@ -65,12 +60,5 @@ class EditNoteViewModel @Inject constructor(
         images.remove(image)
         note.images = images
         noteDetailsLiveData.postValue(note)
-    }
-
-    fun getCurrentUser() {
-        launch {
-            val user = userRepositories.getCurrentUser()
-            currentUserLiveData.postValue(user)
-        }
     }
 }

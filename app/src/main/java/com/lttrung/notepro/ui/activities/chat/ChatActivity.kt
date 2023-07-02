@@ -23,6 +23,7 @@ import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.domain.data.networks.models.User
 import com.lttrung.notepro.ui.adapters.MessageAdapter
 import com.lttrung.notepro.ui.base.BaseActivity
+import com.lttrung.notepro.ui.dialogs.builders.DialogBuilder
 import com.lttrung.notepro.ui.fragments.BottomSheetGallery
 import com.lttrung.notepro.utils.AppConstant
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_CHANNEL_ID
@@ -30,11 +31,13 @@ import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE_RECEIVED
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.PAGE_LIMIT
+import com.lttrung.notepro.utils.JitsiHelper
 import com.lttrung.notepro.utils.NotificationHelper
 import com.lttrung.notepro.utils.openCamera
 import com.lttrung.notepro.utils.requestPermissionToOpenCamera
 import com.lttrung.notepro.utils.toByteArray
 import dagger.hilt.android.AndroidEntryPoint
+import org.jitsi.meet.sdk.JitsiMeetActivity
 import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.inject.Inject
@@ -137,6 +140,7 @@ class ChatActivity : BaseActivity() {
         observeUploadResultData()
     }
 
+
     private fun observeGetMessagesData() {
         viewModel.messagesLiveData.observe(this) { messages ->
             viewModel.isLoading.postValue(false)
@@ -187,6 +191,22 @@ class ChatActivity : BaseActivity() {
             btnBottomSheetGallery.setOnClickListener {
                 bottomGallery = BottomSheetGallery()
                 bottomGallery?.show(supportFragmentManager, bottomGallery?.tag)
+            }
+            btnCall.setOnClickListener {
+                viewModel.currentUserLiveData.value?.let { currentUser ->
+                    socketService.call(note.id)
+                    val options = JitsiHelper.createOptions(note.id, currentUser)
+                    JitsiMeetActivity.launch(this@ChatActivity, options)
+                    return@setOnClickListener
+                }
+                DialogBuilder(this@ChatActivity)
+                    .setNotice(R.string.error_can_not_make_call)
+                    .setCanTouchOutside(false)
+                    .build()
+                    .show()
+            }
+            btnInfo.setOnClickListener {
+                // Start info activity
             }
         }
     }

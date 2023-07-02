@@ -14,6 +14,7 @@ import com.lttrung.notepro.databinding.ActivityEditMemberBinding
 import com.lttrung.notepro.domain.data.networks.models.Member
 import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.ui.base.BaseActivity
+import com.lttrung.notepro.ui.dialogs.builders.DialogBuilder
 import com.lttrung.notepro.utils.AppConstant.Companion.DELETED_MEMBER
 import com.lttrung.notepro.utils.AppConstant.Companion.EDITED_MEMBER
 import com.lttrung.notepro.utils.AppConstant.Companion.MEMBER
@@ -89,7 +90,15 @@ class EditMemberActivity : BaseActivity() {
         super.initListeners()
         binding.apply {
             btnDeleteMember.setOnClickListener {
-                viewModel.deleteMember(note.id, member.id)
+                DialogBuilder(this@EditMemberActivity)
+                    .setNotice(R.string.ask_for_delete_member)
+                    .addButtonRight {
+                        viewModel.deleteMember(note.id, member.id)
+                    }
+                    .addButtonLeft(R.string.cancel)
+                    .setCanTouchOutside(false)
+                    .build()
+                    .show()
             }
             btnEditMember.setOnClickListener {
                 val member = getMemberDataFromUi()

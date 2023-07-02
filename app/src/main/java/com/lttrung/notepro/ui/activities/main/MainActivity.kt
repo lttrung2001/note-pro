@@ -1,11 +1,15 @@
 package com.lttrung.notepro.ui.activities.main
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.paging.Config
 import com.google.android.material.snackbar.Snackbar
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityMainBinding
@@ -119,6 +123,31 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    private val searchWatcher by lazy {
+        object: TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun afterTextChanged(p0: Editable?) {
+                val allNotes = viewModel.notesLiveData.value.orEmpty()
+                if (p0.toString().isEmpty()) {
+                    noteAdapter.submitList(allNotes)
+                } else {
+                    val filteredNotes = allNotes.filter {
+                        it.title.contains(p0.toString()) or it.content.contains(p0.toString())
+                    }
+                    noteAdapter.submitList(filteredNotes)
+                }
+            }
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding.searchBar.clearFocus()
+    }
+
     private fun getMainFeatures(): List<Feature> {
         return listOf(
             Feature(FeatureId.SETTING, R.drawable.ic_baseline_settings_24),
@@ -149,13 +178,23 @@ class MainActivity : BaseActivity() {
 
     override fun initListeners() {
         super.initListeners()
-        binding.fab.setOnClickListener(fabOnClickListener)
+        binding.apply {
+            fab.setOnClickListener(fabOnClickListener)
+            searchBar.addTextChangedListener(searchWatcher)
+            searchBar.setOnFocusChangeListener { view, b ->
+                if (!b) {
+                    noteAdapter.submitList(viewModel.notesLiveData.value.orEmpty())
+                }
+            }
+        }
     }
 
     override fun initViews() {
         super.initViews()
-        binding.rvFeatures.adapter = featureAdapter
-        binding.rvNotes.adapter = noteAdapter
+        binding.apply {
+            rvFeatures.adapter = featureAdapter
+            rvNotes.adapter = noteAdapter
+        }
 
         featureAdapter.submitList(getMainFeatures())
     }

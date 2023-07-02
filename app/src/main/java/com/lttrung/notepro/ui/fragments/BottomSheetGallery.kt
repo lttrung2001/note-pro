@@ -7,13 +7,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.FragmentBottomSheetGalleryBinding
-import com.lttrung.notepro.domain.data.locals.models.ImageSelectionLocalsModel
+import com.lttrung.notepro.domain.data.locals.models.MediaSelectionLocalsModel
 import com.lttrung.notepro.ui.activities.chat.ChatViewModel
-import com.lttrung.notepro.ui.adapters.ImageSelectionAdapter
+import com.lttrung.notepro.ui.adapters.MediaSelectionAdapter
 import com.lttrung.notepro.ui.dialogs.builders.DialogBuilder
 import com.lttrung.notepro.utils.AppConstant.Companion.PAGE_LIMIT
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,10 +28,10 @@ class BottomSheetGallery : BottomSheetDialogFragment() {
     }
     private val viewModel: ChatViewModel by activityViewModels()
     private val imageAdapter by lazy {
-        ImageSelectionAdapter()
+        MediaSelectionAdapter()
             .setIsSelectSingleImage(true)
-            .setItemListener(object : ImageSelectionAdapter.ItemListener {
-                override fun onClick(image: ImageSelectionLocalsModel) {
+            .setItemListener(object : MediaSelectionAdapter.ItemListener {
+                override fun onClick(image: MediaSelectionLocalsModel) {
                     DialogBuilder(requireContext())
                         .setNotice(R.string.ask_send_image)
                         .addButtonLeft(R.string.back)

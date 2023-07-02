@@ -7,12 +7,30 @@
     android:fitsSystemWindows="true"
     tools:context=".ui.activities.main.MainActivity">
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/searchBarContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:backgroundTint="@color/secondary"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="2dp">
+
+        <EditText
+            android:id="@+id/searchBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:hint="@string/search_here"
+            android:padding="10dp" />
+    </androidx.cardview.widget.CardView>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvNotes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/bottomBar"
-        android:layout_alignParentTop="true"
+        android:layout_below="@id/searchBarContainer"
         android:nestedScrollingEnabled="true"
         android:orientation="vertical"
         android:overScrollMode="never"

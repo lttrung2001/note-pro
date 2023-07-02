@@ -141,4 +141,7 @@
     <string name="notice">Notice</string>
     <string name="ask_send_image">Send this image?</string>
     <string name="message_content_empty_notice">Please enter message</string>
+    <string name="ask_for_delete_note">Are you sure to delete this note?</string>
+    <string name="ask_for_delete_member">Are you sure to delete this member?</string>
+    <string name="error_can_not_make_call">Can not make a call at the moment</string>
 </resources>

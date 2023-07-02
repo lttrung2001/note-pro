@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import com.lttrung.notepro.databinding.ActivityViewGalleryBinding
-import com.lttrung.notepro.ui.adapters.ImageSelectionAdapter
+import com.lttrung.notepro.ui.adapters.MediaSelectionAdapter
 import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.PAGE_LIMIT
 import com.lttrung.notepro.utils.AppConstant.Companion.SELECTED_IMAGES
@@ -18,7 +18,7 @@ class ViewGalleryActivity : BaseActivity() {
     }
     override val viewModel: ViewGalleryViewModel by viewModels()
     private val imageSelectionAdapter by lazy {
-        ImageSelectionAdapter()
+        MediaSelectionAdapter()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -90,4 +90,7 @@
     <string name="notice">Thông báo</string>
     <string name="ask_send_image">Gửi ảnh này?</string>
     <string name="message_content_empty_notice">Hãy nhập tin nhắn</string>
+    <string name="ask_for_delete_note">Bạn có chắc chắn muốn xóa ghi chú này?</string>
+    <string name="ask_for_delete_member">Bạn có chắc chắn muốn xóa thành viên này?</string>
+    <string name="error_can_not_make_call">Không thể thực hiện cuộc gọi vào lúc này</string>
 </resources>

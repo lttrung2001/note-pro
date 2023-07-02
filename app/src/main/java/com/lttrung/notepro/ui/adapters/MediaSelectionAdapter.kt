@@ -7,24 +7,24 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.lttrung.notepro.databinding.ImageSelectionItemBinding
-import com.lttrung.notepro.domain.data.locals.models.ImageSelectionLocalsModel
+import com.lttrung.notepro.domain.data.locals.models.MediaSelectionLocalsModel
 import com.squareup.picasso.Picasso
 import java.io.File
 
-class ImageSelectionAdapter :
-    ListAdapter<ImageSelectionLocalsModel, ImageSelectionAdapter.ImageSelectionViewHolder>(
+class MediaSelectionAdapter :
+    ListAdapter<MediaSelectionLocalsModel, MediaSelectionAdapter.ImageSelectionViewHolder>(
         itemCallback
     ) {
     companion object {
-        private val itemCallback = object : DiffUtil.ItemCallback<ImageSelectionLocalsModel>() {
+        private val itemCallback = object : DiffUtil.ItemCallback<MediaSelectionLocalsModel>() {
             override fun areItemsTheSame(
-                oldItem: ImageSelectionLocalsModel, newItem: ImageSelectionLocalsModel
+                oldItem: MediaSelectionLocalsModel, newItem: MediaSelectionLocalsModel
             ): Boolean {
                 return oldItem.id == newItem.id
             }
 
             override fun areContentsTheSame(
-                oldItem: ImageSelectionLocalsModel, newItem: ImageSelectionLocalsModel
+                oldItem: MediaSelectionLocalsModel, newItem: MediaSelectionLocalsModel
             ): Boolean {
                 return oldItem == newItem
             }
@@ -44,23 +44,23 @@ class ImageSelectionAdapter :
         holder.bind(getItem(position))
     }
 
-    fun setIsSelectSingleImage(b: Boolean): ImageSelectionAdapter {
+    fun setIsSelectSingleImage(b: Boolean): MediaSelectionAdapter {
         isSelectSingleImage = b
         return this
     }
 
-    fun setItemListener(itemListener: ItemListener): ImageSelectionAdapter {
+    fun setItemListener(itemListener: ItemListener): MediaSelectionAdapter {
         this.itemListener = itemListener
         return this
     }
 
     interface ItemListener {
-        fun onClick(image: ImageSelectionLocalsModel)
+        fun onClick(image: MediaSelectionLocalsModel)
     }
 
     inner class ImageSelectionViewHolder(private val binding: ImageSelectionItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(image: ImageSelectionLocalsModel) {
+        fun bind(image: MediaSelectionLocalsModel) {
             Picasso.get().load(File(image.url)).resize(300,400).into(binding.img)
             if (!isSelectSingleImage) {
                 binding.checkbox.isChecked = image.isSelected
