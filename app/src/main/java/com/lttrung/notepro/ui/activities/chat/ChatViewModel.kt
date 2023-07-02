@@ -2,17 +2,14 @@ package com.lttrung.notepro.ui.activities.chat
 
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
-import com.google.android.gms.tasks.Task
-import com.google.firebase.storage.UploadTask
 import com.lttrung.notepro.domain.data.locals.entities.CurrentUser
 import com.lttrung.notepro.domain.data.locals.models.ImageSelectionLocalsModel
-import com.lttrung.notepro.domain.data.networks.models.Image
 import com.lttrung.notepro.domain.data.networks.models.Message
 import com.lttrung.notepro.domain.data.networks.models.Paging
 import com.lttrung.notepro.domain.repositories.MessageRepositories
 import com.lttrung.notepro.domain.repositories.UserRepositories
 import com.lttrung.notepro.ui.base.BaseViewModel
-import com.lttrung.notepro.utils.GalleryUtils
+import com.lttrung.notepro.utils.MediaUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -60,7 +57,7 @@ class ChatViewModel @Inject constructor(
 
     internal fun getImages(context: Context, page: Int, limit: Int) {
         launch {
-            val paging = GalleryUtils.findImages(context, page, limit)
+            val paging = MediaUtils.findImages(context, page, limit)
             val newPaging = Paging(
                 paging.hasPreviousPage,
                 paging.hasNextPage,

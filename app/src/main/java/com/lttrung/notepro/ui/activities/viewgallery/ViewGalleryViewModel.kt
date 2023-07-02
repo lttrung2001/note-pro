@@ -5,8 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.lttrung.notepro.domain.data.locals.models.ImageSelectionLocalsModel
 import com.lttrung.notepro.domain.data.networks.models.Paging
 import com.lttrung.notepro.ui.base.BaseViewModel
-import com.lttrung.notepro.utils.GalleryUtils
-import com.lttrung.notepro.utils.Resource
+import com.lttrung.notepro.utils.MediaUtils
 
 class ViewGalleryViewModel : BaseViewModel() {
     internal val imagesLiveData by lazy {
@@ -15,7 +14,7 @@ class ViewGalleryViewModel : BaseViewModel() {
 
     internal fun getImages(context: Context, page: Int, limit: Int) {
         launch {
-            val images = GalleryUtils.findImages(context, page, limit)
+            val images = MediaUtils.findImages(context, page, limit)
             imagesLiveData.postValue(images)
         }
     }

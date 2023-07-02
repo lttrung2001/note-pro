@@ -8,7 +8,7 @@ import android.provider.MediaStore
 import com.lttrung.notepro.domain.data.locals.models.ImageSelectionLocalsModel
 import com.lttrung.notepro.domain.data.networks.models.Paging
 
-object GalleryUtils {
+object MediaUtils {
     fun findImages(
         context: Context, page: Int, limit: Int
     ): Paging<ImageSelectionLocalsModel> {
