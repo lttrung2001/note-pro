@@ -31,7 +31,7 @@ class MediaSelectionAdapter :
 
         }
     }
-    private var isSelectSingleImage = false
+    private var isSelectSingle = false
     private var itemListener: ItemListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageSelectionViewHolder {
@@ -44,8 +44,8 @@ class MediaSelectionAdapter :
         holder.bind(getItem(position))
     }
 
-    fun setIsSelectSingleImage(b: Boolean): MediaSelectionAdapter {
-        isSelectSingleImage = b
+    fun setIsSelectSingle(b: Boolean): MediaSelectionAdapter {
+        isSelectSingle = b
         return this
     }
 
@@ -62,7 +62,7 @@ class MediaSelectionAdapter :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(image: MediaSelectionLocalsModel) {
             Picasso.get().load(File(image.url)).resize(300,400).into(binding.img)
-            if (!isSelectSingleImage) {
+            if (!isSelectSingle) {
                 binding.checkbox.isChecked = image.isSelected
                 binding.checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
                     image.isSelected = isChecked

@@ -29,7 +29,7 @@ class BottomSheetGallery : BottomSheetDialogFragment() {
     private val viewModel: ChatViewModel by activityViewModels()
     private val imageAdapter by lazy {
         MediaSelectionAdapter()
-            .setIsSelectSingleImage(true)
+            .setIsSelectSingle(true)
             .setItemListener(object : MediaSelectionAdapter.ItemListener {
                 override fun onClick(image: MediaSelectionLocalsModel) {
                     DialogBuilder(requireContext())
