@@ -1,6 +1,5 @@
 package com.lttrung.notepro.ui.fragments
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,13 +7,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.FragmentBottomSheetGalleryBinding
 import com.lttrung.notepro.domain.data.locals.models.ImageSelectionLocalsModel
 import com.lttrung.notepro.ui.activities.chat.ChatViewModel
 import com.lttrung.notepro.ui.adapters.ImageSelectionAdapter
-import com.lttrung.notepro.ui.dialogs.UploadDialog
 import com.lttrung.notepro.ui.dialogs.builders.DialogBuilder
 import com.lttrung.notepro.utils.AppConstant.Companion.PAGE_LIMIT
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,14 +38,25 @@ class BottomSheetGallery : BottomSheetDialogFragment() {
                         .addButtonLeft(R.string.back)
                         .addButtonRight(R.string.send) {
                             dismiss()
-                            // Send image
-                            UploadDialog(requireContext(), image.url) { task ->
-                                viewModel.saveUploadResult(task)
-                            }.show()
+                            sendImageViaCloudStorage(image.url)
                         }.build().show()
                 }
             })
     }
+
+    private fun sendImageViaCloudStorage(url: String) {
+        val byteArray = File(url).readBytes()
+        storageRef.child("images/messages/${System.currentTimeMillis()}.jpg")
+            .putBytes(byteArray)
+            .addOnSuccessListener {
+                it.metadata?.reference?.downloadUrl?.addOnSuccessListener { uri ->
+                    viewModel.saveUploadResult(uri.toString())
+                    dismiss()
+                }
+
+            }
+    }
+
     private val onScrollListener by lazy {
         object : RecyclerView.OnScrollListener() {
             // Load more images

@@ -6,14 +6,18 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.ServiceConnection
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.IBinder
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityChatBinding
-import com.lttrung.notepro.domain.data.locals.entities.CurrentUser
 import com.lttrung.notepro.domain.data.networks.models.Message
 import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.domain.data.networks.models.User
@@ -29,10 +33,16 @@ import com.lttrung.notepro.utils.AppConstant.Companion.PAGE_LIMIT
 import com.lttrung.notepro.utils.NotificationHelper
 import com.lttrung.notepro.utils.openCamera
 import com.lttrung.notepro.utils.requestPermissionToOpenCamera
+import com.lttrung.notepro.utils.toByteArray
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.ByteArrayOutputStream
+import java.io.File
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ChatActivity : BaseActivity() {
+    @Inject
+    lateinit var storageRef: StorageReference
     private lateinit var socketService: ChatSocketService
     override val binding by lazy {
         ActivityChatBinding.inflate(layoutInflater)
@@ -41,10 +51,11 @@ class ChatActivity : BaseActivity() {
     private val launcher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
-                // If camera
-                // If choose from gallery
+                // Camera result
+                handleCameraResult(result)
             }
         }
+
     private val messageAdapter by lazy {
         MessageAdapter()
     }
@@ -55,17 +66,7 @@ class ChatActivity : BaseActivity() {
         object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 val message = intent?.getSerializableExtra(MESSAGE) as Message
-                if (message.room == note.id) {
-                    val messages = messageAdapter.currentList.toMutableList().apply {
-                        add(message)
-                    }
-                    // Update live data
-                    viewModel.messagesLiveData.postValue(messages)
-                } else {
-                    NotificationHelper.pushNotification(
-                        this@ChatActivity, CHAT_CHANNEL_ID, message
-                    )
-                }
+                handleIncomingMessage(message)
             }
         }
     }
@@ -206,6 +207,12 @@ class ChatActivity : BaseActivity() {
         val content = binding.messageBox.text?.trim().toString()
 
         if (content.isBlank()) {
+            Snackbar.make(
+                this@ChatActivity,
+                binding.root,
+                getString(R.string.message_content_empty_notice),
+                Snackbar.LENGTH_LONG
+            ).show()
             return
         }
 
@@ -226,5 +233,29 @@ class ChatActivity : BaseActivity() {
         }
         viewModel.messagesLiveData.postValue(messages)
         binding.messageBox.setText("")
+    }
+
+    private fun handleIncomingMessage(message: Message) {
+        if (message.room == note.id) {
+            val messages = messageAdapter.currentList.toMutableList().apply {
+                add(message)
+            }
+            // Update live data
+            viewModel.messagesLiveData.postValue(messages)
+        } else {
+            NotificationHelper.pushNotification(
+                this@ChatActivity, CHAT_CHANNEL_ID, message
+            )
+        }
+    }
+
+    private fun handleCameraResult(result: ActivityResult) {
+        val image = result.data?.extras?.get("data") as Bitmap
+        storageRef.child("images/messages/${System.currentTimeMillis()}.jpg")
+            .putBytes(image.toByteArray()).addOnSuccessListener { task ->
+                task.metadata?.reference?.downloadUrl?.addOnSuccessListener { uri ->
+                    viewModel.saveUploadResult(uri.toString())
+                }
+            }
     }
 }

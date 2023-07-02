@@ -84,4 +84,10 @@
     <string name="default_name">Tôi</string>
     <string name="unpin">Chưa ghim</string>
     <string name="send">Gửi</string>
+    <string name="agree">Đồng ý</string>
+    <string name="cancel">Hủy</string>
+    <string name="notification">Thông báo</string>
+    <string name="notice">Thông báo</string>
+    <string name="ask_send_image">Gửi ảnh này?</string>
+    <string name="message_content_empty_notice">Hãy nhập tin nhắn</string>
 </resources>

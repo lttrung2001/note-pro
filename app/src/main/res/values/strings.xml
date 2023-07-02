@@ -135,9 +135,10 @@
     <string name="default_name">Me</string>
     <string name="send">Send</string>
 
-    <string name="agree" translatable="false">Agree</string>
-    <string name="cancel" translatable="false">Cancel</string>
-    <string name="notification" translatable="false">Notification</string>
-    <string name="notice" translatable="false">Notice</string>
-    <string name="ask_send_image" translatable="false">Send this image?</string>
+    <string name="agree">Agree</string>
+    <string name="cancel">Cancel</string>
+    <string name="notification">Notification</string>
+    <string name="notice">Notice</string>
+    <string name="ask_send_image">Send this image?</string>
+    <string name="message_content_empty_notice">Please enter message</string>
 </resources>
