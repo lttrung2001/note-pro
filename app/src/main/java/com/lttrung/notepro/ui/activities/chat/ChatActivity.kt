@@ -32,6 +32,7 @@ import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE_RECEIVED
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.PAGE_LIMIT
 import com.lttrung.notepro.utils.JitsiHelper
+import com.lttrung.notepro.utils.MediaType
 import com.lttrung.notepro.utils.NotificationHelper
 import com.lttrung.notepro.utils.openCamera
 import com.lttrung.notepro.utils.requestPermissionToOpenCamera
@@ -152,11 +153,13 @@ class ChatActivity : BaseActivity() {
     }
 
     private fun observeUploadResultData() {
-        viewModel.uploadLiveData.observe(this@ChatActivity) { uri ->
+        viewModel.uploadLiveData.observe(this@ChatActivity) { map ->
+            val type = map["TYPE"]
+            val url = map["URL"]
             val message = Message(
                 System.currentTimeMillis().toString(),
-                uri,
-                AppConstant.MESSAGE_CONTENT_TYPE_IMAGE,
+                url!!,
+                type!!,
                 note.id,
                 0L,
                 User(messageAdapter.userId, "")
@@ -188,8 +191,12 @@ class ChatActivity : BaseActivity() {
                     openCamera(launcher)
                 }
             }
-            btnBottomSheetGallery.setOnClickListener {
-                bottomGallery = BottomSheetGallery()
+            btnChooseImage.setOnClickListener {
+                bottomGallery = BottomSheetGallery(MediaType.IMAGE)
+                bottomGallery?.show(supportFragmentManager, bottomGallery?.tag)
+            }
+            btnChooseVideo.setOnClickListener {
+                bottomGallery = BottomSheetGallery(MediaType.VIDEO)
                 bottomGallery?.show(supportFragmentManager, bottomGallery?.tag)
             }
             btnCall.setOnClickListener {
@@ -274,7 +281,10 @@ class ChatActivity : BaseActivity() {
         storageRef.child("images/messages/${System.currentTimeMillis()}.jpg")
             .putBytes(image.toByteArray()).addOnSuccessListener { task ->
                 task.metadata?.reference?.downloadUrl?.addOnSuccessListener { uri ->
-                    viewModel.saveUploadResult(uri.toString())
+                    viewModel.saveUploadResult(hashMapOf<String, String>().apply {
+                        put("TYPE", AppConstant.MESSAGE_CONTENT_TYPE_IMAGE)
+                        put("URL", uri.toString())
+                    })
                 }
             }
     }

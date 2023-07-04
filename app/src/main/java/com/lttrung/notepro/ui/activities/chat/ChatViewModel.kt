@@ -9,6 +9,7 @@ import com.lttrung.notepro.domain.data.networks.models.Paging
 import com.lttrung.notepro.domain.repositories.MessageRepositories
 import com.lttrung.notepro.domain.repositories.UserRepositories
 import com.lttrung.notepro.ui.base.BaseViewModel
+import com.lttrung.notepro.utils.AppConstant
 import com.lttrung.notepro.utils.MediaUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -20,6 +21,7 @@ class ChatViewModel @Inject constructor(
 ) : BaseViewModel() {
     internal var page = 0
     internal var imagePage = 0
+    internal var videoPage = 0
 
     internal val currentUserLiveData by lazy {
         MutableLiveData<CurrentUser>()
@@ -33,8 +35,12 @@ class ChatViewModel @Inject constructor(
         MutableLiveData<Paging<MediaSelectionLocalsModel>>()
     }
 
+    internal val videosLiveData by lazy {
+        MutableLiveData<Paging<MediaSelectionLocalsModel>>()
+    }
+
     val uploadLiveData by lazy {
-        MutableLiveData<String>()
+        MutableLiveData<Map<String, String>>()
     }
 
     internal fun getCurrentUser() {
@@ -69,9 +75,23 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    fun saveUploadResult(uri: String) {
+    internal fun getVideos(context: Context, page: Int, limit: Int) {
         launch {
-            uploadLiveData.postValue(uri)
+            val paging = MediaUtils.findVideos(context, page, limit)
+            val newPaging = Paging(
+                paging.hasPreviousPage,
+                paging.hasNextPage,
+                videosLiveData.value?.data.orEmpty().toMutableList().apply {
+                    addAll(paging.data)
+                })
+            videosLiveData.postValue(newPaging)
+            videoPage++
+        }
+    }
+
+    fun saveUploadResult(map: Map<String, String>) {
+        launch {
+            uploadLiveData.postValue(map)
         }
     }
 }

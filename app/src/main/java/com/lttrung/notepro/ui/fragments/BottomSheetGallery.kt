@@ -14,42 +14,61 @@ import com.lttrung.notepro.domain.data.locals.models.MediaSelectionLocalsModel
 import com.lttrung.notepro.ui.activities.chat.ChatViewModel
 import com.lttrung.notepro.ui.adapters.MediaSelectionAdapter
 import com.lttrung.notepro.ui.dialogs.builders.DialogBuilder
+import com.lttrung.notepro.utils.AppConstant
 import com.lttrung.notepro.utils.AppConstant.Companion.PAGE_LIMIT
+import com.lttrung.notepro.utils.MediaType
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class BottomSheetGallery : BottomSheetDialogFragment() {
+class BottomSheetGallery(private val type: MediaType) : BottomSheetDialogFragment() {
     @Inject
     lateinit var storageRef: StorageReference
     private val binding by lazy {
         FragmentBottomSheetGalleryBinding.inflate(layoutInflater)
     }
     private val viewModel: ChatViewModel by activityViewModels()
-    private val imageAdapter by lazy {
+    private val mediaAdapter by lazy {
         MediaSelectionAdapter()
             .setIsSelectSingle(true)
             .setItemListener(object : MediaSelectionAdapter.ItemListener {
                 override fun onClick(image: MediaSelectionLocalsModel) {
+                    val noticeId = when (type) {
+                        MediaType.IMAGE -> R.string.ask_send_image
+                        MediaType.VIDEO -> R.string.ask_send_video
+                    }
                     DialogBuilder(requireContext())
-                        .setNotice(R.string.ask_send_image)
+                        .setNotice(noticeId)
                         .addButtonLeft(R.string.back)
                         .addButtonRight(R.string.send) {
                             dismiss()
-                            sendImageViaCloudStorage(image.url)
+                            sendMediaViaCloudStorage(image.url)
                         }.build().show()
                 }
             })
     }
 
-    private fun sendImageViaCloudStorage(url: String) {
+    private fun sendMediaViaCloudStorage(url: String) {
         val byteArray = File(url).readBytes()
-        storageRef.child("images/messages/${System.currentTimeMillis()}.jpg")
+        val path = when (type) {
+            MediaType.IMAGE -> "images/messages/${System.currentTimeMillis()}.jpg"
+            MediaType.VIDEO -> "videos/messages/${System.currentTimeMillis()}.mp4"
+        }
+        storageRef.child(path)
             .putBytes(byteArray)
             .addOnSuccessListener {
                 it.metadata?.reference?.downloadUrl?.addOnSuccessListener { uri ->
-                    viewModel.saveUploadResult(uri.toString())
+                    viewModel.saveUploadResult(
+                        hashMapOf<String, String>().apply {
+                            val typeValue = when (type) {
+                                MediaType.IMAGE -> AppConstant.MESSAGE_CONTENT_TYPE_IMAGE
+                                MediaType.VIDEO -> AppConstant.MESSAGE_CONTENT_TYPE_VIDEO
+                            }
+                            put("TYPE", typeValue)
+                            put("URL", uri.toString())
+                        }
+                    )
                     dismiss()
                 }
 
@@ -58,7 +77,12 @@ class BottomSheetGallery : BottomSheetDialogFragment() {
 
     private val onScrollListener by lazy {
         object : RecyclerView.OnScrollListener() {
-            // Load more images
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    loadMedia()
+                }
+            }
         }
     }
 
@@ -69,22 +93,47 @@ class BottomSheetGallery : BottomSheetDialogFragment() {
         initViews()
         initObservers()
         initListeners()
-        viewModel.getImages(requireContext(), viewModel.imagePage, PAGE_LIMIT)
+        loadMedia()
         return binding.root
     }
 
+    private fun loadMedia() {
+        when (type) {
+            MediaType.IMAGE -> {
+                viewModel.getImages(requireContext(), viewModel.imagePage, PAGE_LIMIT)
+            }
+            MediaType.VIDEO -> {
+                viewModel.getVideos(requireContext(), viewModel.videoPage, PAGE_LIMIT)
+            }
+        }
+    }
+
     private fun initViews() {
-        binding.rvImages.adapter = imageAdapter
+        binding.rvImages.adapter = mediaAdapter
     }
 
     private fun initObservers() {
-        viewModel.imagesLiveData.observe(viewLifecycleOwner) { paging ->
-            if (paging.hasNextPage) {
-                binding.rvImages.addOnScrollListener(onScrollListener)
-            } else {
-                binding.rvImages.removeOnScrollListener(onScrollListener)
+        when (type) {
+            MediaType.IMAGE -> {
+                viewModel.imagesLiveData.observe(viewLifecycleOwner) { paging ->
+                    if (paging.hasNextPage) {
+                        binding.rvImages.addOnScrollListener(onScrollListener)
+                    } else {
+                        binding.rvImages.removeOnScrollListener(onScrollListener)
+                    }
+                    mediaAdapter.submitList(paging.data)
+                }
             }
-            imageAdapter.submitList(paging.data)
+            MediaType.VIDEO -> {
+                viewModel.videosLiveData.observe(viewLifecycleOwner) { paging ->
+                    if (paging.hasNextPage) {
+                        binding.rvImages.addOnScrollListener(onScrollListener)
+                    } else {
+                        binding.rvImages.removeOnScrollListener(onScrollListener)
+                    }
+                    mediaAdapter.submitList(paging.data)
+                }
+            }
         }
     }
 

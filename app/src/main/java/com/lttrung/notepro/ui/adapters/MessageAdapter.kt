@@ -95,6 +95,17 @@ class MessageAdapter : ListAdapter<Message, ViewHolder>(CALLBACK) {
                         Picasso.get().load(msg.content).resize(160, 200).into(image)
                     }
                 }
+
+                AppConstant.MESSAGE_CONTENT_TYPE_VIDEO -> {
+                    binding.apply {
+                        message.remove()
+                        contentVideo.show()
+                        contentVideo.setVideoPath(msg.content)
+                        contentVideo.setOnClickListener {
+                            contentVideo.start()
+                        }
+                    }
+                }
             }
         }
     }
@@ -115,6 +126,14 @@ class MessageAdapter : ListAdapter<Message, ViewHolder>(CALLBACK) {
                         message.remove()
                         contentImage.show()
                         Picasso.get().load(msg.content).resize(160, 200).into(contentImage)
+                    }
+
+                    AppConstant.MESSAGE_CONTENT_TYPE_VIDEO -> {
+                        binding.apply {
+                            message.remove()
+                            contentVideo.show()
+                            contentVideo.setVideoPath(msg.content)
+                        }
                     }
                 }
             }

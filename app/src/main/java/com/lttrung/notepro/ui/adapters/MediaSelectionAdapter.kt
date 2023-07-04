@@ -1,13 +1,18 @@
 package com.lttrung.notepro.ui.adapters
 
+import android.graphics.Bitmap
+import android.media.ThumbnailUtils
+import android.provider.MediaStore
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.lttrung.notepro.databinding.ImageSelectionItemBinding
 import com.lttrung.notepro.domain.data.locals.models.MediaSelectionLocalsModel
+import com.lttrung.notepro.utils.AppConstant
+import com.lttrung.notepro.utils.remove
+import com.lttrung.notepro.utils.toByteArray
 import com.squareup.picasso.Picasso
 import java.io.File
 
@@ -31,6 +36,7 @@ class MediaSelectionAdapter :
 
         }
     }
+
     private var isSelectSingle = false
     private var itemListener: ItemListener? = null
 
@@ -61,7 +67,19 @@ class MediaSelectionAdapter :
     inner class ImageSelectionViewHolder(private val binding: ImageSelectionItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(image: MediaSelectionLocalsModel) {
-            Picasso.get().load(File(image.url)).resize(300,400).into(binding.img)
+            when (image.contentType) {
+                AppConstant.MESSAGE_CONTENT_TYPE_IMAGE -> {
+                    Picasso.get().load(File(image.url)).resize(300, 400).into(binding.img)
+                }
+
+                AppConstant.MESSAGE_CONTENT_TYPE_VIDEO -> {
+                    val bitmap = ThumbnailUtils.createVideoThumbnail(
+                        image.url,
+                        MediaStore.Images.Thumbnails.MINI_KIND
+                    )
+                    binding.img.setImageBitmap(Bitmap.createScaledBitmap(bitmap!!, 300, 400, false))
+                }
+            }
             if (!isSelectSingle) {
                 binding.checkbox.isChecked = image.isSelected
                 binding.checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -72,7 +90,7 @@ class MediaSelectionAdapter :
                     binding.checkbox.isChecked = image.isSelected
                 }
             } else {
-                binding.checkbox.visibility = View.GONE
+                binding.checkbox.remove()
                 binding.root.setOnClickListener {
                     itemListener?.onClick(image)
                 }

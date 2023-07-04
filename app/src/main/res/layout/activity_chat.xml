@@ -66,13 +66,21 @@
                 android:src="@drawable/ic_baseline_camera_alt_24" />
 
             <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/btnBottomSheetGallery"
+                android:id="@+id/btnChooseImage"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:background="@android:color/transparent"
                 android:padding="10dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_baseline_photo_album_24" />
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btnChooseVideo"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@android:color/transparent"
+                android:padding="10dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_baseline_video_library_24" />
         </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout

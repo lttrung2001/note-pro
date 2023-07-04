@@ -140,6 +140,7 @@
     <string name="notification">Notification</string>
     <string name="notice">Notice</string>
     <string name="ask_send_image">Send this image?</string>
+    <string name="ask_send_video">Send this video?</string>
     <string name="message_content_empty_notice">Please enter message</string>
     <string name="ask_for_delete_note">Are you sure to delete this note?</string>
     <string name="ask_for_delete_member">Are you sure to delete this member?</string>
