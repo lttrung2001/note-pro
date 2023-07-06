@@ -9,12 +9,12 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    compileSdk 32
 
     defaultConfig {
         applicationId "com.lttrung.notepro"
         minSdk 24
-        targetSdk 33
+        targetSdk 32
         versionCode 1
         versionName "1.0"
 
@@ -67,7 +67,6 @@ dependencies {
     customUI()
     socketIO()
     jitsiSDK()
-    exoPlayer()
 
     // Circle image
     implementation 'de.hdodenhof:circleimageview:3.1.0'
@@ -129,12 +128,6 @@ private void socketIO() {
 
 private void jitsiSDK() {
     dependencies.implementation ('org.jitsi.react:jitsi-meet-sdk:+') { transitive = true }
-}
-
-private void exoPlayer() {
-    dependencies.implementation "androidx.media3:media3-exoplayer:1.0.2"
-    dependencies.implementation "androidx.media3:media3-exoplayer-dash:1.0.2"
-    dependencies.implementation "androidx.media3:media3-ui:1.0.2"
 }
 
 kapt {

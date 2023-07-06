@@ -25,6 +25,7 @@ import com.lttrung.notepro.ui.adapters.MessageAdapter
 import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.ui.dialogs.builders.DialogBuilder
 import com.lttrung.notepro.ui.fragments.BottomSheetGallery
+import com.lttrung.notepro.ui.fragments.PlayVideoFragment
 import com.lttrung.notepro.utils.AppConstant
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_CHANNEL_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE
@@ -61,7 +62,11 @@ class ChatActivity : BaseActivity() {
         }
 
     private val messageAdapter by lazy {
-        MessageAdapter()
+        MessageAdapter().setVideoOnClick {
+            PlayVideoFragment(it).apply {
+                show(supportFragmentManager, tag)
+            }
+        }
     }
     private val note by lazy {
         intent.getSerializableExtra(NOTE) as Note
@@ -102,7 +107,6 @@ class ChatActivity : BaseActivity() {
             }
         }
     }
-    private var bottomGallery: BottomSheetGallery? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -192,12 +196,14 @@ class ChatActivity : BaseActivity() {
                 }
             }
             btnChooseImage.setOnClickListener {
-                bottomGallery = BottomSheetGallery(MediaType.IMAGE)
-                bottomGallery?.show(supportFragmentManager, bottomGallery?.tag)
+                BottomSheetGallery(MediaType.IMAGE).apply {
+                    show(supportFragmentManager, tag)
+                }
             }
             btnChooseVideo.setOnClickListener {
-                bottomGallery = BottomSheetGallery(MediaType.VIDEO)
-                bottomGallery?.show(supportFragmentManager, bottomGallery?.tag)
+                BottomSheetGallery(MediaType.VIDEO).apply {
+                    show(supportFragmentManager, tag)
+                }
             }
             btnCall.setOnClickListener {
                 viewModel.currentUserLiveData.value?.let { currentUser ->

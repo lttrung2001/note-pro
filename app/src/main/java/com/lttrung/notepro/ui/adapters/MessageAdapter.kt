@@ -1,5 +1,6 @@
 package com.lttrung.notepro.ui.adapters
 
+import android.media.MediaPlayer
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -31,6 +32,12 @@ class MessageAdapter : ListAdapter<Message, ViewHolder>(CALLBACK) {
     }
 
     var userId = ""
+    private var videoOnClick: ((msg: Message) -> Unit)? = null
+
+    fun setVideoOnClick(handle: (msg: Message) -> Unit): MessageAdapter {
+        videoOnClick = handle
+        return this
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return when (viewType) {
@@ -80,7 +87,7 @@ class MessageAdapter : ListAdapter<Message, ViewHolder>(CALLBACK) {
         }
     }
 
-    class MyMessageViewHolder(private val binding: MyMessageItemBinding) :
+    inner class MyMessageViewHolder(private val binding: MyMessageItemBinding) :
         ViewHolder(binding.root) {
         fun bind(msg: Message) {
             when (msg.contentType) {
@@ -99,10 +106,11 @@ class MessageAdapter : ListAdapter<Message, ViewHolder>(CALLBACK) {
                 AppConstant.MESSAGE_CONTENT_TYPE_VIDEO -> {
                     binding.apply {
                         message.remove()
-                        contentVideo.show()
-                        contentVideo.setVideoPath(msg.content)
-                        contentVideo.setOnClickListener {
-                            contentVideo.start()
+                        contentVideo.apply {
+                            show()
+                            setOnClickListener {
+                                videoOnClick?.let { onClick -> onClick(msg) }
+                            }
                         }
                     }
                 }
@@ -110,9 +118,10 @@ class MessageAdapter : ListAdapter<Message, ViewHolder>(CALLBACK) {
         }
     }
 
-    class OtherMessageViewHolder(
+    inner class OtherMessageViewHolder(
         private val binding: OtherMessageItemBinding
     ) : ViewHolder(binding.root) {
+        private val mediaPlayer by lazy { MediaPlayer() }
         fun bind(msg: Message) {
             binding.apply {
                 imgAvt.setImageResource(R.drawable.me)
@@ -131,8 +140,17 @@ class MessageAdapter : ListAdapter<Message, ViewHolder>(CALLBACK) {
                     AppConstant.MESSAGE_CONTENT_TYPE_VIDEO -> {
                         binding.apply {
                             message.remove()
-                            contentVideo.show()
-                            contentVideo.setVideoPath(msg.content)
+                            mediaPlayer.apply {
+                                setDataSource(msg.content)
+                                setDisplay(contentVideo.holder)
+                                prepareAsync()
+                            }
+                            contentVideo.apply {
+                                show()
+                                setOnClickListener {
+                                    videoOnClick?.let { onClick -> onClick(msg) }
+                                }
+                            }
                         }
                     }
                 }

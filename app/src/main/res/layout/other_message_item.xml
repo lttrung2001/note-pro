@@ -49,7 +49,7 @@
         app:layout_constraintStart_toEndOf="@+id/img_avt"
         app:layout_constraintTop_toBottomOf="@id/name" />
 
-    <VideoView
+    <SurfaceView
         android:id="@+id/contentVideo"
         android:layout_width="160dp"
         android:layout_height="200dp"

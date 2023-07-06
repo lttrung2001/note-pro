@@ -26,7 +26,7 @@
         android:scaleType="centerCrop"
         android:visibility="gone" />
 
-    <VideoView
+    <SurfaceView
         android:id="@+id/contentVideo"
         android:layout_width="160dp"
         android:layout_height="200dp"
