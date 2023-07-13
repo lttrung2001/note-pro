@@ -14,6 +14,9 @@ class ViewMembersViewModel @Inject constructor(
     private val memberRepositories: MemberRepositories
 ) : BaseViewModel() {
     internal var page = 0
+    internal val listMember by lazy {
+        mutableListOf<Member>()
+    }
 
     internal val membersLiveData by lazy {
         MutableLiveData<Paging<Member>>()
@@ -26,23 +29,9 @@ class ViewMembersViewModel @Inject constructor(
     internal fun getMembers(noteId: String, pageIndex: Int, limit: Int) {
         launch {
             val pagingMember = memberRepositories.getMembers(noteId, pageIndex, limit)
+            listMember.addAll(pagingMember.data)
             page++
-
-            if (membersLiveData.value == null || membersLiveData.value!!.data.isEmpty()) {
-                membersLiveData.postValue(pagingMember)
-            } else {
-                val members = membersLiveData.value!!.data
-                val allMember = members.toMutableList().apply {
-                    addAll(pagingMember.data)
-                }
-                membersLiveData.postValue(
-                    Paging(
-                        pagingMember.hasPreviousPage,
-                        pagingMember.hasNextPage,
-                        allMember
-                    )
-                )
-            }
+            membersLiveData.postValue(pagingMember)
         }
     }
 

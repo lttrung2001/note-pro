@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import com.lttrung.notepro.domain.data.locals.entities.CurrentUser
 import com.lttrung.notepro.domain.data.locals.models.MediaSelectionLocalsModel
+import com.lttrung.notepro.domain.data.networks.models.Image
 import com.lttrung.notepro.domain.data.networks.models.Message
 import com.lttrung.notepro.domain.data.networks.models.Paging
 import com.lttrung.notepro.domain.repositories.MessageRepositories
@@ -22,6 +23,13 @@ class ChatViewModel @Inject constructor(
     internal var page = 0
     internal var imagePage = 0
     internal var videoPage = 0
+
+    val listMessage by lazy {
+        mutableListOf<Message>()
+    }
+    val listImage by lazy {
+        mutableListOf<Image>()
+    }
 
     internal val currentUserLiveData by lazy {
         MutableLiveData<CurrentUser>()
@@ -53,11 +61,9 @@ class ChatViewModel @Inject constructor(
     internal fun getMessages(roomId: String, pageIndex: Int, limit: Int) {
         launch {
             val preMessages = messageRepositories.getMessages(roomId, pageIndex, limit)
+            listMessage.addAll(0, preMessages)
             page++
-            val messages = messagesLiveData.value.orEmpty().toMutableList().apply {
-                addAll(0, preMessages)
-            }
-            messagesLiveData.postValue(messages)
+            messagesLiveData.postValue(preMessages)
         }
     }
 

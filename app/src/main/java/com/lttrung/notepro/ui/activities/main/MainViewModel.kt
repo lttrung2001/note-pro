@@ -18,10 +18,14 @@ class MainViewModel @Inject constructor(
     internal val notesLiveData by lazy {
         MutableLiveData<List<Note>>()
     }
+    internal val listNote by lazy {
+        mutableListOf<Note>()
+    }
 
     internal fun getNotes() {
         launch {
             val notes = noteRepositories.getNotes()
+            listNote.addAll(notes)
             notesLiveData.postValue(notes)
         }
     }

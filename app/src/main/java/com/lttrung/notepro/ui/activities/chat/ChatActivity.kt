@@ -147,10 +147,10 @@ class ChatActivity : BaseActivity() {
 
 
     private fun observeGetMessagesData() {
-        viewModel.messagesLiveData.observe(this) { messages ->
+        viewModel.messagesLiveData.observe(this) { preMessages ->
             viewModel.isLoading.postValue(false)
-            messageAdapter.submitList(messages)
-            if (messages.isEmpty()) {
+            messageAdapter.submitList(viewModel.listMessage)
+            if (preMessages.isEmpty()) {
                 binding.messages.removeOnScrollListener(onScrollListener)
             }
         }
@@ -158,19 +158,16 @@ class ChatActivity : BaseActivity() {
 
     private fun observeUploadResultData() {
         viewModel.uploadLiveData.observe(this@ChatActivity) { map ->
-            val type = map["TYPE"]
-            val url = map["URL"]
             val message = Message(
                 System.currentTimeMillis().toString(),
-                url!!,
-                type!!,
+                map["URL"] ?: "",
+                map["TYPE"] ?: "",
                 note.id,
                 0L,
                 User(messageAdapter.userId, "")
             )
-            viewModel.messagesLiveData.postValue(messageAdapter.currentList.toMutableList().apply {
-                add(message)
-            })
+            viewModel.listMessage.add(message)
+            messageAdapter.submitList(viewModel.listMessage)
             socketService.sendMessage(message)
         }
     }
@@ -261,20 +258,15 @@ class ChatActivity : BaseActivity() {
         )
         socketService.sendMessage(message)
 
-        val messages = messageAdapter.currentList.toMutableList().apply {
-            add(message)
-        }
-        viewModel.messagesLiveData.postValue(messages)
+        viewModel.listMessage.add(message)
+        messageAdapter.submitList(viewModel.listMessage)
         binding.messageBox.setText("")
     }
 
     private fun handleIncomingMessage(message: Message) {
         if (message.room == note.id) {
-            val messages = messageAdapter.currentList.toMutableList().apply {
-                add(message)
-            }
-            // Update live data
-            viewModel.messagesLiveData.postValue(messages)
+            viewModel.listMessage.add(message)
+            messageAdapter.submitList(viewModel.listMessage)
         } else {
             NotificationHelper.pushNotification(
                 this@ChatActivity, CHAT_CHANNEL_ID, message

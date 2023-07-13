@@ -104,19 +104,17 @@ class ViewMembersActivity : BaseActivity() {
             addMemberDialog = AddMemberDialog(this@ViewMembersActivity) { email, role ->
                 viewModel.addMember(note.id, email, role)
             }
-            if (!addMemberDialog.isShowing) {
-                addMemberDialog.show()
-                addMemberDialog.window?.setLayout(
-                    LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT
-                )
-            }
+            addMemberDialog.show()
+            addMemberDialog.window?.setLayout(
+                LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT
+            )
         }
     }
 
     override fun initObservers() {
         super.initObservers()
         viewModel.membersLiveData.observe(this) { paging ->
-            memberAdapter.setPaging(paging)
+            memberAdapter.submitList(viewModel.listMember)
             if (paging.hasNextPage) {
                 binding.rvMembers.addOnScrollListener(onScrollListener)
             } else {
@@ -143,59 +141,37 @@ class ViewMembersActivity : BaseActivity() {
                         rIntent.getSerializableExtra(AppConstant.EDITED_MEMBER) as Member?
                     val deletedMember =
                         rIntent.getSerializableExtra(AppConstant.DELETED_MEMBER) as Member?
-                    val paging = memberAdapter.getPaging()
-                    val members = paging.data.toMutableList()
-                    handleEditResult(editedMember, paging, members)
-                    handleDeleteResult(deletedMember, paging, members)
+                    handleEditResult(editedMember, viewModel.listMember)
+                    handleDeleteResult(deletedMember, viewModel.listMember)
                 }
             }
         }
 
     private fun handleDeleteResult(
-        deletedMember: Member?, paging: Paging<Member>, members: MutableList<Member>
+        deletedMember: Member?, members: MutableList<Member>
     ) {
         deletedMember?.let { member ->
-            val findingMember = members.find {
-                it.id == member.id
-            }
+            val findingMember = members.find { it.id == member.id }
             members.remove(findingMember)
-            viewModel.membersLiveData.postValue(
-                Paging(
-                    paging.hasPreviousPage, paging.hasNextPage, members
-                )
-            )
+            memberAdapter.submitList(members)
 
             socketService.sendRemoveMemberMessage(note.id, member.email)
         }
     }
 
     private fun handleEditResult(
-        editedMember: Member?, paging: Paging<Member>, members: MutableList<Member>
+        editedMember: Member?, members: MutableList<Member>
     ) {
         editedMember?.let { member ->
-            val findingMember = members.find {
-                it.id == member.id
-            }
-            members.remove(findingMember)
-            members.add(member)
-            viewModel.membersLiveData.postValue(
-                Paging(
-                    paging.hasPreviousPage, paging.hasNextPage, members
-                )
-            )
+            val pos = members.indexOfFirst { it.id == member.id }
+            members[pos] = member
+            memberAdapter.submitList(members)
         }
     }
 
     private fun handleAddResult(newMember: Member) {
-        val paging = viewModel.membersLiveData.value
-        val members = paging!!.data.toMutableList().apply {
-            find { it.id == newMember.id } ?: add(newMember)
-        }
-        viewModel.membersLiveData.postValue(
-            Paging(
-                paging.hasPreviousPage, paging.hasNextPage, members
-            )
-        )
+        viewModel.listMember.add(newMember)
+        memberAdapter.submitList(viewModel.listMember)
         addMemberDialog.dismiss()
 
         socketService.sendAddMemberMessage(note.id, newMember.email)

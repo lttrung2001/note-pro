@@ -55,6 +55,9 @@ class ChatSocketService : Service() {
 
     @Inject
     lateinit var gson: Gson
+
+    var isInCall = false
+
     private lateinit var socket: Socket
     private var isRunning = false
 
@@ -206,17 +209,27 @@ class ChatSocketService : Service() {
 
     private fun listenCallEvent(socket: Socket) {
         socket.on("call") { args ->
-            val roomId = args[0] as String
-            val userJson = args[1]
-            val user = gson.fromJson(userJson.toString(), User::class.java)
-            baseContext.startActivity(Intent(
-                this@ChatSocketService, IncomingCallActivity::class.java
-            ).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                putExtra(ROOM_ID, roomId)
-                putExtra(USER, user)
-            })
+            if (isInCall) {
+                // Handle later...
+            } else {
+                handleConnectCall(
+                    args[0].toString(),
+                    args[1].toString()
+                )
+            }
         }
+    }
+
+    private fun handleConnectCall(roomId: String, userJson: String) {
+        val user = gson.fromJson(userJson, User::class.java)
+        baseContext.startActivity(Intent(
+            this@ChatSocketService,
+            IncomingCallActivity::class.java
+        ).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            putExtra(ROOM_ID, roomId)
+            putExtra(USER, user)
+        })
     }
 
     private fun listenChatEvent(socket: Socket) {

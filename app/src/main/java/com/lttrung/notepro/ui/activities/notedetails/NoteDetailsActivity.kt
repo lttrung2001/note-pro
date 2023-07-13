@@ -50,30 +50,6 @@ class NoteDetailsActivity : BaseActivity() {
         }
     }
 
-    // R.id.action_pin -> {
-    //                if (item.isChecked) {
-    //                    item.icon.setTint(resources.getColor(R.color.black, theme))
-    //                } else {
-    //                    item.icon.setTint(resources.getColor(R.color.primary, theme))
-    //                }
-    //                item.isChecked = !item.isChecked
-    //            }
-    //            R.id.action_show_conservation -> {
-    //                val showConservationIntent =
-    //                    Intent(this@NoteDetailsActivity, ChatActivity::class.java)
-    //                showConservationIntent.putExtra(ROOM_ID, note.id)
-    //                showConservationIntent.putExtra(NOTE, note)
-    //                startActivity(showConservationIntent)
-    //            }
-    //            else -> {
-    //                note.isPin = false
-    //                viewModel.editNote(note)
-    //                val resultIntent = Intent()
-    //                resultIntent.putExtra(EDITED_NOTE, note)
-    //                setResult(RESULT_OK, resultIntent)
-    //                finish()
-    //            }
-
     private val imageListener: ImageAdapter.ImageListener by lazy {
         object : ImageAdapter.ImageListener {
             override fun onClick(image: Image) {

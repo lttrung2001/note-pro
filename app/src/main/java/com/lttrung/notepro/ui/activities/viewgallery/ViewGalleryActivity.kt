@@ -41,9 +41,8 @@ class ViewGalleryActivity : BaseActivity() {
 
     override fun initObservers() {
         super.initObservers()
-        viewModel.imagesLiveData.observe(this) { paging ->
-            val images = paging.data
-            imageSelectionAdapter.submitList(images)
+        viewModel.pagingImageLiveData.observe(this) {
+            imageSelectionAdapter.submitList(viewModel.listImage)
         }
     }
 

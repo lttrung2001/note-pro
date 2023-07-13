@@ -8,14 +8,18 @@ import com.lttrung.notepro.ui.base.BaseViewModel
 import com.lttrung.notepro.utils.MediaUtils
 
 class ViewGalleryViewModel : BaseViewModel() {
-    internal val imagesLiveData by lazy {
+    internal val pagingImageLiveData by lazy {
         MutableLiveData<Paging<MediaSelectionLocalsModel>>()
+    }
+    internal val listImage by lazy {
+        mutableListOf<MediaSelectionLocalsModel>()
     }
 
     internal fun getImages(context: Context, page: Int, limit: Int) {
         launch {
             val images = MediaUtils.findImages(context, page, limit)
-            imagesLiveData.postValue(images)
+            listImage.addAll(images.data)
+            pagingImageLiveData.postValue(images)
         }
     }
 }
