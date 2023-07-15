@@ -127,7 +127,7 @@ private void socketIO() {
 }
 
 private void jitsiSDK() {
-    dependencies.implementation ('org.jitsi.react:jitsi-meet-sdk:+') { transitive = true }
+    dependencies.implementation ('org.jitsi.react:jitsi-meet-sdk:8.1.2') { transitive = true }
 }
 
 kapt {

@@ -93,4 +93,5 @@
     <string name="ask_for_delete_note">Bạn có chắc chắn muốn xóa ghi chú này?</string>
     <string name="ask_for_delete_member">Bạn có chắc chắn muốn xóa thành viên này?</string>
     <string name="error_can_not_make_call">Không thể thực hiện cuộc gọi vào lúc này</string>
+    <string name="phone_number_can_not_be_empty">Số điện thoại không được để trống!</string>
 </resources>

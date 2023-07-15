@@ -43,9 +43,13 @@ class LoginActivity : BaseActivity() {
             if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 helper.hasError = true
                 binding.emailLayout.error = getString(R.string.this_text_is_not_email_type)
+            } else {
+                binding.emailLayout.error = ""
             }
             if (!helper.matchesPasswordLength(password)) {
                 binding.passwordLayout.error = getString(R.string.password_check)
+            } else {
+                binding.passwordLayout.error = ""
             }
             if (!helper.hasError) {
                 viewModel.login(email, password)

@@ -145,4 +145,5 @@
     <string name="ask_for_delete_note">Are you sure to delete this note?</string>
     <string name="ask_for_delete_member">Are you sure to delete this member?</string>
     <string name="error_can_not_make_call">Can not make a call at the moment</string>
+    <string name="phone_number_can_not_be_empty">Phone number can not be empty!</string>
 </resources>

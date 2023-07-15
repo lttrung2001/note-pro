@@ -59,21 +59,36 @@ class RegisterActivity : BaseActivity() {
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             helper.hasError = true
             binding.emailLayout.error = getString(R.string.this_text_is_not_email_type)
+        } else {
+            binding.emailLayout.error = ""
         }
         if (!helper.matchesPasswordLength(password)) {
             binding.passwordLayout.error = getString(R.string.password_check)
+        } else {
+            binding.passwordLayout.error = ""
         }
         if (!helper.matchesPasswordLength(confirmPassword)) {
             binding.confirmPasswordLayout.error = getString(R.string.password_check)
+        } else {
+            binding.confirmPasswordLayout.error = ""
         }
         if (!helper.matchesConfirmPassword(password, confirmPassword)) {
             binding.confirmPasswordLayout.error = getString(R.string.password_not_match)
+        } else {
+            binding.confirmPasswordLayout.error = ""
         }
         if (!helper.matchesFullName(fullName)) {
             binding.fullNameLayout.error = getString(R.string.invalid_full_name)
+        } else {
+            binding.fullNameLayout.error = ""
         }
-        if (!helper.matchesPhoneNumber(phoneNumber)) {
+        if (phoneNumber.isEmpty()) {
+            helper.hasError = true
+            binding.phoneNumberLayout.error = getString(R.string.phone_number_can_not_be_empty)
+        } else if (!helper.matchesPhoneNumber(phoneNumber)) {
             binding.phoneNumberLayout.error = getString(R.string.phone_number_check)
+        } else {
+            binding.phoneNumberLayout.error = ""
         }
         return helper
     }
