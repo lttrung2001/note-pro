@@ -1,20 +1,16 @@
 package com.lttrung.notepro.ui.activities.chat
 
 import android.content.BroadcastReceiver
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.ServiceConnection
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.os.IBinder
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityChatBinding
@@ -25,7 +21,6 @@ import com.lttrung.notepro.ui.adapters.MessageAdapter
 import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.ui.dialogs.builders.DialogBuilder
 import com.lttrung.notepro.ui.fragments.BottomSheetGallery
-import com.lttrung.notepro.ui.fragments.PlayVideoFragment
 import com.lttrung.notepro.utils.AppConstant
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_CHANNEL_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE
@@ -37,18 +32,16 @@ import com.lttrung.notepro.utils.MediaType
 import com.lttrung.notepro.utils.NotificationHelper
 import com.lttrung.notepro.utils.openCamera
 import com.lttrung.notepro.utils.requestPermissionToOpenCamera
+import com.lttrung.notepro.utils.requestPermissionToReadGallery
 import com.lttrung.notepro.utils.toByteArray
 import dagger.hilt.android.AndroidEntryPoint
 import org.jitsi.meet.sdk.JitsiMeetActivity
-import java.io.ByteArrayOutputStream
-import java.io.File
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class ChatActivity : BaseActivity() {
     @Inject
     lateinit var storageRef: StorageReference
-    private lateinit var socketService: ChatSocketService
     override val binding by lazy {
         ActivityChatBinding.inflate(layoutInflater)
     }
@@ -62,11 +55,7 @@ class ChatActivity : BaseActivity() {
         }
 
     private val messageAdapter by lazy {
-        MessageAdapter().setVideoOnClick {
-            PlayVideoFragment(it).apply {
-                show(supportFragmentManager, tag)
-            }
-        }
+        MessageAdapter()
     }
     private val note by lazy {
         intent.getSerializableExtra(NOTE) as Note
@@ -86,24 +75,10 @@ class ChatActivity : BaseActivity() {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (viewModel.isLoading.value == false) {
                     if (!recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                        // Load message here...
                         viewModel.isLoading.postValue(true)
                         viewModel.getMessages(note.id, viewModel.page, PAGE_LIMIT)
                     }
                 }
-            }
-        }
-    }
-
-    private val connection by lazy {
-        object : ServiceConnection {
-            override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-                val binder = service as ChatSocketService.LocalBinder
-                socketService = binder.getService()
-            }
-
-            override fun onServiceDisconnected(p0: ComponentName?) {
-
             }
         }
     }
@@ -117,25 +92,17 @@ class ChatActivity : BaseActivity() {
         super.onStart()
 
         registerReceivers()
-        bindService()
     }
 
     override fun onStop() {
         super.onStop()
 
         unregisterReceiver(messageReceiver)
-        unbindService(connection)
     }
 
-    private fun bindService() {
-        Intent(this, ChatSocketService::class.java).also { intent ->
-            bindService(intent, connection, Context.BIND_AUTO_CREATE)
-        }
-    }
-
-    private fun registerReceivers() {
-        val messageReceivedIntentFilter = IntentFilter(MESSAGE_RECEIVED)
-        registerReceiver(messageReceiver, messageReceivedIntentFilter)
+    override fun onDestroy() {
+        super.onDestroy()
+        messageAdapter.onRelease()
     }
 
     override fun initObservers() {
@@ -145,15 +112,19 @@ class ChatActivity : BaseActivity() {
         observeUploadResultData()
     }
 
-
     private fun observeGetMessagesData() {
         viewModel.messagesLiveData.observe(this) { preMessages ->
             viewModel.isLoading.postValue(false)
-            messageAdapter.submitList(viewModel.listMessage)
+            messageAdapter.submitList(viewModel.listMessage.map { MessageAdapter.MediaMessage(it) })
             if (preMessages.isEmpty()) {
                 binding.messages.removeOnScrollListener(onScrollListener)
             }
         }
+    }
+
+    private fun registerReceivers() {
+        val messageReceivedIntentFilter = IntentFilter(MESSAGE_RECEIVED)
+        registerReceiver(messageReceiver, messageReceivedIntentFilter)
     }
 
     private fun observeUploadResultData() {
@@ -167,7 +138,7 @@ class ChatActivity : BaseActivity() {
                 User(messageAdapter.userId, "")
             )
             viewModel.listMessage.add(message)
-            messageAdapter.submitList(viewModel.listMessage)
+            messageAdapter.submitList(viewModel.listMessage.map { MessageAdapter.MediaMessage(it) })
             socketService.sendMessage(message)
         }
     }
@@ -193,13 +164,17 @@ class ChatActivity : BaseActivity() {
                 }
             }
             btnChooseImage.setOnClickListener {
-                BottomSheetGallery(MediaType.IMAGE).apply {
-                    show(supportFragmentManager, tag)
+                if (requestPermissionToReadGallery(this@ChatActivity)) {
+                    BottomSheetGallery(MediaType.IMAGE).apply {
+                        show(supportFragmentManager, tag)
+                    }
                 }
             }
             btnChooseVideo.setOnClickListener {
-                BottomSheetGallery(MediaType.VIDEO).apply {
-                    show(supportFragmentManager, tag)
+                if (requestPermissionToReadGallery(this@ChatActivity)) {
+                    BottomSheetGallery(MediaType.VIDEO).apply {
+                        show(supportFragmentManager, tag)
+                    }
                 }
             }
             btnCall.setOnClickListener {
@@ -217,6 +192,11 @@ class ChatActivity : BaseActivity() {
             }
             btnInfo.setOnClickListener {
                 // Start info activity
+                val chatInfoIntent = Intent(this@ChatActivity, ChatInfoActivity::class.java).apply {
+                    // Put note data (note id, group image url, group name, group theme)
+                    putExtra(NOTE, note)
+                }
+                launcher.launch(chatInfoIntent)
             }
         }
     }
@@ -259,14 +239,14 @@ class ChatActivity : BaseActivity() {
         socketService.sendMessage(message)
 
         viewModel.listMessage.add(message)
-        messageAdapter.submitList(viewModel.listMessage)
+        messageAdapter.submitList(viewModel.listMessage.map { MessageAdapter.MediaMessage(it) })
         binding.messageBox.setText("")
     }
 
     private fun handleIncomingMessage(message: Message) {
         if (message.room == note.id) {
             viewModel.listMessage.add(message)
-            messageAdapter.submitList(viewModel.listMessage)
+            messageAdapter.submitList(viewModel.listMessage.map { MessageAdapter.MediaMessage(it) })
         } else {
             NotificationHelper.pushNotification(
                 this@ChatActivity, CHAT_CHANNEL_ID, message

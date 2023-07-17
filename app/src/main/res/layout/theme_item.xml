@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:background="@drawable/shape_corner_small"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/themeItemOtherMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_other_message"
+        android:padding="10dp"
+        android:text="Other message"
+
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/themeItemMyMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/shape_my_message"
+        android:padding="10dp"
+        android:text="My message"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+</LinearLayout>

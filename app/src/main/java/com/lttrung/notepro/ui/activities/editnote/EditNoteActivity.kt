@@ -53,8 +53,6 @@ class EditNoteActivity : BaseActivity() {
             }
         }
 
-    private lateinit var socketService: ChatSocketService
-
     override val binding by lazy {
         ActivityEditNoteBinding.inflate(layoutInflater)
     }
@@ -130,34 +128,10 @@ class EditNoteActivity : BaseActivity() {
     private val note: Note by lazy {
         intent.getSerializableExtra(NOTE) as Note
     }
-    private val connection by lazy {
-        object : ServiceConnection {
-            override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-                val binder = service as ChatSocketService.LocalBinder
-                socketService = binder.getService()
-            }
-
-            override fun onServiceDisconnected(name: ComponentName?) {
-
-            }
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.getNoteDetails(note.id)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Intent(this@EditNoteActivity, ChatSocketService::class.java).also { intent ->
-            bindService(intent, connection, Service.BIND_AUTO_CREATE)
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        unbindService(connection)
     }
 
     override fun onRequestPermissionsResult(

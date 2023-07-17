@@ -1,11 +1,6 @@
 package com.lttrung.notepro.ui.activities.viewmembers
-
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
 import android.os.Bundle
-import android.os.IBinder
 import android.view.WindowManager.LayoutParams
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -13,8 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lttrung.notepro.databinding.ActivityViewMembersBinding
 import com.lttrung.notepro.domain.data.networks.models.Member
 import com.lttrung.notepro.domain.data.networks.models.Note
-import com.lttrung.notepro.domain.data.networks.models.Paging
-import com.lttrung.notepro.ui.activities.chat.ChatSocketService
 import com.lttrung.notepro.ui.activities.editmember.EditMemberActivity
 import com.lttrung.notepro.ui.adapters.MemberAdapter
 import com.lttrung.notepro.ui.base.BaseActivity
@@ -60,21 +53,9 @@ class ViewMembersActivity : BaseActivity() {
 
     private lateinit var addMemberDialog: AddMemberDialog
 
-    private val connection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            val binder = service as ChatSocketService.LocalBinder
-            socketService = binder.getService()
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-
-        }
-    }
-
     private val note by lazy {
         intent.getSerializableExtra(NOTE) as Note
     }
-    private lateinit var socketService: ChatSocketService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,18 +65,6 @@ class ViewMembersActivity : BaseActivity() {
         viewModel.getMembers(
             note.id, viewModel.page, PAGE_LIMIT
         )
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Intent(this@ViewMembersActivity, ChatSocketService::class.java).also { intent ->
-            bindService(intent, connection, Context.BIND_AUTO_CREATE)
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        unbindService(connection)
     }
 
     override fun initListeners() {

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    tools:context=".ui.activities.chat.ChatInfoActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivChatInfoGroupImage"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/ic_app" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvChatInfoGroupName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:drawableEnd="@drawable/ic_baseline_mode_edit_24"
+            android:drawablePadding="10dp"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:text="Group name" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivChatInfoCallAudio"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginHorizontal="20dp"
+                android:padding="10dp"
+                android:src="@drawable/ic_baseline_call_24" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivChatInfoCallVideo"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginHorizontal="20dp"
+                android:padding="10dp"
+                android:src="@drawable/ic_baseline_video_call_24" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivChatInfoAddMember"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginHorizontal="20dp"
+                android:padding="10dp"
+                android:src="@drawable/ic_baseline_person_add_24" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Customize"
+            android:textColor="@color/text_gray" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnChatInfoChangeTheme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@android:color/transparent"
+            android:drawableEnd="@drawable/ic_baseline_color_lens_24"
+            android:text="Theme"
+            android:textAlignment="textStart"
+            android:textAllCaps="false"
+            android:textSize="16sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnChatInfoViewAlias"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@android:color/transparent"
+            android:text="Alias"
+            android:textAlignment="textStart"
+            android:textAllCaps="false"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="About chat"
+            android:textColor="@color/text_gray" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnChatInfoViewMembers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@android:color/transparent"
+            android:drawableEnd="@drawable/ic_baseline_groups_24"
+            android:text="View members"
+            android:textAlignment="textStart"
+            android:textAllCaps="false"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Other actions"
+            android:textColor="@color/text_gray" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnChatInfoViewMediaFiles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@android:color/transparent"
+            android:drawableEnd="@drawable/ic_baseline_image_24"
+            android:text="View media files"
+            android:textAlignment="textStart"
+            android:textAllCaps="false"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Privacy and support"
+            android:textColor="@color/text_gray" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnChatInfoLeaveChat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@android:color/transparent"
+            android:drawableEnd="@drawable/ic_baseline_logout_24"
+            android:drawableTint="@color/red"
+            android:text="Leave chat"
+            android:textAlignment="textStart"
+            android:textAllCaps="false"
+            android:textColor="@color/red"
+            android:textSize="16sp" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

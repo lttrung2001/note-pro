@@ -1,11 +1,13 @@
 package com.lttrung.notepro.ui.adapters
 
-import android.media.MediaPlayer
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.MyMessageItemBinding
 import com.lttrung.notepro.databinding.OtherMessageItemBinding
@@ -15,14 +17,14 @@ import com.lttrung.notepro.utils.remove
 import com.lttrung.notepro.utils.show
 import com.squareup.picasso.Picasso
 
-class MessageAdapter : ListAdapter<Message, ViewHolder>(CALLBACK) {
+class MessageAdapter : ListAdapter<MessageAdapter.MediaMessage, ViewHolder>(CALLBACK) {
     companion object {
-        private val CALLBACK = object : DiffUtil.ItemCallback<Message>() {
-            override fun areItemsTheSame(oldItem: Message, newItem: Message): Boolean {
-                return oldItem.id == newItem.id
+        private val CALLBACK = object : DiffUtil.ItemCallback<MediaMessage>() {
+            override fun areItemsTheSame(oldItem: MediaMessage, newItem: MediaMessage): Boolean {
+                return oldItem.message.id == newItem.message.id
             }
 
-            override fun areContentsTheSame(oldItem: Message, newItem: Message): Boolean {
+            override fun areContentsTheSame(oldItem: MediaMessage, newItem: MediaMessage): Boolean {
                 return oldItem == newItem
             }
 
@@ -31,12 +33,18 @@ class MessageAdapter : ListAdapter<Message, ViewHolder>(CALLBACK) {
         private const val OTHER_MESSAGE = 3
     }
 
-    var userId = ""
-    private var videoOnClick: ((msg: Message) -> Unit)? = null
+    lateinit var userId: String
 
-    fun setVideoOnClick(handle: (msg: Message) -> Unit): MessageAdapter {
-        videoOnClick = handle
-        return this
+    override fun onViewDetachedFromWindow(holder: ViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        val item = getItem(holder.bindingAdapterPosition)
+        if (holder is MyMessageViewHolder) {
+            item.mPlayer?.pause()
+            holder.binding.playbackButton.show()
+        } else if (holder is OtherMessageViewHolder) {
+            item.mPlayer?.pause()
+            holder.binding.playbackButton.show()
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -76,7 +84,7 @@ class MessageAdapter : ListAdapter<Message, ViewHolder>(CALLBACK) {
 
     override fun getItemViewType(position: Int): Int {
         val message = getItem(position)
-        return when (message.user.id) {
+        return when (message.message.user.id) {
             userId -> {
                 MY_MESSAGE
             }
@@ -87,29 +95,49 @@ class MessageAdapter : ListAdapter<Message, ViewHolder>(CALLBACK) {
         }
     }
 
-    inner class MyMessageViewHolder(private val binding: MyMessageItemBinding) :
+    fun onRelease() {
+        for (item in currentList) {
+            item.mPlayer?.release()
+            item.mPlayer = null
+        }
+    }
+
+    inner class MyMessageViewHolder(val binding: MyMessageItemBinding) :
         ViewHolder(binding.root) {
-        fun bind(msg: Message) {
-            when (msg.contentType) {
+
+        fun bind(msg: MediaMessage) {
+            when (msg.message.contentType) {
                 AppConstant.MESSAGE_CONTENT_TYPE_TEXT -> {
-                    binding.message.text = msg.content
+                    binding.message.text = msg.message.content
                 }
 
                 AppConstant.MESSAGE_CONTENT_TYPE_IMAGE -> {
                     binding.apply {
                         message.remove()
                         image.show()
-                        Picasso.get().load(msg.content).resize(160, 200).into(image)
+                        Picasso.get().load(msg.message.content).resize(160, 200).into(image)
                     }
                 }
 
                 AppConstant.MESSAGE_CONTENT_TYPE_VIDEO -> {
                     binding.apply {
                         message.remove()
-                        contentVideo.apply {
-                            show()
-                            setOnClickListener {
-                                videoOnClick?.let { onClick -> onClick(msg) }
+                        if (msg.mPlayer == null) {
+                            msg.mPlayer = ExoPlayer.Builder(itemView.context).build()
+                        }
+                        msg.mPlayer?.setMediaItem(MediaItem.fromUri("https://jsoncompare.org/LearningContainer/SampleFiles/Video/MP4/sample-mp4-file.mp4"))
+                        msg.mPlayer?.prepare()
+                        playerViewContainer.show()
+                        playerView.apply {
+                            player = msg.mPlayer
+                            playerViewContainer.setOnClickListener {
+                                if (msg.mPlayer!!.playWhenReady) {
+                                    playbackButton.show()
+                                    msg.mPlayer?.pause()
+                                } else {
+                                    playbackButton.remove()
+                                    msg.mPlayer?.play()
+                                }
                             }
                         }
                     }
@@ -119,36 +147,42 @@ class MessageAdapter : ListAdapter<Message, ViewHolder>(CALLBACK) {
     }
 
     inner class OtherMessageViewHolder(
-        private val binding: OtherMessageItemBinding
+        val binding: OtherMessageItemBinding
     ) : ViewHolder(binding.root) {
-        private val mediaPlayer by lazy { MediaPlayer() }
-        fun bind(msg: Message) {
+        fun bind(msg: MediaMessage) {
             binding.apply {
                 imgAvt.setImageResource(R.drawable.me)
-                name.text = msg.user.fullName
-                when (msg.contentType) {
+                name.text = msg.message.user.fullName
+                when (msg.message.contentType) {
                     AppConstant.MESSAGE_CONTENT_TYPE_TEXT -> {
-                        message.text = msg.content
+                        message.text = msg.message.content
                     }
 
                     AppConstant.MESSAGE_CONTENT_TYPE_IMAGE -> {
                         message.remove()
                         contentImage.show()
-                        Picasso.get().load(msg.content).resize(160, 200).into(contentImage)
+                        Picasso.get().load(msg.message.content).resize(160, 200).into(contentImage)
                     }
 
                     AppConstant.MESSAGE_CONTENT_TYPE_VIDEO -> {
                         binding.apply {
                             message.remove()
-                            mediaPlayer.apply {
-                                setDataSource(msg.content)
-                                setDisplay(contentVideo.holder)
-                                prepareAsync()
+                            if (msg.mPlayer == null) {
+                                msg.mPlayer = ExoPlayer.Builder(itemView.context).build()
                             }
-                            contentVideo.apply {
-                                show()
-                                setOnClickListener {
-                                    videoOnClick?.let { onClick -> onClick(msg) }
+                            msg.mPlayer?.setMediaItem(MediaItem.fromUri(msg.message.content))
+                            msg.mPlayer?.prepare()
+                            playerViewContainer.show()
+                            playerView.apply {
+                                player = msg.mPlayer
+                                playerViewContainer.setOnClickListener {
+                                    if (msg.mPlayer!!.playWhenReady) {
+                                        playbackButton.show()
+                                        msg.mPlayer?.pause()
+                                    } else {
+                                        playbackButton.remove()
+                                        msg.mPlayer?.play()
+                                    }
                                 }
                             }
                         }
@@ -156,5 +190,9 @@ class MessageAdapter : ListAdapter<Message, ViewHolder>(CALLBACK) {
                 }
             }
         }
+    }
+
+    data class MediaMessage(val message: Message) {
+        var mPlayer: ExoPlayer? = null
     }
 }

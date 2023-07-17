@@ -1,20 +1,13 @@
 package com.lttrung.notepro.ui.activities.addnote
 
-import android.Manifest
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
 import android.content.pm.PackageManager
-import android.os.Bundle
-import android.os.IBinder
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityAddNoteBinding
 import com.lttrung.notepro.domain.data.networks.models.Image
 import com.lttrung.notepro.domain.data.networks.models.Note
-import com.lttrung.notepro.ui.activities.chat.ChatSocketService
 import com.lttrung.notepro.ui.activities.viewimagedetails.ViewImageDetailsActivity
 import com.lttrung.notepro.ui.adapters.FeatureAdapter
 import com.lttrung.notepro.ui.adapters.ImageAdapter
@@ -90,32 +83,6 @@ class AddNoteActivity : BaseActivity() {
                 }
             }
         })
-    }
-    private lateinit var socketService: ChatSocketService
-
-    private val connection by lazy {
-        object : ServiceConnection {
-            override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-                val binder = service as ChatSocketService.LocalBinder
-                socketService = binder.getService()
-            }
-
-            override fun onServiceDisconnected(name: ComponentName?) {
-
-            }
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Intent(this@AddNoteActivity, ChatSocketService::class.java).also { intent ->
-            bindService(intent, connection, Context.BIND_AUTO_CREATE)
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        unbindService(connection)
     }
 
     override fun onRequestPermissionsResult(

@@ -4,11 +4,13 @@ import com.lttrung.notepro.domain.data.networks.LoginNetworks
 import com.lttrung.notepro.domain.data.networks.MemberNetworks
 import com.lttrung.notepro.domain.data.networks.MessageNetworks
 import com.lttrung.notepro.domain.data.networks.NoteNetworks
+import com.lttrung.notepro.domain.data.networks.ThemeNetworks
 import com.lttrung.notepro.domain.data.networks.UserNetworks
 import com.lttrung.notepro.domain.data.networks.impl.LoginRetrofitServiceImpl
 import com.lttrung.notepro.domain.data.networks.impl.MemberRetrofitServiceImpl
 import com.lttrung.notepro.domain.data.networks.impl.MessageRetrofitServiceImpl
 import com.lttrung.notepro.domain.data.networks.impl.NoteRetrofitServiceImpl
+import com.lttrung.notepro.domain.data.networks.impl.ThemeRetrofitServiceImpl
 import com.lttrung.notepro.domain.data.networks.impl.UserRetrofitServiceImpl
 import dagger.Binds
 import dagger.Module
@@ -31,5 +33,8 @@ interface NetworksModules {
     fun bindsUserNetworks(impl: UserRetrofitServiceImpl): UserNetworks
 
     @Binds
-    fun findsMessageNetworks(impl: MessageRetrofitServiceImpl): MessageNetworks
+    fun bindsMessageNetworks(impl: MessageRetrofitServiceImpl): MessageNetworks
+
+    @Binds
+    fun bindsThemeNetworks(impl: ThemeRetrofitServiceImpl): ThemeNetworks
 }

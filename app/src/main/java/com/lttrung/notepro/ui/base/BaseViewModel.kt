@@ -35,9 +35,7 @@ open class BaseViewModel : ViewModel() {
         showLoading()
         return network.launch(Dispatchers.IO) {
             block.invoke(network)
-            withContext(Dispatchers.Main) {
-                hideLoading()
-            }
+            hideLoading()
         }
     }
 

@@ -4,11 +4,13 @@ import com.lttrung.notepro.domain.repositories.LoginRepositories
 import com.lttrung.notepro.domain.repositories.MemberRepositories
 import com.lttrung.notepro.domain.repositories.MessageRepositories
 import com.lttrung.notepro.domain.repositories.NoteRepositories
+import com.lttrung.notepro.domain.repositories.ThemeRepositories
 import com.lttrung.notepro.domain.repositories.UserRepositories
 import com.lttrung.notepro.domain.repositories.impl.LoginRepositoriesImpl
 import com.lttrung.notepro.domain.repositories.impl.MemberRepositoriesImpl
 import com.lttrung.notepro.domain.repositories.impl.MessageRepositoriesImpl
 import com.lttrung.notepro.domain.repositories.impl.NoteRepositoriesImpl
+import com.lttrung.notepro.domain.repositories.impl.ThemeRepositoriesImpl
 import com.lttrung.notepro.domain.repositories.impl.UserRepositoriesImpl
 import dagger.Binds
 import dagger.Module
@@ -32,4 +34,7 @@ interface RepositoryModules {
 
     @Binds
     fun bindsMessageRepositories(impl: MessageRepositoriesImpl): MessageRepositories
+
+    @Binds
+    fun bindsThemeRepositories(impl: ThemeRepositoriesImpl): ThemeRepositories
 }
