@@ -4,9 +4,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.ColorStateList
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Bundle
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +17,7 @@ import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityChatBinding
 import com.lttrung.notepro.domain.data.networks.models.Message
 import com.lttrung.notepro.domain.data.networks.models.Note
+import com.lttrung.notepro.domain.data.networks.models.Theme
 import com.lttrung.notepro.domain.data.networks.models.User
 import com.lttrung.notepro.ui.adapters.MessageAdapter
 import com.lttrung.notepro.ui.base.BaseActivity
@@ -27,6 +29,7 @@ import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE_RECEIVED
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.PAGE_LIMIT
+import com.lttrung.notepro.utils.AppConstant.Companion.THEME
 import com.lttrung.notepro.utils.JitsiHelper
 import com.lttrung.notepro.utils.MediaType
 import com.lttrung.notepro.utils.NotificationHelper
@@ -34,6 +37,7 @@ import com.lttrung.notepro.utils.openCamera
 import com.lttrung.notepro.utils.requestPermissionToOpenCamera
 import com.lttrung.notepro.utils.requestPermissionToReadGallery
 import com.lttrung.notepro.utils.toByteArray
+import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import org.jitsi.meet.sdk.JitsiMeetActivity
 import javax.inject.Inject
@@ -50,12 +54,18 @@ class ChatActivity : BaseActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 // Camera result
-                handleCameraResult(result)
+                val image = result.data?.extras?.get("data") as Bitmap?
+                val selectedTheme = result.data?.getSerializableExtra(THEME) as Theme?
+                if (image != null) {
+                    handleCameraResult(image)
+                } else if (selectedTheme != null) {
+                    handleChangeChatTheme(selectedTheme)
+                }
             }
         }
 
     private val messageAdapter by lazy {
-        MessageAdapter()
+        MessageAdapter(resources)
     }
     private val note by lazy {
         intent.getSerializableExtra(NOTE) as Note
@@ -203,6 +213,7 @@ class ChatActivity : BaseActivity() {
 
     override fun initViews() {
         super.initViews()
+        handleChangeChatTheme()
         initMessageRecyclerView()
     }
 
@@ -254,8 +265,7 @@ class ChatActivity : BaseActivity() {
         }
     }
 
-    private fun handleCameraResult(result: ActivityResult) {
-        val image = result.data?.extras?.get("data") as Bitmap
+    private fun handleCameraResult(image: Bitmap) {
         storageRef.child("images/messages/${System.currentTimeMillis()}.jpg")
             .putBytes(image.toByteArray()).addOnSuccessListener { task ->
                 task.metadata?.reference?.downloadUrl?.addOnSuccessListener { uri ->
@@ -265,5 +275,28 @@ class ChatActivity : BaseActivity() {
                     })
                 }
             }
+    }
+
+    private fun handleChangeChatTheme(theme: Theme? = null) {
+        if (theme != null) {
+            // Change background
+            Picasso.get().load(theme.bgUrl).into(binding.background)
+            // Change primary color in recyclerview chat
+            messageAdapter.setPrimaryColor(theme.myMsgBgColor, theme.myMsgTextColor)
+            // Change other component in screen
+            binding.apply {
+                val primaryColor = ColorStateList.valueOf(
+                    Color.parseColor(theme.myMsgBgColor)
+                )
+                btnOpenCamera.imageTintList = primaryColor
+                btnChooseImage.imageTintList = primaryColor
+                btnChooseVideo.imageTintList = primaryColor
+                sendMessageButton.imageTintList = primaryColor
+                btnCall.imageTintList = primaryColor
+                btnInfo.imageTintList = primaryColor
+            }
+            // Change status bar color
+            window.statusBarColor = Color.parseColor(theme.myMsgBgColor)
+        }
     }
 }

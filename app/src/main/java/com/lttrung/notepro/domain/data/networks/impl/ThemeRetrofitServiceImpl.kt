@@ -14,7 +14,7 @@ class ThemeRetrofitServiceImpl @Inject constructor(
         const val PATH = "/api/v1"
     }
     interface Service {
-        @GET("/themes")
+        @GET("$PATH/themes/")
         suspend fun fetchThemeList(): Response<ResponseEntity<List<Theme>>>
     }
     override suspend fun fetchThemeList(): ResponseEntity<List<Theme>> {

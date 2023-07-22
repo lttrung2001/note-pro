@@ -21,6 +21,7 @@ class ThemeFragment(private val themeList: List<Theme>) : BottomSheetDialogFragm
     private val themeAdapter by lazy {
         ThemeAdapter {
             viewModel.currentTheme = it
+            // Call api update note theme (add theme field ref to selected theme)
             (requireActivity() as ChatInfoActivity).handleChangeTheme(it)
             dismiss()
         }
@@ -31,6 +32,7 @@ class ThemeFragment(private val themeList: List<Theme>) : BottomSheetDialogFragm
         savedInstanceState: Bundle?
     ): View {
         binding.rvThemes.adapter = themeAdapter
+        themeAdapter.submitList(themeList)
         return binding.root
     }
 }

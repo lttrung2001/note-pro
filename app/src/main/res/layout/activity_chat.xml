@@ -4,15 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
     tools:context=".ui.activities.chat.ChatActivity">
+
+    <ImageView
+        android:id="@+id/background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
 
     <LinearLayout
         android:id="@+id/actionBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true">
+        android:layout_alignParentEnd="true"
+        android:padding="10dp">
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/btnCall"
@@ -38,6 +44,7 @@
         android:layout_height="0dp"
         android:layout_above="@id/message_box_container"
         android:layout_below="@id/actionBar"
+        android:padding="10dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:stackFromEnd="true"
         tools:itemCount="10"
@@ -54,7 +61,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="10dp">
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/btnOpenCamera"
@@ -73,6 +81,7 @@
                 android:padding="10dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_baseline_photo_album_24" />
+
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/btnChooseVideo"
                 android:layout_width="40dp"

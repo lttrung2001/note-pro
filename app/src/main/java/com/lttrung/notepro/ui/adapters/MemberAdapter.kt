@@ -21,7 +21,10 @@ class MemberAdapter(
             }
 
             override fun areContentsTheSame(oldItem: Member, newItem: Member): Boolean {
-                return oldItem == newItem
+                return oldItem.email == newItem.email &&
+                        oldItem.fullName == newItem.fullName &&
+                        oldItem.phoneNumber == newItem.phoneNumber &&
+                        oldItem.role == newItem.role
             }
         }
     }

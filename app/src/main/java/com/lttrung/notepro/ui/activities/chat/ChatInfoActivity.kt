@@ -11,6 +11,7 @@ import com.lttrung.notepro.ui.activities.viewmembers.ViewMembersActivity
 import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.ui.dialogs.AddMemberDialog
 import com.lttrung.notepro.ui.fragments.ThemeFragment
+import com.lttrung.notepro.utils.AppConstant
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -68,6 +69,10 @@ class ChatInfoActivity : BaseActivity() {
 
     fun handleChangeTheme(theme: Theme) {
         // Handle change theme
+        setResult(RESULT_OK, intent.apply {
+            putExtra(AppConstant.THEME, theme)
+        })
+        finish()
     }
 
     private fun handleAddResult(newMember: Member) {

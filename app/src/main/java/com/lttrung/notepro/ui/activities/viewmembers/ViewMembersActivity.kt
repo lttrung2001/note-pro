@@ -133,8 +133,10 @@ class ViewMembersActivity : BaseActivity() {
     ) {
         editedMember?.let { member ->
             val pos = members.indexOfFirst { it.id == member.id }
-            members[pos] = member
+            members[pos].role = member.role
             memberAdapter.submitList(members)
+            // Fix not update UI
+            memberAdapter.notifyItemChanged(pos)
         }
     }
 

@@ -1,7 +1,7 @@
 package com.lttrung.notepro.ui.adapters
 
+import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.lttrung.notepro.databinding.ThemeItemBinding
 import com.lttrung.notepro.domain.data.networks.models.Theme
+import com.squareup.picasso.Picasso
+
 
 class ThemeAdapter(val callback: (theme: Theme) -> Unit) :
     ListAdapter<Theme, ViewHolder>(object : DiffUtil.ItemCallback<Theme>() {
@@ -27,7 +29,7 @@ class ThemeAdapter(val callback: (theme: Theme) -> Unit) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        TODO("Not yet implemented")
+        (holder as ThemeViewHolder).bind()
     }
 
     inner class ThemeViewHolder(val binding: ThemeItemBinding) : ViewHolder(binding.root) {
@@ -40,13 +42,9 @@ class ThemeAdapter(val callback: (theme: Theme) -> Unit) :
         fun bind() {
             val item = getItem(bindingAdapterPosition)
             binding.apply {
-                root.background = Drawable.createFromPath(item.bgUrl)
-                themeItemOtherMessage.apply {
-                    setBackgroundColor(Color.parseColor(item.otherMsgBgColor))
-                    setTextColor(Color.parseColor(item.otherMsgTextColor))
-                }
+                Picasso.get().load(item.bgUrl).into(themeItemBackground)
                 themeItemMyMessage.apply {
-                    setBackgroundColor(Color.parseColor(item.myMsgBgColor))
+                    backgroundTintList = ColorStateList.valueOf(Color.parseColor(item.myMsgBgColor))
                     setTextColor(Color.parseColor(item.myMsgTextColor))
                 }
             }
