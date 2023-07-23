@@ -10,16 +10,19 @@ import com.google.gson.Gson
 import com.lttrung.notepro.domain.data.locals.UserLocals
 import com.lttrung.notepro.domain.data.networks.ResponseEntity
 import com.lttrung.notepro.domain.data.networks.models.Message
+import com.lttrung.notepro.domain.data.networks.models.Theme
 import com.lttrung.notepro.domain.data.networks.models.User
 import com.lttrung.notepro.domain.repositories.MessageRepositories
 import com.lttrung.notepro.exceptions.InvalidTokenException
 import com.lttrung.notepro.ui.activities.incomingcall.IncomingCallActivity
 import com.lttrung.notepro.ui.activities.login.LoginActivity
 import com.lttrung.notepro.utils.AppConstant
+import com.lttrung.notepro.utils.AppConstant.Companion.CHANGE_THEME_RECEIVED
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_LISTENER_NOTIFICATION_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE_RECEIVED
 import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
+import com.lttrung.notepro.utils.AppConstant.Companion.THEME
 import com.lttrung.notepro.utils.AppConstant.Companion.USER
 import com.lttrung.notepro.utils.CurrentActivityHolder
 import com.lttrung.notepro.utils.NotificationHelper
@@ -107,6 +110,12 @@ class ChatSocketService : Service() {
     internal fun call(roomId: String) {
         scope.launch {
             messageRepositories.call(socket, roomId)
+        }
+    }
+
+    internal fun changeTheme(roomId: String, theme: Theme) {
+        scope.launch {
+            messageRepositories.changeTheme(socket, roomId, theme)
         }
     }
 
@@ -205,6 +214,7 @@ class ChatSocketService : Service() {
         }
         listenChatEvent(socket)
         listenCallEvent(socket)
+        listenChangeThemeEvent(socket)
     }
 
     private fun listenCallEvent(socket: Socket) {
@@ -246,6 +256,21 @@ class ChatSocketService : Service() {
                 // Send broadcast
                 val messageReceivedIntent = Intent(MESSAGE_RECEIVED)
                 messageReceivedIntent.putExtra(MESSAGE, message)
+                sendBroadcast(messageReceivedIntent)
+            }
+        }
+    }
+
+    private fun listenChangeThemeEvent(socket: Socket) {
+        socket.on("change_theme") { args ->
+            val theme = gson.fromJson(args[1].toString(), Theme::class.java)
+            val process = ActivityManager.RunningAppProcessInfo()
+            ActivityManager.getMyMemoryState(process)
+            val isChatActivity = CurrentActivityHolder.currentActivity is ChatActivity
+            if (process.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND && isChatActivity) {
+                // Send broadcast
+                val messageReceivedIntent = Intent(CHANGE_THEME_RECEIVED)
+                messageReceivedIntent.putExtra(THEME, theme)
                 sendBroadcast(messageReceivedIntent)
             }
         }

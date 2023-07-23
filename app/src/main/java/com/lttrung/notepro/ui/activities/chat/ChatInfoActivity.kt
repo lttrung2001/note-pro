@@ -21,7 +21,7 @@ class ChatInfoActivity : BaseActivity() {
         ActivityChatInfoBinding.inflate(layoutInflater)
     }
     override val viewModel: ChatInfoViewModel by viewModels()
-    private val note by lazy {
+    val note by lazy {
         intent.getSerializableExtra(NOTE) as Note
     }
     private lateinit var addMemberDialog: AddMemberDialog

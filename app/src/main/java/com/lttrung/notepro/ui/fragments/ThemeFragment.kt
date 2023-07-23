@@ -22,7 +22,12 @@ class ThemeFragment(private val themeList: List<Theme>) : BottomSheetDialogFragm
         ThemeAdapter {
             viewModel.currentTheme = it
             // Call api update note theme (add theme field ref to selected theme)
-            (requireActivity() as ChatInfoActivity).handleChangeTheme(it)
+            val parentActivity = (requireActivity() as ChatInfoActivity)
+            parentActivity.socketService.changeTheme(
+                roomId = parentActivity.note.id,
+                theme = it
+            )
+            parentActivity.handleChangeTheme(it)
             dismiss()
         }
     }

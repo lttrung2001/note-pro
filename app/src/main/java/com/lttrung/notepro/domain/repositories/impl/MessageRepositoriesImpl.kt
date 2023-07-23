@@ -3,6 +3,7 @@ package com.lttrung.notepro.domain.repositories.impl
 import com.google.gson.Gson
 import com.lttrung.notepro.domain.data.networks.MessageNetworks
 import com.lttrung.notepro.domain.data.networks.models.Message
+import com.lttrung.notepro.domain.data.networks.models.Theme
 import com.lttrung.notepro.domain.repositories.MessageRepositories
 import io.socket.client.Socket
 import javax.inject.Inject
@@ -33,6 +34,10 @@ class MessageRepositoriesImpl @Inject constructor(
 
     override suspend fun call(socket: Socket, roomId: String) {
         socket.emit("call", roomId)
+    }
+
+    override suspend fun changeTheme(socket: Socket, roomId: String, theme: Theme) {
+        socket.emit("change_theme", roomId, Gson().toJson(theme))
     }
 
     override suspend fun getMessages(roomId: String, pageIndex: Int, limit: Int): List<Message> {

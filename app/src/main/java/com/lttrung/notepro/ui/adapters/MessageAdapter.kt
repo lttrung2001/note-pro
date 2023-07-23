@@ -1,6 +1,7 @@
 package com.lttrung.notepro.ui.adapters
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.Color
@@ -21,6 +22,7 @@ import com.lttrung.notepro.utils.show
 import com.squareup.picasso.Picasso
 
 class MessageAdapter(
+    val context: Context,
     val resource: Resources
 ) : ListAdapter<MessageAdapter.MediaMessage, ViewHolder>(CALLBACK) {
     companion object {
@@ -50,24 +52,28 @@ class MessageAdapter(
         if (textColor != null) {
             this.textColor = Color.parseColor(textColor)
         }
-        submitList(currentList.toMutableList().map {
-            it.apply { isChangeColor = true }
-        })
         notifyItemRangeChanged(0, currentList.size)
     }
 
+    override fun submitList(list: List<MediaMessage>?) {
+        super.submitList(list?.toMutableList()?.map {
+            it.context = context
+            return@map it
+        })
+    }
+
     override fun onViewDetachedFromWindow(holder: ViewHolder) {
+        super.onViewDetachedFromWindow(holder)
         val item = getItem(holder.bindingAdapterPosition)
         if (item.message.contentType == AppConstant.MESSAGE_CONTENT_TYPE_VIDEO) {
             if (holder is MyMessageViewHolder) {
-                item.mPlayer?.pause()
+                item.mPlayer.pause()
                 holder.binding.playbackButton.show()
             } else if (holder is OtherMessageViewHolder) {
-                item.mPlayer?.pause()
+                item.mPlayer.pause()
                 holder.binding.playbackButton.show()
             }
         }
-        super.onViewDetachedFromWindow(holder)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -118,10 +124,15 @@ class MessageAdapter(
         }
     }
 
+    fun onPause() {
+        for (item in currentList) {
+            item.mPlayer.pause()
+        }
+    }
+
     fun onRelease() {
         for (item in currentList) {
-            item.mPlayer?.release()
-            item.mPlayer = null
+            item.mPlayer.release()
         }
     }
 
@@ -149,21 +160,21 @@ class MessageAdapter(
                     binding.apply {
                         playbackButton.imageTintList = ColorStateList.valueOf(bgColor)
                         message.remove()
-                        if (msg.mPlayer == null) {
-                            msg.mPlayer = ExoPlayer.Builder(itemView.context).build()
-                            msg.mPlayer?.setMediaItem(MediaItem.fromUri("https://jsoncompare.org/LearningContainer/SampleFiles/Video/MP4/sample-mp4-file.mp4"))
-                            msg.mPlayer?.prepare()
+                        if (msg.mPlayer.currentMediaItem == null) {
+//                            msg.mPlayer.setMediaItem(MediaItem.fromUri(msg.message.content))
+                            msg.mPlayer.setMediaItem(MediaItem.fromUri("https://jsoncompare.org/LearningContainer/SampleFiles/Video/MP4/sample-mp4-file.mp4"))
+                            msg.mPlayer.prepare()
                         }
                         playerViewContainer.show()
                         playerView.apply {
                             player = msg.mPlayer
                             playerViewContainer.setOnClickListener {
-                                if (msg.mPlayer!!.playWhenReady) {
+                                if (msg.mPlayer.playWhenReady) {
                                     playbackButton.show()
-                                    msg.mPlayer?.pause()
+                                    msg.mPlayer.pause()
                                 } else {
                                     playbackButton.remove()
-                                    msg.mPlayer?.play()
+                                    msg.mPlayer.play()
                                 }
                             }
                         }
@@ -195,21 +206,20 @@ class MessageAdapter(
                         binding.apply {
                             playbackButton.imageTintList = ColorStateList.valueOf(bgColor)
                             message.remove()
-                            if (msg.mPlayer == null) {
-                                msg.mPlayer = ExoPlayer.Builder(itemView.context).build()
-                                msg.mPlayer?.setMediaItem(MediaItem.fromUri(msg.message.content))
-                                msg.mPlayer?.prepare()
+                            if (msg.mPlayer.currentMediaItem == null) {
+                                msg.mPlayer.setMediaItem(MediaItem.fromUri(msg.message.content))
+                                msg.mPlayer.prepare()
                             }
                             playerViewContainer.show()
                             playerView.apply {
                                 player = msg.mPlayer
                                 playerViewContainer.setOnClickListener {
-                                    if (msg.mPlayer!!.playWhenReady) {
+                                    if (msg.mPlayer.playWhenReady) {
                                         playbackButton.show()
-                                        msg.mPlayer?.pause()
+                                        msg.mPlayer.pause()
                                     } else {
                                         playbackButton.remove()
-                                        msg.mPlayer?.play()
+                                        msg.mPlayer.play()
                                     }
                                 }
                             }
@@ -221,7 +231,8 @@ class MessageAdapter(
     }
 
     data class MediaMessage(val message: Message) {
-        var mPlayer: ExoPlayer? = null
+        val mPlayer by lazy { ExoPlayer.Builder(context).build() }
         var isChangeColor = false
+        lateinit var context: Context
     }
 }

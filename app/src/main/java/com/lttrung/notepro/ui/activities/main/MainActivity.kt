@@ -6,6 +6,7 @@ import android.text.TextWatcher
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.view.get
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityMainBinding
 import com.lttrung.notepro.domain.data.networks.models.Note
@@ -67,25 +68,6 @@ class MainActivity : BaseActivity() {
     private val noteAdapter: NoteAdapter by lazy {
         NoteAdapter(noteListener)
     }
-    private val featureAdapter by lazy {
-        FeatureAdapter(object : FeatureAdapter.FeatureListener {
-            override fun onClick(item: Feature) {
-                when (item.id) {
-                    FeatureId.INFO -> {
-                        startActivity(Intent(this@MainActivity, ViewProfileActivity::class.java))
-                    }
-
-                    FeatureId.SETTING -> {
-                        startActivity(Intent(this@MainActivity, SettingActivity::class.java))
-                    }
-
-                    else -> {
-
-                    }
-                }
-            }
-        })
-    }
 
     private val noteListener: NoteAdapter.NoteListener by lazy {
         object : NoteAdapter.NoteListener {
@@ -135,13 +117,6 @@ class MainActivity : BaseActivity() {
         binding.searchBar.clearFocus()
     }
 
-    private fun getMainFeatures(): List<Feature> {
-        return listOf(
-            Feature(FeatureId.SETTING, R.drawable.ic_baseline_settings_24),
-            Feature(FeatureId.INFO, R.drawable.ic_baseline_person_24)
-        )
-    }
-
     override fun initObservers() {
         super.initObservers()
         viewModel.notesLiveData.observe(this) { notes ->
@@ -172,16 +147,27 @@ class MainActivity : BaseActivity() {
                     noteAdapter.submitList(viewModel.listNote)
                 }
             }
+            bottomNavView.background = null
+            bottomNavView.menu[2].isEnabled = false
+            bottomNavView.setOnItemSelectedListener {
+                when (it.itemId) {
+                    R.id.action_settings -> {
+                        startActivity(Intent(this@MainActivity, SettingActivity::class.java))
+                    }
+                    R.id.action_profile -> {
+                        startActivity(Intent(this@MainActivity, ViewProfileActivity::class.java))
+                    }
+                    else -> {
+
+                    }
+                }
+                return@setOnItemSelectedListener true
+            }
         }
     }
 
     override fun initViews() {
         super.initViews()
-        binding.apply {
-            rvFeatures.adapter = featureAdapter
-            rvNotes.adapter = noteAdapter
-        }
-
-        featureAdapter.submitList(getMainFeatures())
+        binding.rvNotes.adapter = noteAdapter
     }
 }

@@ -15,6 +15,7 @@ class AppConstant {
         const val MESSAGES_JSON = "com.lttrung.notepro.MESSAGES_JSON"
         const val IMAGES_JSON = "com.lttrung.notepro.IMAGES_JSON"
         const val MESSAGE_RECEIVED = "com.lttrung.notepro.MESSAGE_RECEIVED"
+        const val CHANGE_THEME_RECEIVED = "com.lttrung.notepro.CHANGE_THEME_RECEIVED"
         const val LOAD_MESSAGES_RECEIVED = "com.lttrung.notepro.LOAD_MESSAGES_RECEIVED"
         const val LIST_IMAGE = "com.lttrung.notepro.LIST_IMAGE"
         const val THEME = "com.lttrung.notepro.THEME"

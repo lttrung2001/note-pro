@@ -4,15 +4,25 @@
     tools:context="com.lttrung.notepro.ui.main.MainActivity">
     <item
         android:id="@+id/action_search"
-        android:icon="@drawable/ic_baseline_search_24"
-        android:orderInCategory="0"
-        android:title="@string/action_settings"
-        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        android:icon="@drawable/ic_app"
+        android:title="@string/dashboard"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_message"
+        android:icon="@drawable/ic_baseline_message_24"
+        android:title="@string/message"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/placeholder"
+        android:title="" />
+    <item
+        android:id="@+id/action_profile"
+        android:icon="@drawable/ic_baseline_person_24"
+        android:title="@string/edit_profile"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_settings"
         android:icon="@drawable/ic_baseline_settings_24"
-        android:orderInCategory="1"
         android:title="@string/action_settings"
         app:showAsAction="ifRoom" />
 </menu>

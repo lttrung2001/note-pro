@@ -24,6 +24,7 @@ import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.ui.dialogs.builders.DialogBuilder
 import com.lttrung.notepro.ui.fragments.BottomSheetGallery
 import com.lttrung.notepro.utils.AppConstant
+import com.lttrung.notepro.utils.AppConstant.Companion.CHANGE_THEME_RECEIVED
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_CHANNEL_ID
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE_RECEIVED
@@ -41,6 +42,7 @@ import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import org.jitsi.meet.sdk.JitsiMeetActivity
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class ChatActivity : BaseActivity() {
@@ -65,7 +67,7 @@ class ChatActivity : BaseActivity() {
         }
 
     private val messageAdapter by lazy {
-        MessageAdapter(resources)
+        MessageAdapter(this, resources)
     }
     private val note by lazy {
         intent.getSerializableExtra(NOTE) as Note
@@ -78,6 +80,14 @@ class ChatActivity : BaseActivity() {
             }
         }
     }
+    private val changeThemeReceiver by lazy {
+        object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                val theme = intent?.getSerializableExtra(THEME) as Theme
+                handleChangeChatTheme(theme)
+            }
+        }
+    }
 
     private val onScrollListener by lazy {
         object : RecyclerView.OnScrollListener() {
@@ -85,7 +95,6 @@ class ChatActivity : BaseActivity() {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (viewModel.isLoading.value == false) {
                     if (!recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                        viewModel.isLoading.postValue(true)
                         viewModel.getMessages(note.id, viewModel.page, PAGE_LIMIT)
                     }
                 }
@@ -108,6 +117,12 @@ class ChatActivity : BaseActivity() {
         super.onStop()
 
         unregisterReceiver(messageReceiver)
+        unregisterReceiver(changeThemeReceiver)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        messageAdapter.onPause()
     }
 
     override fun onDestroy() {
@@ -124,7 +139,6 @@ class ChatActivity : BaseActivity() {
 
     private fun observeGetMessagesData() {
         viewModel.messagesLiveData.observe(this) { preMessages ->
-            viewModel.isLoading.postValue(false)
             messageAdapter.submitList(viewModel.listMessage.map { MessageAdapter.MediaMessage(it) })
             if (preMessages.isEmpty()) {
                 binding.messages.removeOnScrollListener(onScrollListener)
@@ -135,6 +149,8 @@ class ChatActivity : BaseActivity() {
     private fun registerReceivers() {
         val messageReceivedIntentFilter = IntentFilter(MESSAGE_RECEIVED)
         registerReceiver(messageReceiver, messageReceivedIntentFilter)
+        val changeThemeReceivedIntentFilter = IntentFilter(CHANGE_THEME_RECEIVED)
+        registerReceiver(changeThemeReceiver, changeThemeReceivedIntentFilter)
     }
 
     private fun observeUploadResultData() {
@@ -213,8 +229,8 @@ class ChatActivity : BaseActivity() {
 
     override fun initViews() {
         super.initViews()
-        handleChangeChatTheme()
         initMessageRecyclerView()
+        handleChangeChatTheme(note.theme)
     }
 
     private fun initMessageRecyclerView() {
@@ -297,6 +313,10 @@ class ChatActivity : BaseActivity() {
             }
             // Change status bar color
             window.statusBarColor = Color.parseColor(theme.myMsgBgColor)
+            // Change loading progress bar color
+            loadingDialog.binding.progressBar.indeterminateTintList = ColorStateList.valueOf(
+                Color.parseColor(theme.myMsgBgColor)
+            )
         }
     }
 }

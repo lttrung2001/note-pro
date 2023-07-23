@@ -1,5 +1,6 @@
 package com.lttrung.notepro.domain.data.networks.models
 
+import com.google.gson.annotations.SerializedName
 import com.lttrung.notepro.domain.data.locals.entities.NoteLocalsModel
 import java.io.Serializable
 
@@ -10,7 +11,8 @@ data class Note(
     val lastModified: Long = 0,
     var isPin: Boolean = false,
     val role: String = "viewer",
-    var images: List<Image> = emptyList()
+    var images: List<Image> = emptyList(),
+    var theme: Theme? = null
 ) : Serializable {
     fun hasEditPermission(): Boolean {
         return role == "owner" || role == "editor"

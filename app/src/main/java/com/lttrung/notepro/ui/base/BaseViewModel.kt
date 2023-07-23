@@ -21,11 +21,9 @@ open class BaseViewModel : ViewModel() {
     private val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
         viewModelScope.launch {
             throwable.printStackTrace()
-            withContext(Dispatchers.Main) {
-                hideLoading()
-                // Handle error
-                throwableLiveData.postValue(throwable)
-            }
+            hideLoading()
+            // Handle error
+            throwableLiveData.postValue(throwable)
         }
     }
 
