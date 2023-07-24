@@ -131,11 +131,6 @@
             android:exported="false"
             android:label="@string/add_note" />
         <activity
-            android:name=".ui.activities.setting.SettingActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-            android:exported="false"
-            android:label="@string/action_settings" />
-        <activity
             android:name=".ui.activities.main.MainActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:exported="true">

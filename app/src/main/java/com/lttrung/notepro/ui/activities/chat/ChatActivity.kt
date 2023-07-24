@@ -55,6 +55,11 @@ class ChatActivity : BaseActivity() {
     private val launcher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
+                val themeChanged = result.data?.getSerializableExtra(THEME) as Theme?
+                if (themeChanged != null) {
+                    note.theme = themeChanged
+                    return@registerForActivityResult
+                }
                 // Camera result
                 val image = result.data?.extras?.get("data") as Bitmap?
                 val selectedTheme = result.data?.getSerializableExtra(THEME) as Theme?
@@ -128,6 +133,14 @@ class ChatActivity : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         messageAdapter.onRelease()
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        setResult(RESULT_OK, intent.apply {
+            putExtra(THEME, note.theme)
+        })
+        finish()
     }
 
     override fun initObservers() {

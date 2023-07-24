@@ -38,7 +38,6 @@ import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
-import okhttp3.internal.wait
 import javax.inject.Inject
 
 
@@ -61,7 +60,7 @@ class ChatSocketService : Service() {
 
     var isInCall = false
 
-    private lateinit var socket: Socket
+    private var socket: Socket? = null
     private var isRunning = false
 
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -79,43 +78,43 @@ class ChatSocketService : Service() {
 
     internal fun sendMessage(message: Message) {
         scope.launch {
-            messageRepositories.sendMessage(socket, message)
+            socket?.let { messageRepositories.sendMessage(it, message) }
         }
     }
 
     internal fun sendAddNoteMessage(roomId: String) {
         scope.launch {
-            messageRepositories.sendAddNoteMessage(socket, roomId)
+            socket?.let { messageRepositories.sendAddNoteMessage(it, roomId) }
         }
     }
 
     internal fun sendDeleteNoteMessage(roomId: String) {
         scope.launch {
-            messageRepositories.sendDeleteNoteMessage(socket, roomId)
+            socket?.let { messageRepositories.sendDeleteNoteMessage(it, roomId) }
         }
     }
 
     internal fun sendAddMemberMessage(roomId: String, email: String) {
         scope.launch {
-            messageRepositories.sendAddMemberMessage(socket, roomId, email)
+            socket?.let { messageRepositories.sendAddMemberMessage(it, roomId, email) }
         }
     }
 
     internal fun sendRemoveMemberMessage(roomId: String, email: String) {
         scope.launch {
-            messageRepositories.sendRemoveMemberMessage(socket, roomId, email)
+            socket?.let { messageRepositories.sendRemoveMemberMessage(it, roomId, email) }
         }
     }
 
     internal fun call(roomId: String) {
         scope.launch {
-            messageRepositories.call(socket, roomId)
+            socket?.let { messageRepositories.call(it, roomId) }
         }
     }
 
     internal fun changeTheme(roomId: String, theme: Theme) {
         scope.launch {
-            messageRepositories.changeTheme(socket, roomId, theme)
+            socket?.let { messageRepositories.changeTheme(it, roomId, theme) }
         }
     }
 
@@ -208,13 +207,15 @@ class ChatSocketService : Service() {
     }
 
     private fun startConnection() {
-        socket.connect()
-        socket.on(Socket.EVENT_CONNECT_ERROR) {
+        socket?.connect()
+        socket?.on(Socket.EVENT_CONNECT_ERROR) {
             stopSelf()
         }
-        listenChatEvent(socket)
-        listenCallEvent(socket)
-        listenChangeThemeEvent(socket)
+        if (socket != null) {
+            listenChatEvent(socket!!)
+            listenCallEvent(socket!!)
+            listenChangeThemeEvent(socket!!)
+        }
     }
 
     private fun listenCallEvent(socket: Socket) {

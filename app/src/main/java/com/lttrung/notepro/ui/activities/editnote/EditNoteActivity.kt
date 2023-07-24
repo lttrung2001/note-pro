@@ -1,20 +1,16 @@
 package com.lttrung.notepro.ui.activities.editnote
 
-import android.app.Service
-import android.content.ComponentName
 import android.content.Intent
-import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.IBinder
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityEditNoteBinding
 import com.lttrung.notepro.domain.data.networks.models.Image
 import com.lttrung.notepro.domain.data.networks.models.Note
+import com.lttrung.notepro.domain.data.networks.models.Theme
 import com.lttrung.notepro.ui.activities.chat.ChatActivity
-import com.lttrung.notepro.ui.activities.chat.ChatSocketService
 import com.lttrung.notepro.ui.activities.viewimagedetails.ViewImageDetailsActivity
 import com.lttrung.notepro.ui.activities.viewmembers.ViewMembersActivity
 import com.lttrung.notepro.ui.adapters.FeatureAdapter
@@ -30,6 +26,7 @@ import com.lttrung.notepro.utils.AppConstant.Companion.EDIT_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE_ACTION_TYPE
 import com.lttrung.notepro.utils.AppConstant.Companion.SELECTED_IMAGES
+import com.lttrung.notepro.utils.AppConstant.Companion.THEME
 import com.lttrung.notepro.utils.FeatureId
 import com.lttrung.notepro.utils.openCamera
 import com.lttrung.notepro.utils.openGallery
@@ -44,6 +41,11 @@ class EditNoteActivity : BaseActivity() {
             if (result.resultCode == RESULT_OK) {
                 val resultIntent = result.data
                 resultIntent?.let {
+                    val theme = resultIntent.getSerializableExtra(THEME) as Theme?
+                    if (theme != null) {
+                        note.theme = theme
+                        return@registerForActivityResult
+                    }
                     val images = it.getSerializableExtra(SELECTED_IMAGES) as List<Image>
                     val tempList = note.images.toMutableList()
                     tempList.addAll(images)
@@ -101,7 +103,7 @@ class EditNoteActivity : BaseActivity() {
                             Intent(this@EditNoteActivity, ChatActivity::class.java).apply {
                                 putExtra(NOTE, note)
                             }
-                        startActivity(chatIntent)
+                        launcher.launch(chatIntent)
                     }
 
                     FeatureId.DELETE -> {
@@ -132,6 +134,14 @@ class EditNoteActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.getNoteDetails(note.id)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        setResult(RESULT_OK, Intent().apply {
+            putExtra(NOTE_ACTION_TYPE, EDIT_NOTE)
+            putExtra(NOTE, note)
+        })
     }
 
     override fun onRequestPermissionsResult(

@@ -8,37 +8,124 @@
     android:orientation="vertical"
     tools:context=".ui.activities.main.MainActivity">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/searchBarContainer"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_gravity="top"
-        android:layout_margin="10dp"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="2dp">
-
-        <EditText
-            android:id="@+id/searchBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:hint="@string/search_here"
-            android:padding="10dp" />
-    </androidx.cardview.widget.CardView>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvNotes"
+    <LinearLayout
+        android:id="@+id/llNotes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="68dp"
         android:layout_marginBottom="60dp"
-        android:nestedScrollingEnabled="true"
+        android:orientation="vertical">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/searchBarContainer"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_gravity="top"
+            android:layout_margin="10dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="2dp">
+
+            <EditText
+                android:id="@+id/searchBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="@string/search_here"
+                android:padding="10dp" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvNotes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:nestedScrollingEnabled="true"
+            android:orientation="vertical"
+            android:overScrollMode="never"
+            android:paddingStart="10dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="100"
+            tools:listitem="@layout/note_item" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llSettings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="60dp"
         android:orientation="vertical"
-        android:overScrollMode="never"
-        android:paddingStart="10dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:itemCount="100"
-        tools:listitem="@layout/note_item" />
+        android:paddingHorizontal="10dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/btn_view_profile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="32dp"
+            android:orientation="horizontal">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/img_avt"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/me"
+                app:civ_border_color="@color/primary"
+                app:civ_border_width="2dp" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="16dp"
+                android:drawableEnd="@drawable/ic_baseline_arrow_forward_ios_24"
+                android:text="Thanh Trung Le"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/account"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_change_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:drawableStart="@drawable/ic_baseline_change_password_24"
+            android:drawableEnd="@drawable/ic_baseline_arrow_forward_ios_24"
+            android:drawablePadding="20dp"
+            android:drawableTint="@android:color/holo_blue_light"
+            android:text="@string/change_password"
+            android:textAlignment="viewStart"
+            android:textAllCaps="false"
+            android:textSize="16sp" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/others"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_logout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:drawableStart="@drawable/ic_baseline_exit_to_app_24"
+            android:drawableEnd="@drawable/ic_baseline_arrow_forward_ios_24"
+            android:drawablePadding="20dp"
+            android:drawableTint="@android:color/holo_red_light"
+            android:text="@string/logout"
+            android:textAlignment="viewStart"
+            android:textAllCaps="false"
+            android:textSize="16sp" />
+    </LinearLayout>
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomAppBar"
@@ -55,6 +142,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:background="@android:color/transparent"
+            app:itemActiveIndicatorStyle="@color/primary"
             app:labelVisibilityMode="unlabeled"
             app:menu="@menu/menu_main" />
     </com.google.android.material.bottomappbar.BottomAppBar>
@@ -65,6 +153,5 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/secondary"
         android:src="@drawable/ic_baseline_add_24"
-        android:tint="@color/white"
         app:layout_anchor="@id/bottomAppBar" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

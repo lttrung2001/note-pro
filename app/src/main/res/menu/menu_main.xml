@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.lttrung.notepro.ui.main.MainActivity">
     <item
-        android:id="@+id/action_search"
+        android:id="@+id/action_view_notes"
         android:icon="@drawable/ic_app"
         android:title="@string/dashboard"
         app:showAsAction="ifRoom" />

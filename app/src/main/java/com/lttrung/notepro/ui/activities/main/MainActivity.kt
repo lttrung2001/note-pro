@@ -11,22 +11,22 @@ import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityMainBinding
 import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.ui.activities.addnote.AddNoteActivity
+import com.lttrung.notepro.ui.activities.changepassword.ChangePasswordActivity
 import com.lttrung.notepro.ui.activities.chat.ChatSocketService
 import com.lttrung.notepro.ui.activities.editnote.EditNoteActivity
+import com.lttrung.notepro.ui.activities.login.LoginActivity
 import com.lttrung.notepro.ui.activities.notedetails.NoteDetailsActivity
-import com.lttrung.notepro.ui.activities.setting.SettingActivity
 import com.lttrung.notepro.ui.activities.viewprofile.ViewProfileActivity
-import com.lttrung.notepro.ui.adapters.FeatureAdapter
 import com.lttrung.notepro.ui.adapters.NoteAdapter
 import com.lttrung.notepro.ui.base.BaseActivity
-import com.lttrung.notepro.ui.entities.Feature
 import com.lttrung.notepro.utils.AppConstant.Companion.ADD_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.DELETE_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.EDIT_NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE_ACTION_TYPE
-import com.lttrung.notepro.utils.FeatureId
 import com.lttrung.notepro.utils.ServiceUtils
+import com.lttrung.notepro.utils.remove
+import com.lttrung.notepro.utils.show
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -112,6 +112,29 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    private val viewProfileListener by lazy {
+        View.OnClickListener {
+            val viewProfileIntent = Intent(this, ViewProfileActivity::class.java)
+            startActivity(viewProfileIntent)
+        }
+    }
+
+    private val changePasswordListener by lazy {
+        View.OnClickListener {
+            val changePasswordIntent = Intent(this, ChangePasswordActivity::class.java)
+            startActivity(changePasswordIntent)
+        }
+    }
+
+    private val logoutOnClickListener by lazy {
+        View.OnClickListener {
+            viewModel.logout()
+            val logoutIntent = Intent(this, LoginActivity::class.java)
+            logoutIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(logoutIntent)
+        }
+    }
+
     override fun onStop() {
         super.onStop()
         binding.searchBar.clearFocus()
@@ -135,6 +158,9 @@ class MainActivity : BaseActivity() {
                 startService(Intent(this, ChatSocketService::class.java))
             }
         }
+        viewModel.userLiveData.observe(this) { user ->
+            binding.tvName.text = user.fullName
+        }
     }
 
     override fun initListeners() {
@@ -151,8 +177,13 @@ class MainActivity : BaseActivity() {
             bottomNavView.menu[2].isEnabled = false
             bottomNavView.setOnItemSelectedListener {
                 when (it.itemId) {
+                    R.id.action_view_notes -> {
+                        llNotes.show()
+                        llSettings.remove()
+                    }
                     R.id.action_settings -> {
-                        startActivity(Intent(this@MainActivity, SettingActivity::class.java))
+                        llNotes.remove()
+                        llSettings.show()
                     }
                     R.id.action_profile -> {
                         startActivity(Intent(this@MainActivity, ViewProfileActivity::class.java))
@@ -163,6 +194,10 @@ class MainActivity : BaseActivity() {
                 }
                 return@setOnItemSelectedListener true
             }
+
+            btnViewProfile.setOnClickListener(viewProfileListener)
+            btnChangePassword.setOnClickListener(changePasswordListener)
+            btnLogout.setOnClickListener(logoutOnClickListener)
         }
     }
 

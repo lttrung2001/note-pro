@@ -11,7 +11,7 @@
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_above="@id/rvFeatures"
+        android:layout_above="@id/featureContainer"
         android:layout_alignParentTop="true"
 
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -22,7 +22,7 @@
             android:orientation="vertical"
             android:paddingHorizontal="16dp">
 
-            <EditText
+            <TextView
                 android:id="@+id/edt_note_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <EditText
+            <TextView
                 android:id="@+id/edt_note_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -62,12 +62,23 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvFeatures"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/featureContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/feature_item" />
+        android:layout_margin="10dp"
+        android:backgroundTint="@color/secondary"
+        app:cardCornerRadius="16dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvFeatures"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="5"
+            tools:itemCount="5"
+            tools:listitem="@layout/feature_item" />
+    </androidx.cardview.widget.CardView>
 </RelativeLayout>
