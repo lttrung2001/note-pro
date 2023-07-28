@@ -7,12 +7,14 @@ import com.lttrung.notepro.databinding.ActivityChatInfoBinding
 import com.lttrung.notepro.domain.data.networks.models.Member
 import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.domain.data.networks.models.Theme
+import com.lttrung.notepro.ui.activities.main.MainActivity
 import com.lttrung.notepro.ui.activities.viewmembers.ViewMembersActivity
 import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.ui.dialogs.AddMemberDialog
 import com.lttrung.notepro.ui.fragments.ThemeFragment
 import com.lttrung.notepro.utils.AppConstant
 import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
+import com.lttrung.notepro.utils.JitsiHelper
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -52,6 +54,9 @@ class ChatInfoActivity : BaseActivity() {
                     }
                 }
             }
+            btnChatInfoLeaveChat.setOnClickListener {
+                viewModel.leaveChat(note.id)
+            }
         }
     }
 
@@ -64,6 +69,11 @@ class ChatInfoActivity : BaseActivity() {
             ThemeFragment(it).also { f ->
                 f.show(supportFragmentManager, f.tag)
             }
+        }
+        viewModel.leaveChatLiveData.observe(this) {
+            startActivity(Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            })
         }
     }
 

@@ -89,9 +89,13 @@
     <string name="notification">Thông báo</string>
     <string name="notice">Thông báo</string>
     <string name="ask_send_image">Gửi ảnh này?</string>
+    <string name="ask_send_video">Gửi video này?</string>
     <string name="message_content_empty_notice">Hãy nhập tin nhắn</string>
     <string name="ask_for_delete_note">Bạn có chắc chắn muốn xóa ghi chú này?</string>
     <string name="ask_for_delete_member">Bạn có chắc chắn muốn xóa thành viên này?</string>
     <string name="error_can_not_make_call">Không thể thực hiện cuộc gọi vào lúc này</string>
     <string name="phone_number_can_not_be_empty">Số điện thoại không được để trống!</string>
+    <string name="missed_call">Cuộc gọi nhỡ</string>
+    <string name="you_missed_call_from">Bạn bỏ lỡ cuộc gọi từ %s</string>
+    <string name="ask_leave_meet">Bạn có chắc muốn rời khỏi cuộc gọi này?</string>
 </resources>

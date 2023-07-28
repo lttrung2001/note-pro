@@ -19,6 +19,7 @@ import com.lttrung.notepro.ui.activities.login.LoginActivity
 import com.lttrung.notepro.utils.AppConstant
 import com.lttrung.notepro.utils.AppConstant.Companion.CHANGE_THEME_RECEIVED
 import com.lttrung.notepro.utils.AppConstant.Companion.CHAT_LISTENER_NOTIFICATION_ID
+import com.lttrung.notepro.utils.AppConstant.Companion.IS_AUDIO_CALL
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE_RECEIVED
 import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
@@ -61,7 +62,6 @@ class ChatSocketService : Service() {
     var isInCall = false
 
     private var socket: Socket? = null
-    private var isRunning = false
 
     private val scope = CoroutineScope(Dispatchers.IO)
     private val binder by lazy {
@@ -108,6 +108,12 @@ class ChatSocketService : Service() {
 
     internal fun call(roomId: String) {
         scope.launch {
+            socket?.let { messageRepositories.call(it, roomId, true) }
+        }
+    }
+
+    internal fun callVideo(roomId: String) {
+        scope.launch {
             socket?.let { messageRepositories.call(it, roomId) }
         }
     }
@@ -133,15 +139,12 @@ class ChatSocketService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        if (!isRunning) {
-            isRunning = true
-            initObservers()
-            val refreshToken = userLocals.getRefreshToken()
-            if (refreshToken.isEmpty()) {
-                accessTokenLiveData.postValue(Resource.Error(InvalidTokenException()))
-            } else {
-                callGetAccessTokenApi(refreshToken)
-            }
+        initObservers()
+        val refreshToken = userLocals.getRefreshToken()
+        if (refreshToken.isEmpty()) {
+            accessTokenLiveData.postValue(Resource.Error(InvalidTokenException()))
+        } else {
+            callGetAccessTokenApi(refreshToken)
         }
     }
 
@@ -224,14 +227,19 @@ class ChatSocketService : Service() {
                 // Handle later...
             } else {
                 handleConnectCall(
-                    args[0].toString(),
-                    args[1].toString()
+                    roomId = args[0].toString(),
+                    userJson = args[1].toString(),
+                    isAudioCall = args[2].toString().toBoolean()
                 )
             }
         }
     }
 
-    private fun handleConnectCall(roomId: String, userJson: String) {
+    private fun handleConnectCall(
+        roomId: String,
+        userJson: String,
+        isAudioCall: Boolean
+    ) {
         val user = gson.fromJson(userJson, User::class.java)
         baseContext.startActivity(Intent(
             this@ChatSocketService,
@@ -240,6 +248,7 @@ class ChatSocketService : Service() {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
             putExtra(ROOM_ID, roomId)
             putExtra(USER, user)
+            putExtra(IS_AUDIO_CALL, isAudioCall)
         })
     }
 

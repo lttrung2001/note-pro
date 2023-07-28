@@ -14,7 +14,7 @@ interface MessageRepositories {
     suspend fun sendDeleteNoteMessage(socket: Socket, roomId: String)
     suspend fun sendAddMemberMessage(socket: Socket, roomId: String, email: String)
     suspend fun sendRemoveMemberMessage(socket: Socket, roomId: String, email: String)
-    suspend fun call(socket: Socket, roomId: String)
+    suspend fun call(socket: Socket, roomId: String, isAudioCall: Boolean = false)
     suspend fun changeTheme(socket: Socket, roomId: String, theme: Theme)
 
     suspend fun getMessages(roomId: String, pageIndex: Int, limit: Int): List<Message>

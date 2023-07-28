@@ -4,7 +4,7 @@
     tools:context="com.lttrung.notepro.ui.main.MainActivity">
     <item
         android:id="@+id/action_view_notes"
-        android:icon="@drawable/ic_app"
+        android:icon="@drawable/ic_baseline_home_24"
         android:title="@string/dashboard"
         app:showAsAction="ifRoom" />
     <item

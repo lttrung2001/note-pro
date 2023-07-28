@@ -19,7 +19,7 @@ open class BaseViewModel : ViewModel() {
         MutableLiveData<Throwable>()
     }
     private val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             throwable.printStackTrace()
             hideLoading()
             // Handle error
@@ -27,7 +27,7 @@ open class BaseViewModel : ViewModel() {
         }
     }
 
-    val network = viewModelScope + exceptionHandler
+    private val network = viewModelScope + exceptionHandler
 
     fun launch(block: suspend CoroutineScope.() -> Unit): Job {
         showLoading()

@@ -1,6 +1,7 @@
 package com.lttrung.notepro.ui.activities.main
 
 import android.content.Intent
+import android.os.Build
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -142,7 +143,7 @@ class MainActivity : BaseActivity() {
 
     override fun initObservers() {
         super.initObservers()
-        viewModel.notesLiveData.observe(this) { notes ->
+        viewModel.notesLiveData.observe(this) {
             viewModel.listNote.removeAll { it.id == "" }
             // Fix sort
             viewModel.listNote.sortBy { !it.isPin }
@@ -154,12 +155,16 @@ class MainActivity : BaseActivity() {
                 }
             }
             noteAdapter.submitList(viewModel.listNote)
-            if (!ServiceUtils.isServiceRunning(this, ChatSocketService::class.java)) {
-                startService(Intent(this, ChatSocketService::class.java))
+            try {
+                if (!ServiceUtils.isServiceRunning(this, ChatSocketService::class.java)) {
+                    startService(Intent(this, ChatSocketService::class.java))
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
         viewModel.userLiveData.observe(this) { user ->
-            binding.tvName.text = user.fullName
+            binding.tvName.text = user.fullName ?: ""
         }
     }
 

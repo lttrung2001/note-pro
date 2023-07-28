@@ -19,6 +19,7 @@ class AppConstant {
         const val LOAD_MESSAGES_RECEIVED = "com.lttrung.notepro.LOAD_MESSAGES_RECEIVED"
         const val LIST_IMAGE = "com.lttrung.notepro.LIST_IMAGE"
         const val THEME = "com.lttrung.notepro.THEME"
+        const val IS_AUDIO_CALL = "com.lttrung.notepro.IS_AUDIO_CALL"
 
 
         const val CHAT_LISTENER_NOTIFICATION_ID = 1

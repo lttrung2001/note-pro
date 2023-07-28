@@ -79,7 +79,7 @@ class ConfirmDialog(val mContext: Context) : Dialog(mContext) {
 
     private fun setContent(content: String?) {
         mContent = content
-        if (mTvContent != null) {
+        if (mContent != null) {
             if (mContent!!.contains("<strong>") || mContent!!.contains("</a>")) mTvContent!!.text =
                 Html.fromHtml(mContent) else {
                 mTvContent!!.text = mContent

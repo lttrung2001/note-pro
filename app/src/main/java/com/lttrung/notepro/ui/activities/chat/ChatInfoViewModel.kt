@@ -15,6 +15,7 @@ class ChatInfoViewModel @Inject constructor(
     private val themeRepositories: ThemeRepositories
 ) : BaseViewModel() {
     internal val addMemberLiveData by lazy { MutableLiveData<Member>() }
+    internal val leaveChatLiveData by lazy { MutableLiveData<Unit>() }
     internal val themeListLiveData by lazy { MutableLiveData<List<Theme>>() }
     internal val themeList by lazy { mutableListOf<Theme>() }
     internal var currentTheme: Theme? = null
@@ -23,6 +24,13 @@ class ChatInfoViewModel @Inject constructor(
         launch {
             val addMember = memberRepositories.addMember(noteId, email, role)
             addMemberLiveData.postValue(addMember)
+        }
+    }
+
+    internal fun leaveChat(roomId: String) {
+        launch {
+            val leaveChat = memberRepositories.deleteMember(roomId)
+            leaveChatLiveData.postValue(leaveChat)
         }
     }
 

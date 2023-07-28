@@ -8,7 +8,7 @@ import javax.inject.Singleton
 interface MemberNetworks {
     suspend fun addMember(noteId: String, email: String, role: String): ResponseEntity<Member>
     suspend fun editMember(noteId: String, member: Member): ResponseEntity<Member>
-    suspend fun deleteMember(noteId: String, memberId: String): ResponseEntity<Unit>
+    suspend fun deleteMember(noteId: String, memberId: String?): ResponseEntity<Unit>
     suspend fun getMemberDetails(noteId: String, memberId: String): ResponseEntity<Member>
     suspend fun getMembers(noteId: String, pageIndex: Int, limit: Int): ResponseEntity<Paging<Member>>
 

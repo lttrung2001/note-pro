@@ -34,7 +34,7 @@ class MessageRetrofitServiceImpl @Inject constructor(
         return if (response.isSuccessful && body != null) {
             body
         } else {
-            throw Exception(body?.message)
+            throw Exception("Đã có lỗi xảy ra. Vui lòng thử lại sau.")
         }
     }
 }

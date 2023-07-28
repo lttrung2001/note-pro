@@ -32,8 +32,8 @@ class MessageRepositoriesImpl @Inject constructor(
         socket.emit("remove_member", roomId, email)
     }
 
-    override suspend fun call(socket: Socket, roomId: String) {
-        socket.emit("call", roomId)
+    override suspend fun call(socket: Socket, roomId: String, isAudioCall: Boolean) {
+        socket.emit("call", roomId, isAudioCall)
     }
 
     override suspend fun changeTheme(socket: Socket, roomId: String, theme: Theme) {

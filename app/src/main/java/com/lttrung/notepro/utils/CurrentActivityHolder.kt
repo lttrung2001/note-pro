@@ -1,11 +1,13 @@
 package com.lttrung.notepro.utils
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 
 class CurrentActivityHolder : Application.ActivityLifecycleCallbacks {
     companion object {
+        @SuppressLint("StaticFieldLeak")
         lateinit var currentActivity: Activity
     }
 

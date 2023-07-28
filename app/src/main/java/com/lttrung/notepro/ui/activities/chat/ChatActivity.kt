@@ -40,7 +40,6 @@ import com.lttrung.notepro.utils.requestPermissionToReadGallery
 import com.lttrung.notepro.utils.toByteArray
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
-import org.jitsi.meet.sdk.JitsiMeetActivity
 import javax.inject.Inject
 
 
@@ -219,8 +218,30 @@ class ChatActivity : BaseActivity() {
             btnCall.setOnClickListener {
                 viewModel.currentUserLiveData.value?.let { currentUser ->
                     socketService.call(note.id)
-                    val options = JitsiHelper.createOptions(note.id, currentUser)
-                    JitsiMeetActivity.launch(this@ChatActivity, options)
+                    val options = JitsiHelper.createOptions(
+                        roomId = note.id,
+                        currentUser = currentUser,
+                        audioOnly = true
+                    )
+                    startJitsi(options)
+//                    JitsiMeetActivity.launch(this@ChatActivity, options)
+                    return@setOnClickListener
+                }
+                DialogBuilder(this@ChatActivity)
+                    .setNotice(R.string.error_can_not_make_call)
+                    .setCanTouchOutside(false)
+                    .build()
+                    .show()
+            }
+            btnCallVideo.setOnClickListener {
+                viewModel.currentUserLiveData.value?.let { currentUser ->
+                    socketService.callVideo(note.id)
+                    val options = JitsiHelper.createOptions(
+                        roomId = note.id,
+                        currentUser = currentUser
+                    )
+                    startJitsi(options)
+//                    JitsiMeetActivity.launch(this@ChatActivity, options)
                     return@setOnClickListener
                 }
                 DialogBuilder(this@ChatActivity)
@@ -317,11 +338,14 @@ class ChatActivity : BaseActivity() {
                 val primaryColor = ColorStateList.valueOf(
                     Color.parseColor(theme.myMsgBgColor)
                 )
+                messageBoxLayout.boxStrokeColor = Color.parseColor(theme.myMsgBgColor)
+                messageBoxLayout.hintTextColor = primaryColor
                 btnOpenCamera.imageTintList = primaryColor
                 btnChooseImage.imageTintList = primaryColor
                 btnChooseVideo.imageTintList = primaryColor
                 sendMessageButton.imageTintList = primaryColor
                 btnCall.imageTintList = primaryColor
+                btnCallVideo.imageTintList = primaryColor
                 btnInfo.imageTintList = primaryColor
             }
             // Change status bar color

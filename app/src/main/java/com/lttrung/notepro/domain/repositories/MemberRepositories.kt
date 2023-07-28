@@ -10,7 +10,7 @@ interface MemberRepositories {
     val networks: MemberNetworks
     suspend fun addMember(noteId: String, email: String, role: String): Member
     suspend fun editMember(noteId: String, member: Member): Member
-    suspend fun deleteMember(noteId: String, memberId: String): Unit
+    suspend fun deleteMember(noteId: String, memberId: String? = null)
     suspend fun getMemberDetails(noteId: String, memberId: String): Member
     suspend fun getMembers(noteId: String, pageIndex: Int, limit: Int): Paging<Member>
 

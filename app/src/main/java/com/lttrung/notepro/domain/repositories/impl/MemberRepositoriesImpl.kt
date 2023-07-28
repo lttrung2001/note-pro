@@ -16,7 +16,7 @@ class MemberRepositoriesImpl @Inject constructor(override val networks: MemberNe
         return networks.editMember(noteId, member).data
     }
 
-    override suspend fun deleteMember(noteId: String, memberId: String) {
+    override suspend fun deleteMember(noteId: String, memberId: String?) {
         return networks.deleteMember(noteId, memberId).data
     }
 

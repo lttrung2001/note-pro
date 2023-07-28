@@ -34,7 +34,7 @@ class MemberRetrofitServiceImpl @Inject constructor(private val service: Service
         @DELETE("$PATH/delete-member")
         suspend fun deleteMember(
             @Query("noteId") noteId: String,
-            @Query("memberId") memberId: String
+            @Query("memberId") memberId: String?
         ): Response<ResponseEntity<Unit>>
 
         @GET("$PATH/get-member-details")
@@ -68,7 +68,7 @@ class MemberRetrofitServiceImpl @Inject constructor(private val service: Service
         return if (response.isSuccessful && body != null) {
             body
         } else {
-            throw Exception(body?.message)
+            throw Exception("Đã có lỗi xảy ra. Vui lòng thử lại sau.")
         }
     }
 
@@ -78,17 +78,17 @@ class MemberRetrofitServiceImpl @Inject constructor(private val service: Service
         return if (response.isSuccessful && body != null) {
             body
         } else {
-            throw Exception(body?.message)
+            throw Exception("Đã có lỗi xảy ra. Vui lòng thử lại sau.")
         }
     }
 
-    override suspend fun deleteMember(noteId: String, memberId: String): ResponseEntity<Unit> {
+    override suspend fun deleteMember(noteId: String, memberId: String?): ResponseEntity<Unit> {
         val response = service.deleteMember(noteId, memberId)
         val body = response.body()
         return if (response.isSuccessful && body != null) {
             body
         } else {
-            throw Exception(body?.message)
+            throw Exception("Đã có lỗi xảy ra. Vui lòng thử lại sau.")
         }
     }
 
@@ -101,7 +101,7 @@ class MemberRetrofitServiceImpl @Inject constructor(private val service: Service
         return if (response.isSuccessful && body != null) {
             body
         } else {
-            throw Exception(body?.message)
+            throw Exception("Đã có lỗi xảy ra. Vui lòng thử lại sau.")
         }
     }
 
@@ -115,7 +115,7 @@ class MemberRetrofitServiceImpl @Inject constructor(private val service: Service
         return if (response.isSuccessful && body != null) {
             body
         } else {
-            throw Exception(body?.message)
+            throw Exception("Đã có lỗi xảy ra. Vui lòng thử lại sau.")
         }
     }
 
@@ -125,7 +125,7 @@ class MemberRetrofitServiceImpl @Inject constructor(private val service: Service
         return if (response.isSuccessful && body != null) {
             body
         } else {
-            throw Exception(body?.message)
+            throw Exception("Đã có lỗi xảy ra. Vui lòng thử lại sau.")
         }
     }
 }
