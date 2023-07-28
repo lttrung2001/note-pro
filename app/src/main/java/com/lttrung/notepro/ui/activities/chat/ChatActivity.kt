@@ -57,15 +57,13 @@ class ChatActivity : BaseActivity() {
                 val themeChanged = result.data?.getSerializableExtra(THEME) as Theme?
                 if (themeChanged != null) {
                     note.theme = themeChanged
+                    handleChangeChatTheme(themeChanged)
                     return@registerForActivityResult
                 }
                 // Camera result
                 val image = result.data?.extras?.get("data") as Bitmap?
-                val selectedTheme = result.data?.getSerializableExtra(THEME) as Theme?
                 if (image != null) {
                     handleCameraResult(image)
-                } else if (selectedTheme != null) {
-                    handleChangeChatTheme(selectedTheme)
                 }
             }
         }
@@ -270,6 +268,10 @@ class ChatActivity : BaseActivity() {
     private fun initMessageRecyclerView() {
         binding.messages.apply {
             adapter = messageAdapter
+            setRecycledViewPool(RecyclerView.RecycledViewPool().apply {
+                this.setMaxRecycledViews(MessageAdapter.MY_MESSAGE, 50)
+                this.setMaxRecycledViews(MessageAdapter.OTHER_MESSAGE, 50)
+            })
             setItemViewCacheSize(100)
         }
     }

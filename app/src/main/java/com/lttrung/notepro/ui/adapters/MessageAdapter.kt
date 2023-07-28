@@ -36,8 +36,8 @@ class MessageAdapter(
             }
 
         }
-        private const val MY_MESSAGE = 2
-        private const val OTHER_MESSAGE = 3
+        const val MY_MESSAGE = 2
+        const val OTHER_MESSAGE = 3
     }
 
     lateinit var userId: String
