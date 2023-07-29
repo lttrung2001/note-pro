@@ -13,6 +13,3 @@
 .externalNativeBuild
 .cxx
 local.properties
-google-services.json
-app/src/main/java/com/lttrung/notepro/utils/RetrofitUtils.kt
-app/src/main/java/com/lttrung/notepro/utils/RetrofitUtils.kt

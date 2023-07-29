@@ -149,10 +149,11 @@ class ChatActivity : BaseActivity() {
 
     private fun observeGetMessagesData() {
         viewModel.messagesLiveData.observe(this) { preMessages ->
-            messageAdapter.submitList(viewModel.listMessage.map { MessageAdapter.MediaMessage(it) })
+            messageAdapter.addData(preMessages.map { MessageAdapter.MediaMessage(it, this) })
             if (preMessages.isEmpty()) {
                 binding.messages.removeOnScrollListener(onScrollListener)
             }
+            binding.messages.scrollToPosition(messageAdapter.itemCount)
         }
     }
 
@@ -174,7 +175,7 @@ class ChatActivity : BaseActivity() {
                 User(messageAdapter.userId, "")
             )
             viewModel.listMessage.add(message)
-            messageAdapter.submitList(viewModel.listMessage.map { MessageAdapter.MediaMessage(it) })
+            messageAdapter.addData(listOf(message).map { MessageAdapter.MediaMessage(it, this) })
             socketService.sendMessage(message)
         }
     }
@@ -269,10 +270,16 @@ class ChatActivity : BaseActivity() {
         binding.messages.apply {
             adapter = messageAdapter
             setRecycledViewPool(RecyclerView.RecycledViewPool().apply {
-                this.setMaxRecycledViews(MessageAdapter.MY_MESSAGE, 50)
-                this.setMaxRecycledViews(MessageAdapter.OTHER_MESSAGE, 50)
+                setMaxRecycledViews(MessageAdapter.TEXT_MY_MESSAGE, 50)
+                setMaxRecycledViews(MessageAdapter.TEXT_OTHER_MESSAGE, 50)
+
+                setMaxRecycledViews(MessageAdapter.IMAGE_MY_MESSAGE, 50)
+                setMaxRecycledViews(MessageAdapter.IMAGE_OTHER_MESSAGE, 50)
+
+                setMaxRecycledViews(MessageAdapter.VIDEO_MY_MESSAGE, 50)
+                setMaxRecycledViews(MessageAdapter.VIDEO_OTHER_MESSAGE, 50)
             })
-            setItemViewCacheSize(100)
+            setItemViewCacheSize(300)
         }
     }
 
@@ -302,14 +309,14 @@ class ChatActivity : BaseActivity() {
         socketService.sendMessage(message)
 
         viewModel.listMessage.add(message)
-        messageAdapter.submitList(viewModel.listMessage.map { MessageAdapter.MediaMessage(it) })
+        messageAdapter.addData(listOf(message).map { MessageAdapter.MediaMessage(it, this) })
         binding.messageBox.setText("")
     }
 
     private fun handleIncomingMessage(message: Message) {
         if (message.room == note.id) {
             viewModel.listMessage.add(message)
-            messageAdapter.submitList(viewModel.listMessage.map { MessageAdapter.MediaMessage(it) })
+            messageAdapter.addData(listOf(message).map { MessageAdapter.MediaMessage(it, this) })
         } else {
             NotificationHelper.pushNotification(
                 this@ChatActivity, CHAT_CHANNEL_ID, message

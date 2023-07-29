@@ -55,7 +55,7 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:stackFromEnd="true"
         tools:itemCount="10"
-        tools:listitem="@layout/other_message_item" />
+        tools:listitem="@layout/text_other_message_item" />
 
     <LinearLayout
         android:id="@+id/message_box_container"
