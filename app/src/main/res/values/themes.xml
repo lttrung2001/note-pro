@@ -16,6 +16,7 @@
 
     <style name="Theme.NotePro.NoActionBar" parent="Base.Theme.NotePro.NoActionBar">
         <!-- Customize your light theme here. -->
+        <item name="android:windowContentTransitions">true</item>
     </style>
 
     <style name="Divider">

@@ -1,7 +1,6 @@
 package com.lttrung.notepro.ui.activities.main
 
 import android.content.Intent
-import android.os.Build
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -30,6 +29,7 @@ import com.lttrung.notepro.utils.remove
 import com.lttrung.notepro.utils.show
 import dagger.hilt.android.AndroidEntryPoint
 
+
 @AndroidEntryPoint
 class MainActivity : BaseActivity() {
     private val launcher =
@@ -40,19 +40,15 @@ class MainActivity : BaseActivity() {
                     val note = i.getSerializableExtra(NOTE) as Note
                     when (i.getIntExtra(NOTE_ACTION_TYPE, 0)) {
                         ADD_NOTE -> {
-                            viewModel.listNote.add(0, note)
-                            noteAdapter.submitList(viewModel.listNote)
+                            handleAddNoteResult(note)
                         }
 
                         EDIT_NOTE -> {
-                            viewModel.listNote.removeIf { it.id == note.id }
-                            viewModel.listNote.add(0, note)
-                            noteAdapter.submitList(viewModel.listNote)
+                            handleEditNoteResult(note)
                         }
 
                         DELETE_NOTE -> {
-                            viewModel.listNote.removeIf { it.id == note.id }
-                            noteAdapter.submitList(viewModel.listNote)
+                            handleDeleteNoteResult(note)
                         }
 
                         else -> {
@@ -62,6 +58,7 @@ class MainActivity : BaseActivity() {
                 }
             }
         }
+
     override val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
@@ -209,5 +206,79 @@ class MainActivity : BaseActivity() {
     override fun initViews() {
         super.initViews()
         binding.rvNotes.adapter = noteAdapter
+    }
+
+    private fun handleDeleteNoteResult(note: Note) {
+        val pos = viewModel.listNote.indexOfFirst { it.id == note.id }
+        viewModel.listNote.removeAt(pos)
+        noteAdapter.submitList(viewModel.listNote)
+        noteAdapter.notifyItemRemoved(pos)
+    }
+
+    private fun handleEditNoteResult(note: Note) {
+        val pos = viewModel.listNote.indexOfFirst { it.id == note.id }
+        if (note.isPin != viewModel.listNote[pos].isPin) {
+            viewModel.listNote.removeAt(pos)
+            if (note.isPin) {
+                val firstIdx = viewModel.listNote.indexOfFirst { it.isPin && it.id != "" }
+                if (firstIdx != -1) {
+                    viewModel.listNote.add(firstIdx, note)
+                    noteAdapter.notifyItemInserted(firstIdx)
+                } else {
+                    viewModel.listNote.add(0, Note("", getString(R.string.pinned)))
+                    viewModel.listNote.add(1, note)
+                    noteAdapter.submitList(viewModel.listNote)
+                    noteAdapter.notifyItemRangeInserted(0, 2)
+                }
+            } else {
+                val firstIdx = viewModel.listNote.indexOfFirst { !it.isPin && it.id != "" }
+                if (firstIdx != -1) {
+                    viewModel.listNote.add(firstIdx, note)
+                    noteAdapter.notifyItemInserted(firstIdx)
+                } else {
+                    viewModel.listNote.add(Note("", getString(R.string.unpin)))
+                    viewModel.listNote.add(note)
+                    noteAdapter.submitList(viewModel.listNote)
+                    noteAdapter.notifyItemRangeInserted(
+                        noteAdapter.itemCount - 2,
+                        noteAdapter.itemCount
+                    )
+                }
+            }
+        } else {
+            val firstIdx = viewModel.listNote.indexOfFirst { it.isPin == note.isPin && it.id != "" }
+            if (firstIdx != -1) {
+                viewModel.listNote.add(firstIdx, note)
+                noteAdapter.notifyItemInserted(firstIdx)
+            }
+        }
+        noteAdapter.notifyItemRemoved(pos + 1)
+    }
+
+    private fun handleAddNoteResult(note: Note) {
+        val firstNoteIdx = if (note.isPin) {
+            viewModel.listNote.indexOfFirst { it.isPin && it.id != "" }
+        } else {
+            viewModel.listNote.indexOfFirst { !it.isPin && it.id != "" }
+        }
+        if (firstNoteIdx != -1) {
+            viewModel.listNote.add(firstNoteIdx, note)
+            noteAdapter.notifyItemInserted(firstNoteIdx)
+        } else {
+            if (note.isPin) {
+                viewModel.listNote.add(0, Note("", getString(R.string.pinned)))
+                viewModel.listNote.add(1, note)
+                noteAdapter.submitList(viewModel.listNote)
+                noteAdapter.notifyItemRangeInserted(0, 2)
+            } else {
+                viewModel.listNote.add(Note("", getString(R.string.unpin)))
+                viewModel.listNote.add(note)
+                noteAdapter.submitList(viewModel.listNote)
+                noteAdapter.notifyItemRangeInserted(
+                    noteAdapter.itemCount - 2,
+                    noteAdapter.itemCount
+                )
+            }
+        }
     }
 }
