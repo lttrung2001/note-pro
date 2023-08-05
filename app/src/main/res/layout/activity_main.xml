@@ -78,9 +78,9 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="16dp"
                 android:drawableEnd="@drawable/ic_baseline_arrow_forward_ios_24"
-                android:text="Thanh Trung Le"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:text="Thanh Trung Le" />
         </LinearLayout>
 
         <com.google.android.material.textview.MaterialTextView
@@ -125,6 +125,26 @@
             android:textAlignment="viewStart"
             android:textAllCaps="false"
             android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llMessages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="60dp"
+        android:orientation="vertical"
+        android:paddingHorizontal="10dp"
+        android:visibility="gone">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvMessages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="4"
+            tools:listitem="@layout/message_item" />
     </LinearLayout>
 
     <com.google.android.material.bottomappbar.BottomAppBar

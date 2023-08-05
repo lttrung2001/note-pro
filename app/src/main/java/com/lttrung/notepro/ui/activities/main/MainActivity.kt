@@ -12,11 +12,13 @@ import com.lttrung.notepro.databinding.ActivityMainBinding
 import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.ui.activities.addnote.AddNoteActivity
 import com.lttrung.notepro.ui.activities.changepassword.ChangePasswordActivity
+import com.lttrung.notepro.ui.activities.chat.ChatActivity
 import com.lttrung.notepro.ui.activities.chat.ChatSocketService
 import com.lttrung.notepro.ui.activities.editnote.EditNoteActivity
 import com.lttrung.notepro.ui.activities.login.LoginActivity
 import com.lttrung.notepro.ui.activities.notedetails.NoteDetailsActivity
 import com.lttrung.notepro.ui.activities.viewprofile.ViewProfileActivity
+import com.lttrung.notepro.ui.adapters.MessageAdapter2
 import com.lttrung.notepro.ui.adapters.NoteAdapter
 import com.lttrung.notepro.ui.base.BaseActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.ADD_NOTE
@@ -65,6 +67,15 @@ class MainActivity : BaseActivity() {
     override val viewModel: MainViewModel by viewModels()
     private val noteAdapter: NoteAdapter by lazy {
         NoteAdapter(noteListener)
+    }
+    private val messageAdapter by lazy {
+        MessageAdapter2 {
+            val chatIntent =
+                Intent(this@MainActivity, ChatActivity::class.java).apply {
+                    putExtra(NOTE, it)
+                }
+            launcher.launch(chatIntent)
+        }
     }
 
     private val noteListener: NoteAdapter.NoteListener by lazy {
@@ -152,6 +163,9 @@ class MainActivity : BaseActivity() {
                 }
             }
             noteAdapter.submitList(viewModel.listNote)
+            messageAdapter.submitList(viewModel.listNote.filter {
+                it.lastMessage != null
+            })
             try {
                 if (!ServiceUtils.isServiceRunning(this, ChatSocketService::class.java)) {
                     startService(Intent(this, ChatSocketService::class.java))
@@ -182,10 +196,17 @@ class MainActivity : BaseActivity() {
                     R.id.action_view_notes -> {
                         llNotes.show()
                         llSettings.remove()
+                        llMessages.remove()
                     }
                     R.id.action_settings -> {
                         llNotes.remove()
                         llSettings.show()
+                        llMessages.remove()
+                    }
+                    R.id.action_message -> {
+                        llNotes.remove()
+                        llSettings.remove()
+                        llMessages.show()
                     }
                     R.id.action_profile -> {
                         startActivity(Intent(this@MainActivity, ViewProfileActivity::class.java))
@@ -206,6 +227,7 @@ class MainActivity : BaseActivity() {
     override fun initViews() {
         super.initViews()
         binding.rvNotes.adapter = noteAdapter
+        binding.rvMessages.adapter = messageAdapter
     }
 
     private fun handleDeleteNoteResult(note: Note) {

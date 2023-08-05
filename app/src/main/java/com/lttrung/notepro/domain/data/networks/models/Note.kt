@@ -12,7 +12,8 @@ data class Note(
     var isPin: Boolean = false,
     val role: String = "viewer",
     var images: List<Image> = emptyList(),
-    var theme: Theme? = null
+    var theme: Theme? = null,
+    var lastMessage: Message? = null
 ) : Serializable {
     fun hasEditPermission(): Boolean {
         return role == "owner" || role == "editor"
