@@ -3,9 +3,11 @@ package com.lttrung.notepro.ui.activities.main
 import android.content.Intent
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.KeyEvent
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.get
 import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.ActivityMainBinding
@@ -102,25 +104,6 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    private val searchWatcher by lazy {
-        object: TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-
-            override fun afterTextChanged(p0: Editable?) {
-                if (p0.toString().isEmpty()) {
-                    noteAdapter.submitList(viewModel.listNote)
-                } else {
-                    val filteredNotes = viewModel.listNote.filter {
-                        it.title.contains(p0.toString()) or it.content.contains(p0.toString())
-                    }
-                    noteAdapter.submitList(filteredNotes)
-                }
-            }
-        }
-    }
-
     private val viewProfileListener by lazy {
         View.OnClickListener {
             val viewProfileIntent = Intent(this, ViewProfileActivity::class.java)
@@ -183,12 +166,23 @@ class MainActivity : BaseActivity() {
         super.initListeners()
         binding.apply {
             fab.setOnClickListener(fabOnClickListener)
-            searchBar.addTextChangedListener(searchWatcher)
-            searchBar.setOnFocusChangeListener { _, b ->
-                if (!b) {
-                    noteAdapter.submitList(viewModel.listNote)
+            searchBar.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return true
                 }
-            }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    if (newText.toString().isEmpty()) {
+                        noteAdapter.submitList(viewModel.listNote)
+                    } else {
+                        val filteredNotes = viewModel.listNote.filter {
+                            it.title.contains(newText.toString()) or it.content.contains(newText.toString())
+                        }
+                        noteAdapter.submitList(filteredNotes)
+                    }
+                    return true
+                }
+            })
             bottomNavView.background = null
             bottomNavView.menu[2].isEnabled = false
             bottomNavView.setOnItemSelectedListener {

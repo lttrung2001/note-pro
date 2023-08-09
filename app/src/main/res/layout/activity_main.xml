@@ -24,20 +24,23 @@
             app:cardCornerRadius="10dp"
             app:cardElevation="2dp">
 
-            <EditText
+            <androidx.appcompat.widget.SearchView
                 android:id="@+id/searchBar"
+                app:queryHint="@string/search_here"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@null"
-                android:hint="@string/search_here"
-                android:padding="10dp" />
+                android:imeOptions="actionSearch"
+                android:padding="10dp"
+                app:iconifiedByDefault="false"
+                app:queryBackground="@null"
+                app:searchIcon="@null" />
         </androidx.cardview.widget.CardView>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvNotes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:nestedScrollingEnabled="true"
             android:orientation="vertical"
             android:overScrollMode="never"

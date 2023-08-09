@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activities.editimage.EditImageFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btnSend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:background="@android:color/transparent"
+            android:text="@string/send"
+            android:textColor="@color/primary"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/ivEditingImage"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="@string/contrast"
+            android:textColor="@color/primary"
+            android:textSize="16sp" />
+
+        <SeekBar
+            android:id="@+id/sbContrastBar"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:max="200"
+            android:progress="100" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="@string/brightness"
+            android:textColor="@color/primary"
+            android:textSize="16sp" />
+
+        <SeekBar
+            android:id="@+id/sbBrightnessBar"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:max="255" />
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -188,6 +188,11 @@ class MessageAdapter(
         notifyItemRangeInserted(0, tmpList.size)
     }
 
+    fun addSingleData(msg: MediaMessage) {
+        mList.add(msg)
+        notifyItemInserted(mList.size - 1)
+    }
+
     fun onPause() {
         for (item in mList) {
             item.mPlayer.pause()

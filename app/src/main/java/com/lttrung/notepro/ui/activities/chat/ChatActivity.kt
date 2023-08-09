@@ -153,7 +153,6 @@ class ChatActivity : BaseActivity() {
             if (preMessages.isEmpty()) {
                 binding.messages.removeOnScrollListener(onScrollListener)
             }
-            binding.messages.scrollToPosition(messageAdapter.itemCount)
         }
     }
 
@@ -174,8 +173,8 @@ class ChatActivity : BaseActivity() {
                 0L,
                 User(messageAdapter.userId, "")
             )
-            viewModel.listMessage.add(message)
-            messageAdapter.addData(listOf(message).map { MessageAdapter.MediaMessage(it, this) })
+            viewModel.listMessage.add(0, message)
+            messageAdapter.addSingleData(MessageAdapter.MediaMessage(message, this))
             socketService.sendMessage(message)
         }
     }
@@ -308,15 +307,15 @@ class ChatActivity : BaseActivity() {
         )
         socketService.sendMessage(message)
 
-        viewModel.listMessage.add(message)
-        messageAdapter.addData(listOf(message).map { MessageAdapter.MediaMessage(it, this) })
+        viewModel.listMessage.add(0, message)
+        messageAdapter.addSingleData(MessageAdapter.MediaMessage(message, this))
         binding.messageBox.setText("")
     }
 
     private fun handleIncomingMessage(message: Message) {
         if (message.room == note.id) {
             viewModel.listMessage.add(message)
-            messageAdapter.addData(listOf(message).map { MessageAdapter.MediaMessage(it, this) })
+            messageAdapter.addSingleData(MessageAdapter.MediaMessage(message, this))
         } else {
             NotificationHelper.pushNotification(
                 this@ChatActivity, CHAT_CHANNEL_ID, message

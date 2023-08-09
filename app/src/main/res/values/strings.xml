@@ -149,4 +149,6 @@
     <string name="missed_call">Missed call</string>
     <string name="you_missed_call_from">You missed call from %s</string>
     <string name="ask_leave_meet">Are you sure to leave this room?</string>
+    <string name="brightness">Brightness</string>
+    <string name="contrast">Contrast</string>
 </resources>

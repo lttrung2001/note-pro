@@ -1,5 +1,6 @@
 package com.lttrung.notepro.ui.fragments
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import com.lttrung.notepro.R
 import com.lttrung.notepro.databinding.FragmentBottomSheetGalleryBinding
 import com.lttrung.notepro.domain.data.locals.models.MediaSelectionLocalsModel
 import com.lttrung.notepro.ui.activities.chat.ChatViewModel
+import com.lttrung.notepro.ui.activities.editimage.EditImageFragment
 import com.lttrung.notepro.ui.adapters.MediaSelectionAdapter
 import com.lttrung.notepro.ui.dialogs.builders.DialogBuilder
 import com.lttrung.notepro.utils.AppConstant
@@ -34,17 +36,35 @@ class BottomSheetGallery(private val type: MediaType) : BottomSheetDialogFragmen
             .setIsSelectSingle(true)
             .setItemListener(object : MediaSelectionAdapter.ItemListener {
                 override fun onClick(image: MediaSelectionLocalsModel) {
-                    val noticeId = when (type) {
-                        MediaType.IMAGE -> R.string.ask_send_image
-                        MediaType.VIDEO -> R.string.ask_send_video
-                    }
-                    DialogBuilder(requireContext())
-                        .setNotice(noticeId)
+                    if (type == MediaType.VIDEO) {
+                        DialogBuilder(requireContext())
+                        .setNotice(R.string.ask_send_video)
                         .addButtonLeft(R.string.back)
                         .addButtonRight(R.string.send) {
                             dismiss()
                             sendMediaViaCloudStorage(image.url)
                         }.build().show()
+                    } else if (type == MediaType.IMAGE) {
+                        try {
+                            val bitmap = BitmapFactory.decodeFile(image.url)
+                            val f = EditImageFragment(bitmap)
+                            f.show(requireActivity().supportFragmentManager, f.tag)
+                            dismiss()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+//                    val noticeId = when (type) {
+//                        MediaType.IMAGE -> R.string.ask_send_image
+//                        MediaType.VIDEO -> R.string.ask_send_video
+//                    }
+//                    DialogBuilder(requireContext())
+//                        .setNotice(noticeId)
+//                        .addButtonLeft(R.string.back)
+//                        .addButtonRight(R.string.send) {
+//                            dismiss()
+//                            sendMediaViaCloudStorage(image.url)
+//                        }.build().show()
                 }
             })
     }
