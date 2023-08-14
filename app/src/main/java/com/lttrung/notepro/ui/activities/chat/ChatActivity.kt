@@ -175,7 +175,7 @@ class ChatActivity : BaseActivity() {
             )
             viewModel.listMessage.add(0, message)
             messageAdapter.addSingleData(MessageAdapter.MediaMessage(message, this))
-            socketService.sendMessage(message)
+            socketService?.sendMessage(message)
         }
     }
 
@@ -215,7 +215,7 @@ class ChatActivity : BaseActivity() {
             }
             btnCall.setOnClickListener {
                 viewModel.currentUserLiveData.value?.let { currentUser ->
-                    socketService.call(note.id)
+                    socketService?.call(note.id)
                     val options = JitsiHelper.createOptions(
                         roomId = note.id,
                         currentUser = currentUser,
@@ -233,7 +233,7 @@ class ChatActivity : BaseActivity() {
             }
             btnCallVideo.setOnClickListener {
                 viewModel.currentUserLiveData.value?.let { currentUser ->
-                    socketService.callVideo(note.id)
+                    socketService?.callVideo(note.id)
                     val options = JitsiHelper.createOptions(
                         roomId = note.id,
                         currentUser = currentUser
@@ -305,7 +305,7 @@ class ChatActivity : BaseActivity() {
             0L,
             User(uid, "")
         )
-        socketService.sendMessage(message)
+        socketService?.sendMessage(message)
 
         viewModel.listMessage.add(0, message)
         messageAdapter.addSingleData(MessageAdapter.MediaMessage(message, this))

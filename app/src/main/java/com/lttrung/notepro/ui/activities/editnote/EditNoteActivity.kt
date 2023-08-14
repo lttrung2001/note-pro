@@ -194,7 +194,7 @@ class EditNoteActivity : BaseActivity() {
         }
 
         viewModel.deleteNoteLiveData.observe(this) {
-            socketService.sendDeleteNoteMessage(note.id)
+            socketService?.sendDeleteNoteMessage(note.id)
 
             val resultIntent = Intent()
             resultIntent.putExtra(NOTE, note)

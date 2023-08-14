@@ -88,6 +88,6 @@ class ChatInfoActivity : BaseActivity() {
     private fun handleAddResult(newMember: Member) {
         addMemberDialog.dismiss()
 
-        socketService.sendAddMemberMessage(note.id, newMember.email)
+        socketService?.sendAddMemberMessage(note.id, newMember.email)
     }
 }

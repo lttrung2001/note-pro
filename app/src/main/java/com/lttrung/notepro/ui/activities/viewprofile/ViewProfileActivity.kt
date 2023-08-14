@@ -29,7 +29,7 @@ class ViewProfileActivity : BaseActivity() {
             binding.tvId.text = user.id
             binding.tvFullName.text = user.fullName
             binding.tvEmail.text = user.email
-            binding.tvPhoneNumber.text = user.phoneNumber
+            binding.tvPhoneNumber.text = "0" + user.phoneNumber.substring(3)
         }
     }
 

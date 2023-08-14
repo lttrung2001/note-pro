@@ -146,7 +146,7 @@ class AddNoteActivity : BaseActivity() {
             resultIntent.putExtra(NOTE_ACTION_TYPE, ADD_NOTE)
             setResult(RESULT_OK, resultIntent)
 
-            socketService.sendAddNoteMessage(note.id)
+            socketService?.sendAddNoteMessage(note.id)
             finish()
         }
     }

@@ -20,7 +20,6 @@ import org.jitsi.meet.sdk.JitsiMeetConferenceOptions
 abstract class BaseActivity : AppCompatActivity() {
     abstract val binding: ViewBinding
 
-    lateinit var socketService: ChatSocketService
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             val binder = service as ChatSocketService.LocalBinder
@@ -31,6 +30,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
         }
     }
+    var socketService: ChatSocketService? = null
 
     override fun onStart() {
         super.onStart()

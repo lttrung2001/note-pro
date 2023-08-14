@@ -158,6 +158,11 @@ class MainActivity : BaseActivity() {
             }
         }
         viewModel.userLiveData.observe(this) { user ->
+            if (user == null) {
+                viewModel.logout()
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
+            }
             binding.tvName.text = user.fullName ?: ""
         }
     }
@@ -268,6 +273,9 @@ class MainActivity : BaseActivity() {
                 noteAdapter.notifyItemInserted(firstIdx)
             }
         }
+        noteAdapter.submitList(viewModel.listNote.apply {
+            removeAt(pos + 1)
+        })
         noteAdapter.notifyItemRemoved(pos + 1)
     }
 

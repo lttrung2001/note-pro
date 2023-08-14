@@ -123,8 +123,9 @@ class ViewMembersActivity : BaseActivity() {
             val findingMember = members.find { it.id == member.id }
             members.remove(findingMember)
             memberAdapter.submitList(members)
+            memberAdapter.notifyDataSetChanged()
 
-            socketService.sendRemoveMemberMessage(note.id, member.email)
+            socketService?.sendRemoveMemberMessage(note.id, member.email)
         }
     }
 
@@ -143,8 +144,9 @@ class ViewMembersActivity : BaseActivity() {
     private fun handleAddResult(newMember: Member) {
         viewModel.listMember.add(newMember)
         memberAdapter.submitList(viewModel.listMember)
+        memberAdapter.notifyDataSetChanged()
         addMemberDialog.dismiss()
 
-        socketService.sendAddMemberMessage(note.id, newMember.email)
+        socketService?.sendAddMemberMessage(note.id, newMember.email)
     }
 }
