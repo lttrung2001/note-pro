@@ -150,6 +150,9 @@ class ChatActivity : BaseActivity() {
     private fun observeGetMessagesData() {
         viewModel.messagesLiveData.observe(this) { preMessages ->
             messageAdapter.addData(preMessages.map { MessageAdapter.MediaMessage(it, this) })
+            if (viewModel.page == 1) {
+                binding.messages.scrollToPosition(viewModel.listMessage.size - 1)
+            }
             if (preMessages.isEmpty()) {
                 binding.messages.removeOnScrollListener(onScrollListener)
             }
