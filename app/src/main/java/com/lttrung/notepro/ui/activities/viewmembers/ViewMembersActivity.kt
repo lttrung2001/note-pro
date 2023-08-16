@@ -110,8 +110,8 @@ class ViewMembersActivity : BaseActivity() {
                         rIntent.getSerializableExtra(AppConstant.EDITED_MEMBER) as Member?
                     val deletedMember =
                         rIntent.getSerializableExtra(AppConstant.DELETED_MEMBER) as Member?
-                    handleEditResult(editedMember, viewModel.listMember)
-                    handleDeleteResult(deletedMember, viewModel.listMember)
+                    handleEditResult(editedMember, memberAdapter.currentList.toMutableList())
+                    handleDeleteResult(deletedMember, memberAdapter.currentList.toMutableList())
                 }
             }
         }
@@ -123,8 +123,6 @@ class ViewMembersActivity : BaseActivity() {
             val findingMember = members.find { it.id == member.id }
             members.remove(findingMember)
             memberAdapter.submitList(members)
-            memberAdapter.notifyDataSetChanged()
-
             socketService?.sendRemoveMemberMessage(note.id, member.email)
         }
     }
@@ -134,17 +132,16 @@ class ViewMembersActivity : BaseActivity() {
     ) {
         editedMember?.let { member ->
             val pos = members.indexOfFirst { it.id == member.id }
-            members[pos].role = member.role
+            members[pos] = member
             memberAdapter.submitList(members)
-            // Fix not update UI
-            memberAdapter.notifyItemChanged(pos)
         }
     }
 
     private fun handleAddResult(newMember: Member) {
-        viewModel.listMember.add(newMember)
-        memberAdapter.submitList(viewModel.listMember)
-        memberAdapter.notifyDataSetChanged()
+        memberAdapter.submitList(memberAdapter.currentList
+            .toMutableList().apply {
+            add(0, newMember)
+        })
         addMemberDialog.dismiss()
 
         socketService?.sendAddMemberMessage(note.id, newMember.email)
