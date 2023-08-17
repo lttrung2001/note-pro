@@ -49,4 +49,9 @@ class JitsiActivity : JitsiMeetActivity() {
     override fun onBackPressed() {
         dialog.show()
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        socketService.isInCall = false
+    }
 }

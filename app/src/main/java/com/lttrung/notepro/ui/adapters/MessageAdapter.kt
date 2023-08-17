@@ -55,19 +55,21 @@ class MessageAdapter(
 
     override fun onViewDetachedFromWindow(holder: ViewHolder) {
         super.onViewDetachedFromWindow(holder)
-        val item = getItem(holder.bindingAdapterPosition)
-        if (item.message.contentType == AppConstant.MESSAGE_CONTENT_TYPE_VIDEO) {
-            if (holder is MyMessageVideoViewHolder) {
-                holder.binding.apply {
+        if (holder.bindingAdapterPosition != -1) {
+            val item = getItem(holder.bindingAdapterPosition)
+            if (item.message.contentType == AppConstant.MESSAGE_CONTENT_TYPE_VIDEO) {
+                if (holder is MyMessageVideoViewHolder) {
+                    holder.binding.apply {
 //                    playerView.player?.pause()
-                    item.mPlayer.pause()
-                    playbackButton.show()
-                }
-            } else if (holder is OtherMessageVideoViewHolder) {
-                holder.binding.apply {
+                        item.mPlayer.pause()
+                        playbackButton.show()
+                    }
+                } else if (holder is OtherMessageVideoViewHolder) {
+                    holder.binding.apply {
 //                    playerView.player?.pause()
-                    item.mPlayer.pause()
-                    playbackButton.show()
+                        item.mPlayer.pause()
+                        playbackButton.show()
+                    }
                 }
             }
         }
@@ -190,7 +192,7 @@ class MessageAdapter(
 
     fun addSingleData(msg: MediaMessage) {
         mList.add(msg)
-        notifyItemInserted(mList.size - 1)
+        notifyDataSetChanged()
     }
 
     fun onPause() {
@@ -223,6 +225,7 @@ class MessageAdapter(
                 Picasso
                     .get()
                     .load(msg.message.content)
+                    .placeholder(R.drawable.me)
                     .resize(160, 200)
                     .into(this)
             }
@@ -273,6 +276,7 @@ class MessageAdapter(
                 Picasso
                     .get()
                     .load(msg.message.content)
+                    .placeholder(R.drawable.me)
                     .resize(160, 200)
                     .into(contentImage)
             }

@@ -35,7 +35,6 @@ class IncomingCallActivity : BaseActivity() {
             }
 
             override fun onFinish() {
-                ringtone.stop()
                 finish()
                 // Push notification for missing call
                 NotificationHelper.pushNotification(
@@ -51,6 +50,12 @@ class IncomingCallActivity : BaseActivity() {
     private val ringtone by lazy {
         val defaultRingtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
         RingtoneManager.getRingtone(this@IncomingCallActivity, defaultRingtoneUri)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        ringtone.stop()
+        countDownTimer.cancel()
     }
 
     override fun initViews() {
@@ -93,7 +98,6 @@ class IncomingCallActivity : BaseActivity() {
                     audioOnly = isAudioCall
                 )
                 startJitsi(options)
-//                JitsiMeetActivity.launch(this@IncomingCallActivity, options)
                 finish()
             }
         }

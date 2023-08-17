@@ -8,7 +8,7 @@ import android.os.Bundle
 class CurrentActivityHolder : Application.ActivityLifecycleCallbacks {
     companion object {
         @SuppressLint("StaticFieldLeak")
-        lateinit var currentActivity: Activity
+        var currentActivity: Activity? = null
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {

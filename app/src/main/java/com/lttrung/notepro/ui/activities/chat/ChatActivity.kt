@@ -56,7 +56,7 @@ class ChatActivity : BaseActivity() {
             if (result.resultCode == RESULT_OK) {
                 val themeChanged = result.data?.getSerializableExtra(THEME) as Theme?
                 if (themeChanged != null) {
-                    note.theme = themeChanged
+                    note?.theme = themeChanged
                     handleChangeChatTheme(themeChanged)
                     return@registerForActivityResult
                 }
@@ -72,7 +72,7 @@ class ChatActivity : BaseActivity() {
         MessageAdapter(this, resources)
     }
     private val note by lazy {
-        intent.getSerializableExtra(NOTE) as Note
+        intent.getSerializableExtra(NOTE) as Note?
     }
     private val messageReceiver by lazy {
         object : BroadcastReceiver() {
@@ -97,7 +97,7 @@ class ChatActivity : BaseActivity() {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (viewModel.isLoading.value == false) {
                     if (!recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                        viewModel.getMessages(note.id, viewModel.page, PAGE_LIMIT)
+                        viewModel.getMessages(note?.id ?: "", viewModel.page, PAGE_LIMIT)
                     }
                 }
             }
@@ -135,7 +135,7 @@ class ChatActivity : BaseActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         setResult(RESULT_OK, intent.apply {
-            putExtra(THEME, note.theme)
+            putExtra(THEME, note?.theme)
         })
         finish()
     }
@@ -172,7 +172,7 @@ class ChatActivity : BaseActivity() {
                 System.currentTimeMillis().toString(),
                 map["URL"] ?: "",
                 map["TYPE"] ?: "",
-                note.id,
+                note?.id ?: "",
                 0L,
                 User(messageAdapter.userId, "")
             )
@@ -186,7 +186,7 @@ class ChatActivity : BaseActivity() {
         viewModel.currentUserLiveData.observe(this) { user ->
             user.id ?: finish()
             messageAdapter.userId = user.id!!
-            viewModel.getMessages(note.id, viewModel.page, PAGE_LIMIT)
+            viewModel.getMessages(note?.id ?: "", viewModel.page, PAGE_LIMIT)
         }
     }
 
@@ -218,9 +218,9 @@ class ChatActivity : BaseActivity() {
             }
             btnCall.setOnClickListener {
                 viewModel.currentUserLiveData.value?.let { currentUser ->
-                    socketService?.call(note.id)
+                    socketService?.call(note?.id ?: "")
                     val options = JitsiHelper.createOptions(
-                        roomId = note.id,
+                        roomId = note?.id ?: "",
                         currentUser = currentUser,
                         audioOnly = true
                     )
@@ -236,9 +236,9 @@ class ChatActivity : BaseActivity() {
             }
             btnCallVideo.setOnClickListener {
                 viewModel.currentUserLiveData.value?.let { currentUser ->
-                    socketService?.callVideo(note.id)
+                    socketService?.callVideo(note?.id ?: "")
                     val options = JitsiHelper.createOptions(
-                        roomId = note.id,
+                        roomId = note?.id ?: "",
                         currentUser = currentUser
                     )
                     startJitsi(options)
@@ -265,7 +265,7 @@ class ChatActivity : BaseActivity() {
     override fun initViews() {
         super.initViews()
         initMessageRecyclerView()
-        handleChangeChatTheme(note.theme)
+        handleChangeChatTheme(note?.theme)
     }
 
     private fun initMessageRecyclerView() {
@@ -282,6 +282,7 @@ class ChatActivity : BaseActivity() {
                 setMaxRecycledViews(MessageAdapter.VIDEO_OTHER_MESSAGE, 50)
             })
             setItemViewCacheSize(300)
+            setHasFixedSize(true)
         }
     }
 
@@ -304,7 +305,7 @@ class ChatActivity : BaseActivity() {
             System.currentTimeMillis().toString(),
             content,
             AppConstant.MESSAGE_CONTENT_TYPE_TEXT,
-            note.id,
+            note?.id ?: "",
             0L,
             User(uid, "")
         )
@@ -313,12 +314,14 @@ class ChatActivity : BaseActivity() {
         viewModel.listMessage.add(0, message)
         messageAdapter.addSingleData(MessageAdapter.MediaMessage(message, this))
         binding.messageBox.setText("")
+        binding.messages.smoothScrollToPosition(messageAdapter.itemCount - 1)
     }
 
     private fun handleIncomingMessage(message: Message) {
-        if (message.room == note.id) {
+        if (message.room == note?.id) {
             viewModel.listMessage.add(message)
             messageAdapter.addSingleData(MessageAdapter.MediaMessage(message, this))
+            binding.messages.smoothScrollToPosition(messageAdapter.itemCount - 1)
         } else {
             NotificationHelper.pushNotification(
                 this@ChatActivity, CHAT_CHANNEL_ID, message

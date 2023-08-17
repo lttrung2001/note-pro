@@ -53,7 +53,6 @@
         android:layout_below="@id/actionBar"
         android:padding="10dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:stackFromEnd="true"
         tools:itemCount="10"
         tools:listitem="@layout/text_other_message_item" />
 

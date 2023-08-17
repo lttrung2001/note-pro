@@ -96,6 +96,7 @@ class EditImageFragment(
         })
 
         binding.btnSend.setOnClickListener {
+            viewModel.isLoading.value = true
             sendMediaViaCloudStorage(
                 binding.ivEditingImage.drawable
                     .toBitmap()
@@ -175,7 +176,6 @@ class EditImageFragment(
     }
 
     private fun sendMediaViaCloudStorage(byteArray: ByteArray) {
-        viewModel.isLoading.value = true
         val path = "images/messages/${System.currentTimeMillis()}.jpg"
         storageRef.child(path)
             .putBytes(byteArray)

@@ -9,8 +9,10 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.Person
 import com.lttrung.notepro.R
 import com.lttrung.notepro.domain.data.networks.models.Message
+import com.lttrung.notepro.domain.data.networks.models.Note
 import com.lttrung.notepro.ui.activities.chat.ChatActivity
 import com.lttrung.notepro.utils.AppConstant.Companion.MESSAGE
+import com.lttrung.notepro.utils.AppConstant.Companion.NOTE
 import com.lttrung.notepro.utils.AppConstant.Companion.ROOM_ID
 
 object NotificationHelper {
@@ -27,12 +29,13 @@ object NotificationHelper {
     ) {
         val intent = Intent(context, ChatActivity::class.java).apply {
             putExtra(ROOM_ID, message.room)
+            putExtra(NOTE, Note(message.room, ""))
             putExtra(MESSAGE, message)
-            flags =
-                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_TASK_ON_HOME
+//            flags =
+//                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_TASK_ON_HOME
         }
         val pendingIntent: PendingIntent = PendingIntent.getActivity(
-            context, 0, intent, PendingIntent.FLAG_IMMUTABLE
+            context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT
         )
         val notification = NotificationCompat.Builder(context, channelId)
             .setPriority(NotificationCompat.PRIORITY_HIGH).setStyle(
