@@ -201,7 +201,10 @@ class ChatSocketService : Service() {
     }
 
     private fun createSocket(accessToken: String): Socket {
-        return IO.socket(BASE_URL, IO.Options.builder().setReconnection(true).setAuth(buildMap {
+        return IO.socket(BASE_URL, IO.Options.builder()
+            .setReconnection(true)
+            .setSecure(false)
+            .setAuth(buildMap {
             if (accessToken.isEmpty()) {
                 switchToLoginScreen()
             }

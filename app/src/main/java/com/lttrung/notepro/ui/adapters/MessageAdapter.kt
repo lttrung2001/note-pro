@@ -192,7 +192,7 @@ class MessageAdapter(
 
     fun addSingleData(msg: MediaMessage) {
         mList.add(msg)
-        notifyDataSetChanged()
+        notifyItemInserted(mList.size - 1)
     }
 
     fun onPause() {
